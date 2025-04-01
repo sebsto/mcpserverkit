@@ -1,0 +1,40 @@
+{
+	"configurations": [
+		{
+			"type": "swift-lldb",
+			"request": "launch",
+			"args": [],
+			"cwd": "${workspaceFolder:MCP2Lambda}",
+			"name": "Debug MCP2Lambda",
+			"program": "${workspaceFolder:MCP2Lambda}/.build/debug/MCP2Lambda",
+			"preLaunchTask": "swift: Build Debug MCP2Lambda"
+		},
+		{
+			"type": "swift-lldb",
+			"request": "launch",
+			"args": [],
+			"cwd": "${workspaceFolder:MCP2Lambda}",
+			"name": "Release MCP2Lambda",
+			"program": "${workspaceFolder:MCP2Lambda}/.build/release/MCP2Lambda",
+			"preLaunchTask": "swift: Build Release MCP2Lambda"
+		},
+		{
+			"type": "swift-lldb",
+			"request": "launch",
+			"args": [],
+			"cwd": "${workspaceFolder:MCP2Lambda}",
+			"name": "Debug MCPClientBedrock",
+			"program": "${workspaceFolder:MCP2Lambda}/.build/debug/MCPClientBedrock",
+			"preLaunchTask": "swift: Build Debug MCPClientBedrock"
+		},
+		{
+			"type": "swift-lldb",
+			"request": "launch",
+			"args": [],
+			"cwd": "${workspaceFolder:MCP2Lambda}",
+			"name": "Release MCPClientBedrock",
+			"program": "${workspaceFolder:MCP2Lambda}/.build/release/MCPClientBedrock",
+			"preLaunchTask": "swift: Build Release MCPClientBedrock"
+		}
+	]
+}
