@@ -11,30 +11,30 @@ import Foundation
 
 // Define the calculator tool schema
 let calculatorSchema = """
-{
-    "type": "object",
-    "properties": {
-      "a": {
-        "description": "First number",
-        "type": "number"
-      },
-      "b": {
-        "description": "Second number",
-        "type": "number"
-      },
-      "operation": {
-        "description": "Operation to perform (add, subtract, multiply, divide)",
-        "type": "string",
-        "enum": ["add", "subtract", "multiply", "divide"]
-      }
-    },
-    "required": [
-      "a",
-      "b",
-      "operation"
-    ]
-}
-"""
+    {
+        "type": "object",
+        "properties": {
+          "a": {
+            "description": "First number",
+            "type": "number"
+          },
+          "b": {
+            "description": "Second number",
+            "type": "number"
+          },
+          "operation": {
+            "description": "Operation to perform (add, subtract, multiply, divide)",
+            "type": "string",
+            "enum": ["add", "subtract", "multiply", "divide"]
+          }
+        },
+        "required": [
+          "a",
+          "b",
+          "operation"
+        ]
+    }
+    """
 
 // Define a struct for calculator input
 struct CalculatorInput: Codable {

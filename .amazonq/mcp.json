@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "weather": {
+    "example": {
       "command": ".build/debug/MCPExampleServer",
       "args": []
     }

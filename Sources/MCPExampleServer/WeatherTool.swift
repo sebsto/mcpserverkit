@@ -44,7 +44,7 @@ let myWeatherTool = MCPTool<String, String>(
             throw MCPServerError.invalidParam("city", "\(input)")
         }
         let (data, _) = try await URLSession.shared.data(from: url)
-        
+
         // return the data as a string
         return String(decoding: data, as: UTF8.self)
     }

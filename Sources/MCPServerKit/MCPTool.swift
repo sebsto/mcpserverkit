@@ -6,7 +6,7 @@ import FoundatioNEssentials
 import Foundation
 #endif
 
-public struct MCPTool<Input: Codable, Output>: MCPToolProtocol {
+public struct MCPTool<Input: Decodable, Output: Encodable>: MCPToolProtocol {
     public let name: String
     public let description: String
     public let inputSchema: String

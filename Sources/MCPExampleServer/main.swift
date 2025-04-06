@@ -12,7 +12,7 @@ let server = JSONBasedMCPServer(
     version: "1.0.0",
     tools: [
         myWeatherTool.asJSONTool(),  // String input, String output
-        calculatorTool.asJSONTool()  // CalculatorInput input, Double output
+        calculatorTool.asJSONTool(),  // CalculatorInput input, Double output
     ]
 )
 
