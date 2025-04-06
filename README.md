@@ -151,13 +151,13 @@ Servers built with MCPServerKit can be used with any MCP-compatible client, incl
 - [Claude Dekstop App](https://claude.ai/download)
 - Other AI services that support the Model Context Protocol
 
-To use the Wetaher example, add this JSON file to tour MCP CLient configuration 
+To use the Weather example, add this JSON file to tour MCP CLient configuration 
 
 ```
 {
   "mcpServers": {
     "weather": {
-      "command": "<path to your executable>",
+      "command": ".build/debug/MCPWeatherServer",
       "args": []
     }
   }
