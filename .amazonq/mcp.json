@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "weather": {
+      "command": ".build/debug/MCPWeatherServer",
+      "args": []
+    }
+  }
+}

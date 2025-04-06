@@ -1,115 +1,176 @@
-# MCP2Lambda (Swift Implementation)
+# MCPSwift
 
-This is a Swift 6 implementation of the MCP2Lambda project, which allows you to run any AWS Lambda function as a Large Language Model (LLM) tool without code changes using Anthropic's Model Context Protocol (MCP).
+A high-level Swift framework for building Model Context Protocol (MCP) servers with a simplified API.
 
 ## Overview
 
-MCP2Lambda enables LLMs to interact with AWS Lambda functions as tools, extending their capabilities beyond text generation. This allows models to:
+MCPSwift provides `MCPServerKit`, a high-level and easy-to-use API built on top of [the official MCP Swift SDK](https://github.com/modelcontextprotocol/swift-sdk). This framework simplifies the process of creating MCP-compatible tools and servers in Swift.
 
-- Access real-time and private data, including data sources in your VPCs
-- Execute custom code using a Lambda function as sandbox environment
-- Interact with external services and APIs using Lambda functions internet access (and bandwidth)
-- Perform specialized calculations or data processing
+Key features:
+- Simplified tool creation and registration
+- Standardized error handling
+- Streamlined server setup and communication
+- Type-safe API for building MCP tools
 
-## Prerequisites
+The project includes a weather tool example to demonstrate how to implement a functional MCP server using the framework.
 
-- Swift 6.0 or higher
-- AWS account with configured credentials
-- AWS Lambda functions (sample functions provided in the repo)
-- An application using Amazon Bedrock with the Converse API
+## MCPServerKit
 
-## Project Structure
+MCPServerKit is the core library that abstracts away the complexity of the MCP protocol, allowing developers to focus on building their tools rather than managing protocol details.
 
-The project is organized as follows:
+### Key Components
 
-- `Sources/MCPCore`: Core library for MCP protocol implementation
-- `Sources/MCP2Lambda`: Main server application that bridges MCP and AWS Lambda
-- `Sources/MCPClientBedrock`: Client application that connects to Amazon Bedrock
-- `sample_functions/swift`: Sample Lambda functions implemented in Swift
+- **MCPToolProtocol**: Generic protocol defining the interface for MCP tools with associated Input and Output types
+- **MCPTool**: A default abstraction for defining tools with schemas and handlers, supporting type-safe input and output
+- **MCPServer**: Manages server lifecycle and communication
+- **MCPServerError**: Standardized error handling for MCP servers
+
+### Benefits
+
+- Reduces boilerplate code when implementing MCP tools
+- Provides a consistent pattern for tool development
+- Handles the complexities of MCP communication
+- Makes it easy to create and test new tools
+
+## Requirements
+
+- macOS 15 or later
+- Swift 6.1 or later
+- Xcode 16 or later (recommended for development)
 
 ## Installation
 
-### Building from Source
+Clone the repository:
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/sebsto/mcp2lambda-swift.git
-   cd mcp2lambda-swift
-   ```
+```bash
+git clone <repository-url>
+cd MCPSwift
+```
 
-2. Build the project:
-   ```
-   swift build
-   ```
+Build the project:
 
-3. Run the server:
-   ```
-   swift run MCP2Lambda
-   ```
+```bash
+swift build
+```
 
-### Using Docker
+## Project Structure
 
-1. Build the Docker image:
-   ```
-   docker build -t mcp2lambda-swift .
-   ```
+- **MCPServerKit**: The core library for building MCP servers and tools
+- **MCPWeatherServer**: An example implementation that demonstrates how to use MCPServerKit
+- **Tests**: Unit tests for the server components
 
-2. Run the container:
-   ```
-   docker run -p 8080:8080 mcp2lambda-swift
-   ```
+## Using MCPServerKit
 
-## Configuration
+### Creating a Tool
 
-The MCP2Lambda server can be configured using command-line arguments or environment variables:
+```swift
+import MCPServerKit
 
-- `--region` or `AWS_REGION`: AWS region to use (default: us-east-1)
-- `--function-prefix` or `FUNCTION_PREFIX`: Prefix for Lambda functions to include (default: mcp2lambda-)
-- `--function-list` or `FUNCTION_LIST`: JSON array of allowed function names (default: [])
-- `--no-pre-discovery` or `PRE_DISCOVERY=false`: Disable registering Lambda functions as individual tools at startup
+// Define your tool's schema
+let myToolSchema = """
+{
+    "type": "object",
+    "properties": {
+      "parameter_name": {
+        "description": "Description of the parameter",
+        "type": "string"
+      }
+    },
+    "required": [
+      "parameter_name"
+    ]
+}
+"""
 
-## Strategy Selection
+// Create your tool with a handler function and converter
+let myTool = MCPTool<String, String>(
+    name: "tool_name",
+    description: "Description of what your tool does",
+    inputSchema: myToolSchema,
+    converter: { params in
+        // Convert the input parameters to the expected type
+        try await MCPTool<String, String>.extractStringParameter(params, name: "parameter_name")
+    },
+    body: { (input: String) async throws -> String in
+        // Process the input and return a result
+        return "Processed: \(input)"
+    }
+)
+```
 
-The gateway supports two different strategies for handling Lambda functions:
+### Setting Up a Server
 
-1. **Pre-Discovery Mode** (default: enabled): Registers each Lambda function as an individual tool at startup. This provides a more intuitive interface where each function appears as its own named tool.
+```swift
+import MCPServerKit
 
-2. **Generic Mode**: Uses two generic tools (`list_lambda_functions` and `invoke_lambda_function`) to interact with Lambda functions.
+// Start the server with your tools
+try await MCPServer.startStdioServer(
+    name: "MyMCPServer",
+    version: "1.0.0",
+    tools: [myTool]
+) 
+```
 
-## Sample Lambda Functions
+## Example: Weather Tool
 
-The repository includes three sample Lambda functions implemented in Swift:
+The included weather tool demonstrates a practical implementation using MCPServerKit:
 
-1. **CustomerIdFromEmail**: Retrieves a customer ID based on an email address.
-2. **CustomerInfoFromId**: Retrieves detailed customer information based on a customer ID.
-3. **RunPythonCode**: Executes arbitrary Python code within a Lambda sandbox environment.
+```swift
+let myWeatherTool = MCPTool<String, String>(
+    name: "weather",
+    description: "Returns weather data for a specified city",
+    inputSchema: weatherSchema,
+    converter: { params in 
+        try await MCPTool<String, String>.extractStringParameter(params, name: "city") 
+    },
+    body: { (city: String) async throws -> String in
+        // Fetch weather data for the city
+        let weatherURL = "http://wttr.in/\(city)?format=j1"
+        let url = URL(string: weatherURL)
+        guard let url else {
+            throw MCPServerError.invalidParam("city", "\(city)")
+        }
+        let (data, _) = try await URLSession.shared.data(from: url)
+        
+        return String(data: data, encoding: .utf8) ?? "Unable to decode response"
+    }
+)
+```
 
-### Deploying Sample Functions
+To run the example:
 
-1. Install the AWS SAM CLI: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html
+```bash
+swift run MCPWeatherServer
+```
 
-2. Deploy the sample functions:
-   ```
-   cd sample_functions/swift
-   sam build
-   sam deploy
-   ```
+## Integrating with MCP Clients
 
-## Using with Amazon Bedrock
+Servers built with MCPServerKit can be used with any MCP-compatible client, including:
 
-The MCPClientBedrock application connects MCP2Lambda to Amazon Bedrock models:
+- [Amazon Q Developer CLI](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/command-line-installing.html)
+- [Claude Dekstop App](https://claude.ai/download)
+- Other AI services that support the Model Context Protocol
 
-1. Start the MCP2Lambda server:
-   ```
-   swift run MCP2Lambda
-   ```
+To use the Wetaher example, add this JSON file to tour MCP CLient configuration 
 
-2. Run the Bedrock client:
-   ```
-   swift run MCPClientBedrock
-   ```
+```
+{
+  "mcpServers": {
+    "weather": {
+      "command": "<path to your executable>",
+      "args": []
+    }
+  }
+}
+```
 
-3. Interact with the model through the command-line interface.
+## Dependencies
+
+- [swift-sdk](https://github.com/modelcontextprotocol/swift-sdk) - The official Swift SDK for the Model Context Protocol
+
+## License
+
+This project is licensed under the terms included in the [MIT LICENSE](LICENSE) file.
 
 ## Contributing
 

@@ -2,58 +2,37 @@
 import PackageDescription
 
 let package = Package(
-    name: "MCP2Lambda",
+    name: "MCPSwift",
     platforms: [
         .macOS(.v15)
     ],
     products: [
-        .executable(name: "MCP2Lambda", targets: ["MCP2Lambda"]),
-        .executable(name: "MCPClientBedrock", targets: ["MCPClientBedrock"]),
-        .library(name: "MCPCore", targets: ["MCPCore"])
+        .executable(name: "MCPWeatherServer", targets: ["MCPWeatherServer"]),
+        .library(name: "MCPServerKit", targets: ["MCPServerKit"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-argument-parser", from: "1.3.0"),
-        .package(url: "https://github.com/swift-server/async-http-client", from: "1.20.0"),
-        .package(url: "https://github.com/vapor/vapor", from: "4.92.1"),
-        .package(url: "https://github.com/soto-project/soto", from: "6.8.0"),
-        .package(url: "https://github.com/apple/swift-testing", from: "0.6.0")
+        .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", from: "0.7.0"),
     ],
     targets: [
         .executableTarget(
-            name: "MCP2Lambda",
+            name: "MCPWeatherServer",
             dependencies: [
-                "MCPCore",
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-                .product(name: "Vapor", package: "vapor"),
-                .product(name: "SotoLambda", package: "soto")
+                .target(name: "MCPServerKit"),
             ],
-            path: "Sources/MCP2Lambda"
-        ),
-        .executableTarget(
-            name: "MCPClientBedrock",
-            dependencies: [
-                "MCPCore",
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-                .product(name: "AsyncHTTPClient", package: "async-http-client"),
-                .product(name: "SotoBedrock", package: "soto")
-            ],
-            path: "Sources/MCPClientBedrock"
+            path: "Sources/MCPWeatherServer"
         ),
         .target(
-            name: "MCPCore",
+            name: "MCPServerKit",
             dependencies: [
-                .product(name: "Vapor", package: "vapor")
+                .product(name: "MCP", package: "swift-sdk"),
             ],
-            path: "Sources/MCPCore"
+            path: "Sources/MCPServerKit"
         ),
         .testTarget(
-            name: "MCP2LambdaTests",
+            name: "MCPServerTests",
             dependencies: [
-                "MCP2Lambda", 
-                "MCPCore",
-                .product(name: "Testing", package: "swift-testing")
-            ],
-            path: "Tests/MCP2LambdaTests"
+                .target(name: "MCPServerKit"),
+            ]
         )
     ]
 )
