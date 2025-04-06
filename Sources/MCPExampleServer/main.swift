@@ -16,5 +16,12 @@ let server = JSONBasedMCPServer(
     ]
 )
 
+//let server = JSONBasedMCPServer.create(
+//name: "MultiToolServer",
+//version: "1.0.0",
+//tools: myWeatherTool,  // String input, String output
+//       calculatorTool  // CalculatorInput input, Double output
+//)
+
 // Start the server
 try await server.startStdioServer()

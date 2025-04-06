@@ -22,11 +22,6 @@ public struct JSONBasedMCPServer: Sendable {
         self.tools = tools
     }
     
-    /// Create a server with a variadic list of tools
-    public static func create(name: String, version: String, tools: JSONBasedMCPTool...) -> JSONBasedMCPServer {
-        return JSONBasedMCPServer(name: name, version: version, tools: tools)
-    }
-    
     /// Helper method to find a tool by name
     func findTool(name: String) -> JSONBasedMCPTool? {
         return tools.first { $0.name == name }
@@ -78,3 +73,15 @@ public struct JSONBasedMCPServer: Sendable {
         await server.waitUntilCompleted()
     }
 }
+
+//extension JSONBasedMCPServer {
+//    /// Create a server with a variadic list of tools
+//    public static func create(name: String, version: String, tools: JSONBasedMCPTool...) -> JSONBasedMCPServer {
+//        return JSONBasedMCPServer(name: name, version: version, tools: tools)
+//    }
+//    
+//    /// Create a server with a variadic list of tools
+//    public static func create<Input, Output>(name: String, version: String, tools: MCPTool<Input, Output>...) -> JSONBasedMCPServer {
+//        return JSONBasedMCPServer(name: name, version: version, tools: tools.map { JSONMCPToolAdapter($0) })
+//    }
+//}
