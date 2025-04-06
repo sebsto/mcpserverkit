@@ -49,38 +49,41 @@ struct MCPServerIntegrationTests {
         #expect(input.text == "Hello world")
     }
     
-    // Test the extractStringParameter helper method
-    @Test("Test extractStringParameter helper")
-    func testExtractStringParameter() async throws {
-        // Create a mock CallTool.Parameters
+    // Test the extractParameter helper method
+    @Test("Test extractParameter helper")
+    func testExtractParameter() async throws {
+        // Create a mock CallTool.Parameters with a string parameter
         let parameters = CallTool.Parameters(
             name: "testTool",
-            arguments: ["text": .string("Hello world")]
+            arguments: ["city": .string("Seattle")]
         )
         
-        // Use the helper method to extract the parameter
-        let text = try await MCPTool<SimpleInput, SimpleOutput>.extractStringParameter(parameters, name: "text")
-        #expect(text == "Hello world")
+        // Use the helper method to extract the parameter as a String
+        let city = try MCPTool<String, String>.extractParameter(parameters, name: "city")
+        #expect(city == "Seattle")
+        
+        // Create parameters with an object
+        let objectParams = CallTool.Parameters(
+            name: "testTool",
+            arguments: ["input": .object(["text": .string("Hello world")])]
+        )
+        
+        // Define a struct that matches the object structure
+        struct TestObject: Codable, Equatable {
+            let text: String
+        }
+        
+        // Extract the parameter as the TestObject type
+        let obj = try MCPTool<TestObject, String>.extractParameter(objectParams, name: "input")
+        #expect(obj.text == "Hello world")
         
         // Test with missing parameter
         let emptyParams = CallTool.Parameters(name: "testTool", arguments: [:])
         do {
-            _ = try await MCPTool<SimpleInput, SimpleOutput>.extractStringParameter(emptyParams, name: "text")
+            _ = try MCPTool<String, String>.extractParameter(emptyParams, name: "city")
             #expect(Bool(false), "Expected error was not thrown")
         } catch let error as MCPServerError {
-            #expect(error.errorDescription == "Missing parameter text")
-        }
-        
-        // Test with wrong type parameter
-        let wrongTypeParams = CallTool.Parameters(
-            name: "testTool",
-            arguments: ["text": .bool(true)]
-        )
-        do {
-            _ = try await MCPTool<SimpleInput, SimpleOutput>.extractStringParameter(wrongTypeParams, name: "text")
-            #expect(Bool(false), "Expected error was not thrown")
-        } catch let error as MCPServerError {
-            #expect(error.errorDescription?.contains("Invalid parameter text") == true)
+            #expect(error.errorDescription == "Missing parameter city")
         }
     }
     

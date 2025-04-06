@@ -89,7 +89,7 @@ let myTool = MCPTool<String, String>(
     inputSchema: myToolSchema,
     converter: { params in
         // Convert the input parameters to the expected type
-        try await MCPTool<String, String>.extractStringParameter(params, name: "parameter_name")
+        try await MCPTool<String, String>.extractParameter(params, name: "parameter_name")
     },
     body: { (input: String) async throws -> String in
         // Process the input and return a result
@@ -103,12 +103,15 @@ let myTool = MCPTool<String, String>(
 ```swift
 import MCPServerKit
 
-// Start the server with your tools
-try await MCPServer.startStdioServer(
+// create the server
+let server = MCPServer(
     name: "MyMCPServer",
     version: "1.0.0",
     tools: [myTool]
-) 
+)
+// start the server
+try await server.startStdioServer()
+
 ```
 
 ## Example: Weather Tool
@@ -121,7 +124,7 @@ let myWeatherTool = MCPTool<String, String>(
     description: "Returns weather data for a specified city",
     inputSchema: weatherSchema,
     converter: { params in 
-        try await MCPTool<String, String>.extractStringParameter(params, name: "city") 
+        try await MCPTool<String, String>.extractParameter(params, name: "city") 
     },
     body: { (city: String) async throws -> String in
         // Fetch weather data for the city
@@ -132,7 +135,7 @@ let myWeatherTool = MCPTool<String, String>(
         }
         let (data, _) = try await URLSession.shared.data(from: url)
         
-        return String(data: data, encoding: .utf8) ?? "Unable to decode response"
+        return String(decoding: data, as: UTF8.self)
     }
 )
 ```
@@ -140,7 +143,7 @@ let myWeatherTool = MCPTool<String, String>(
 To run the example:
 
 ```bash
-swift run MCPWeatherServer
+cat call_tool.json | swift run MCPWeatherServer
 ```
 
 ## Integrating with MCP Clients

@@ -6,9 +6,11 @@ import FoundatioNEssentials
 import Foundation
 #endif
 
-// start the server
-try await MCPServer.startStdioServer(
+// create the server
+let server = MCPServer(
     name: "MyMCPServer",
     version: "1.0.0",
     tools: [myWeatherTool]
 )
+// start the server
+try await server.startStdioServer()

@@ -6,14 +6,25 @@ import FoundatioNEssentials
 import Foundation
 #endif
 
-//FIXME: separate server from startServer()
-public struct MCPServer {
-    //TODO: add a logger into the game
-    public static func startStdioServer<Input: Decodable, Output>(
+//TODO: add compliance to Swift Service Lifecycle
+//TODO: add a logger into the game
+public struct MCPServer<Input: Decodable, Output>: Sendable {
+
+    let name: String
+    let version: String
+    let tools: [any MCPToolProtocol<Input, Output>]
+
+    public init(
         name: String,
         version: String,
-        tools: [any MCPToolProtocol<Input, Output>],
-    ) async throws {
+        tools: [any MCPToolProtocol<Input, Output>]
+    ) {
+        self.name = name
+        self.version = version
+        self.tools = tools
+    }
+
+    public func startStdioServer() async throws {
 
         // create the server
         let server = Server(
@@ -56,6 +67,7 @@ public struct MCPServer {
             let output = try await tool.handler(input)
 
             // return the result
+            //FIXME: should we return the output as JSON object?
             return CallTool.Result(content: [.text(String(describing: output))])
         }
 

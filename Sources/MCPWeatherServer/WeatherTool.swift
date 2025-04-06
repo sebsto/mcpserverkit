@@ -29,11 +29,13 @@ let myWeatherToolSchema =
 let myWeatherToolDescription =
     "This tool returns current weather and weather forecast for a given city. It returns current data and forecasted data, such as temperature in celsius and farenheit, humidity, rain level in milimiters and inches, wind speed in kmh and mph and direction, pressure in milibar and inches, visibility, weather description."
 
-let myWeatherTool = MCPTool(
+let myWeatherTool = MCPTool<String, String>(
     name: "weather",
     description: myWeatherToolDescription,
     inputSchema: myWeatherToolSchema,
-    converter: { params in try await MCPTool<String, String>.extractStringParameter(params, name: "city") },
+    converter: { params in
+        return try MCPTool<String, String>.extractParameter(params, name: "city")
+    },
 ) { (input: String) async throws -> String in
 
     let weatherURL = "http://wttr.in/\(input)?format=j1"
@@ -41,8 +43,9 @@ let myWeatherTool = MCPTool(
     guard let url else {
         throw MCPServerError.invalidParam("city", "\(input)")
     }
-    let (data, _) = try await URLSession.shared.data(from: url)
+     let (data, _) = try await URLSession.shared.data(from: url)
+//    let data = "moked response".data(using: .utf8)!
 
     // return the data as a string
-    return String(data: data, encoding: .utf8) ?? "can not decode JSON string"
+    return String(decoding: data, as: UTF8.self)
 }
