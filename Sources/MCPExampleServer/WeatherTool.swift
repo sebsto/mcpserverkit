@@ -2,7 +2,7 @@ import MCP
 import MCPServerKit
 
 #if canImport(FoundationEssentials)
-import FoundatioNEssentials
+import FoundationEssentials
 #else
 import Foundation
 #endif
@@ -36,16 +36,16 @@ let myWeatherTool = MCPTool<String, String>(
     converter: { params in
         return try MCPTool<String, String>.extractParameter(params, name: "city")
     },
-) { (input: String) async throws -> String in
+    body: { (input: String) async throws -> String in
 
-    let weatherURL = "http://wttr.in/\(input)?format=j1"
-    let url = URL(string: weatherURL)
-    guard let url else {
-        throw MCPServerError.invalidParam("city", "\(input)")
+        let weatherURL = "http://wttr.in/\(input)?format=j1"
+        let url = URL(string: weatherURL)
+        guard let url else {
+            throw MCPServerError.invalidParam("city", "\(input)")
+        }
+        let (data, _) = try await URLSession.shared.data(from: url)
+        
+        // return the data as a string
+        return String(decoding: data, as: UTF8.self)
     }
-     let (data, _) = try await URLSession.shared.data(from: url)
-//    let data = "moked response".data(using: .utf8)!
-
-    // return the data as a string
-    return String(decoding: data, as: UTF8.self)
-}
+)

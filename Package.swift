@@ -7,7 +7,7 @@ let package = Package(
         .macOS(.v15)
     ],
     products: [
-        .executable(name: "MCPWeatherServer", targets: ["MCPWeatherServer"]),
+        .executable(name: "MCPExampleServer", targets: ["MCPExampleServer"]),
         .library(name: "MCPServerKit", targets: ["MCPServerKit"]),
     ],
     dependencies: [
@@ -15,11 +15,11 @@ let package = Package(
     ],
     targets: [
         .executableTarget(
-            name: "MCPWeatherServer",
+            name: "MCPExampleServer",
             dependencies: [
                 .target(name: "MCPServerKit"),
             ],
-            path: "Sources/MCPWeatherServer"
+            path: "Sources/MCPExampleServer"
         ),
         .target(
             name: "MCPServerKit",

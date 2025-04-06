@@ -11,6 +11,7 @@ Key features:
 - Standardized error handling
 - Streamlined server setup and communication
 - Type-safe API for building MCP tools
+- Support for heterogeneous tools with different input/output types
 
 The project includes a weather tool example to demonstrate how to implement a functional MCP server using the framework.
 
@@ -24,6 +25,8 @@ MCPServerKit is the core library that abstracts away the complexity of the MCP p
 - **MCPTool**: A default abstraction for defining tools with schemas and handlers, supporting type-safe input and output
 - **MCPServer**: Manages server lifecycle and communication
 - **MCPServerError**: Standardized error handling for MCP servers
+- **JSONBasedMCPTool**: Protocol for tools that work with JSON-based input/output
+- **JSONBasedMCPServer**: Server implementation that supports tools with different input/output types
 
 ### Benefits
 
@@ -31,6 +34,7 @@ MCPServerKit is the core library that abstracts away the complexity of the MCP p
 - Provides a consistent pattern for tool development
 - Handles the complexities of MCP communication
 - Makes it easy to create and test new tools
+- Allows tools with different input/output types to coexist in the same server
 
 ## Requirements
 
@@ -98,7 +102,9 @@ let myTool = MCPTool<String, String>(
 )
 ```
 
-### Setting Up a Server
+### Setting Up a Server with Homogeneous Tools
+
+If all your tools have the same input and output types, you can use the standard MCPServer:
 
 ```swift
 import MCPServerKit
@@ -111,15 +117,36 @@ let server = MCPServer(
 )
 // start the server
 try await server.startStdioServer()
-
 ```
 
-## Example: Weather Tool
+### Setting Up a Server with Heterogeneous Tools
 
-The included weather tool demonstrates a practical implementation using MCPServerKit:
+If your tools have different input and output types, use the JSONBasedMCPServer:
 
 ```swift
-let myWeatherTool = MCPTool<String, String>(
+import MCPServerKit
+
+// Create the JSON-based server with multiple tools of different types
+let server = JSONBasedMCPServer(
+    name: "MultiToolServer",
+    version: "1.0.0",
+    tools: [
+        weatherTool.asJSONTool(),  // String input, String output
+        calculatorTool.asJSONTool() // Different input/output types
+    ]
+)
+
+// Start the server
+try await server.startStdioServer()
+```
+
+## Example: Weather and Calculator Tools
+
+The included example demonstrates a practical implementation using MCPServerKit with multiple tool types:
+
+```swift
+// Weather tool (String input, String output)
+let weatherTool = MCPTool<String, String>(
     name: "weather",
     description: "Returns weather data for a specified city",
     inputSchema: weatherSchema,
@@ -136,6 +163,33 @@ let myWeatherTool = MCPTool<String, String>(
         let (data, _) = try await URLSession.shared.data(from: url)
         
         return String(decoding: data, as: UTF8.self)
+    }
+)
+
+// Calculator tool (CalculatorInput input, Double output)
+let calculatorTool = MCPTool<CalculatorInput, Double>(
+    name: "calculator",
+    description: "Performs basic arithmetic operations",
+    inputSchema: calculatorSchema,
+    converter: { params in
+        // Extract the parameters and create a CalculatorInput
+        let data = try JSONEncoder().encode(params.arguments)
+        return try JSONDecoder().decode(CalculatorInput.self, from: data)
+    },
+    body: { (input: CalculatorInput) async throws -> Double in
+        // Perform calculation based on operation
+        switch input.operation {
+        case "add": return input.a + input.b
+        case "subtract": return input.a - input.b
+        case "multiply": return input.a * input.b
+        case "divide": 
+            guard input.b != 0 else {
+                throw MCPServerError.invalidParam("b", "Cannot divide by zero")
+            }
+            return input.a / input.b
+        default:
+            throw MCPServerError.invalidParam("operation", "Unknown operation")
+        }
     }
 )
 ```

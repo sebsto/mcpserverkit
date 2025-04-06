@@ -1,0 +1,1 @@
+{"jsonrpc":"2.0","id":13,"method":"tools/call","params":{"name":"calculator","arguments":{"operation":"add","a":10,"b":5}}}
