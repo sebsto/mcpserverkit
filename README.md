@@ -23,10 +23,9 @@ MCPServerKit is the core library that abstracts away the complexity of the MCP p
 
 - **MCPToolProtocol**: Generic protocol defining the interface for MCP tools with associated Input and Output types
 - **MCPTool**: A default abstraction for defining tools with schemas and handlers, supporting type-safe input and output
-- **MCPServer**: Manages server lifecycle and communication
+- **MCPServer**: Unified server implementation that supports both homogeneous and heterogeneous tools
 - **MCPServerError**: Standardized error handling for MCP servers
 - **JSONBasedMCPTool**: Protocol for tools that work with JSON-based input/output
-- **JSONBasedMCPServer**: Server implementation that supports tools with different input/output types
 
 ### Benefits
 
@@ -60,7 +59,7 @@ swift build
 ## Project Structure
 
 - **MCPServerKit**: The core library for building MCP servers and tools
-- **MCPWeatherServer**: An example implementation that demonstrates how to use MCPServerKit
+- **MCPExampleServer**: An example implementation that demonstrates how to use MCPServerKit
 - **Tests**: Unit tests for the server components
 
 ## Using MCPServerKit
@@ -104,16 +103,16 @@ let myTool = MCPTool<String, String>(
 
 ### Setting Up a Server with Homogeneous Tools
 
-If all your tools have the same input and output types, you can use the standard MCPServer:
+If all your tools have the same input and output types, you can use the homogeneous tools factory method:
 
 ```swift
 import MCPServerKit
 
 // create the server
-let server = MCPServer(
+let server = MCPServer.create(
     name: "MyMCPServer",
     version: "1.0.0",
-    tools: [myTool]
+    tools: myTool1, myTool2, myTool3  // all tools have same Input/Output types
 )
 // start the server
 try await server.startStdioServer()
@@ -121,13 +120,13 @@ try await server.startStdioServer()
 
 ### Setting Up a Server with Heterogeneous Tools
 
-If your tools have different input and output types, use the JSONBasedMCPServer:
+If your tools have different input and output types, use the heterogeneous tools factory method:
 
 ```swift
 import MCPServerKit
 
-// Create the JSON-based server with multiple tools of different types
-let server = JSONBasedMCPServer(
+// Create the server with multiple tools of different types
+let server = MCPServer.create(
     name: "MultiToolServer",
     version: "1.0.0",
     tools: [
@@ -148,56 +147,73 @@ The included example demonstrates a practical implementation using MCPServerKit 
 // Weather tool (String input, String output)
 let weatherTool = MCPTool<String, String>(
     name: "weather",
-    description: "Returns weather data for a specified city",
-    inputSchema: weatherSchema,
-    converter: { params in 
-        try await MCPTool<String, String>.extractParameter(params, name: "city") 
+    description: "Get weather information for a city",
+    inputSchema: """
+    {
+        "type": "object",
+        "properties": {
+            "city": {
+                "type": "string",
+                "description": "The city to get weather for"
+            }
+        },
+        "required": ["city"]
+    }
+    """,
+    converter: { params in
+        try await MCPTool<String, String>.extractParameter(params, name: "city")
     },
-    body: { (city: String) async throws -> String in
-        // Fetch weather data for the city
-        let weatherURL = "http://wttr.in/\(city)?format=j1"
-        let url = URL(string: weatherURL)
-        guard let url else {
-            throw MCPServerError.invalidParam("city", "\(city)")
-        }
-        let (data, _) = try await URLSession.shared.data(from: url)
-        
-        return String(decoding: data, as: UTF8.self)
+    body: { city in
+        // Implementation would fetch weather data
+        return "Weather for \(city): Sunny, 72°F"
     }
 )
 
 // Calculator tool (CalculatorInput input, Double output)
+struct CalculatorInput: Codable {
+    let operation: String
+    let numbers: [Double]
+}
+
 let calculatorTool = MCPTool<CalculatorInput, Double>(
     name: "calculator",
-    description: "Performs basic arithmetic operations",
-    inputSchema: calculatorSchema,
-    converter: { params in
-        // Extract the parameters and create a CalculatorInput
-        let data = try JSONEncoder().encode(params.arguments)
-        return try JSONDecoder().decode(CalculatorInput.self, from: data)
-    },
-    body: { (input: CalculatorInput) async throws -> Double in
-        // Perform calculation based on operation
-        switch input.operation {
-        case "add": return input.a + input.b
-        case "subtract": return input.a - input.b
-        case "multiply": return input.a * input.b
-        case "divide": 
-            guard input.b != 0 else {
-                throw MCPServerError.invalidParam("b", "Cannot divide by zero")
+    description: "Perform mathematical operations",
+    inputSchema: """
+    {
+        "type": "object",
+        "properties": {
+            "operation": {
+                "type": "string",
+                "enum": ["add", "subtract", "multiply", "divide"]
+            },
+            "numbers": {
+                "type": "array",
+                "items": {
+                    "type": "number"
+                }
             }
-            return input.a / input.b
+        },
+        "required": ["operation", "numbers"]
+    }
+    """,
+    converter: { params in
+        try await MCPTool<CalculatorInput, Double>.extractParameter(params, name: "input")
+    },
+    body: { input in
+        switch input.operation {
+        case "add":
+            return input.numbers.reduce(0, +)
+        case "subtract":
+            return input.numbers.dropFirst().reduce(input.numbers[0], -)
+        case "multiply":
+            return input.numbers.reduce(1, *)
+        case "divide":
+            return input.numbers.dropFirst().reduce(input.numbers[0], /)
         default:
-            throw MCPServerError.invalidParam("operation", "Unknown operation")
+            throw MCPServerError.invalidParam("operation", input.operation)
         }
     }
 )
-```
-
-To run the example:
-
-```bash
-cat call_tool.json | swift run MCPWeatherServer
 ```
 
 ## Integrating with MCP Clients

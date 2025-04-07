@@ -6,8 +6,8 @@ import FoundationEssentials
 import Foundation
 #endif
 
-// Create the JSON-based server with multiple tools of different types
-let server = JSONBasedMCPServer(
+// Create the server with multiple tools of different types
+let server = MCPServer.create(
     name: "MultiToolServer",
     version: "1.0.0",
     tools: [
@@ -15,13 +15,6 @@ let server = JSONBasedMCPServer(
         calculatorTool.asJSONTool(),  // CalculatorInput input, Double output
     ]
 )
-
-//let server = JSONBasedMCPServer.create(
-//name: "MultiToolServer",
-//version: "1.0.0",
-//tools: myWeatherTool,  // String input, String output
-//       calculatorTool  // CalculatorInput input, Double output
-//)
 
 // Start the server
 try await server.startStdioServer()

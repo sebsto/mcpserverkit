@@ -7,7 +7,7 @@ import Foundation
 #endif
 
 /// A protocol for MCP tools that work with JSON-based input and output
-public protocol JSONBasedMCPTool: Sendable {
+public protocol JSONBasedMCPTool: UnifiedMCPTool {
     var name: String { get }
     var description: String { get }
     var inputSchema: String { get }
