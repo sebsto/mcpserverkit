@@ -6,15 +6,6 @@ import FoundationEssentials
 import Foundation
 #endif
 
-/// A protocol that unifies different types of MCP tools
-public protocol UnifiedMCPTool: Sendable {
-    var name: String { get }
-    var description: String { get }
-    var inputSchema: String { get }
-
-    func handle(jsonInput: CallTool.Parameters) async throws -> Encodable
-}
-
 /// A unified MCPServer that can handle both homogeneous and heterogeneous tools
 public struct MCPServer: Sendable {
     let name: String
