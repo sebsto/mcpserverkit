@@ -19,45 +19,23 @@ public protocol UnifiedMCPTool: Sendable {
 public struct MCPServer: Sendable {
     let name: String
     let version: String
-    let tools: [any UnifiedMCPTool]
+    let tools: [any MCPToolProtocol]
 
     public init(
         name: String,
         version: String,
-        tools: [any UnifiedMCPTool]
+        tools: [any MCPToolProtocol]
     ) {
         self.name = name
         self.version = version
         self.tools = tools
     }
 
-    /// Create a server with homogeneous tools (all tools have the same input/output types)
-    public static func create<Input: Decodable, Output: Encodable>(
-        name: String,
-        version: String,
-        tools: [any MCPToolProtocol<Input, Output>]
-    ) -> MCPServer {
-        MCPServer(
-            name: name,
-            version: version,
-            tools: tools.map { $0.asJSONTool() }
-        )
-    }
-
-    /// Create a server with a variadic list of homogeneous tools
-    public static func create<Input: Decodable, Output: Encodable>(
-        name: String,
-        version: String,
-        tools: any MCPToolProtocol<Input, Output>...
-    ) -> MCPServer {
-        create(name: name, version: version, tools: tools)
-    }
-
-    /// Create a server with heterogeneous tools (tools can have different input/output types)
+    /// Create a server with tools
     public static func create(
         name: String,
         version: String,
-        tools: [any JSONBasedMCPTool]
+        tools: [any MCPToolProtocol]
     ) -> MCPServer {
         MCPServer(
             name: name,
@@ -66,11 +44,11 @@ public struct MCPServer: Sendable {
         )
     }
 
-    /// Create a server with a variadic list of heterogeneous tools
+    /// Create a server with a variadic list of tools
     public static func create(
         name: String,
         version: String,
-        tools: any JSONBasedMCPTool...
+        tools: any MCPToolProtocol...
     ) -> MCPServer {
         create(name: name, version: version, tools: tools)
     }
@@ -119,19 +97,5 @@ public struct MCPServer: Sendable {
         try await server.start(transport: StdioTransport())
 
         await server.waitUntilCompleted()
-    }
-}
-
-// Extension to make MCPToolProtocol conform to UnifiedMCPTool
-extension MCPToolProtocol where Output: Encodable {
-    func asUnifiedTool() -> any UnifiedMCPTool {
-        JSONMCPToolAdapter(self)
-    }
-}
-
-// Extension to make JSONBasedMCPTool conform to UnifiedMCPTool
-extension JSONBasedMCPTool {
-    func asUnifiedTool() -> any UnifiedMCPTool {
-        self
     }
 }

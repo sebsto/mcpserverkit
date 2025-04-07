@@ -19,9 +19,7 @@ public struct MCPTool<Input: Decodable, Output: Encodable>: MCPToolProtocol {
         inputSchema: String,
         converter: @Sendable @escaping (CallTool.Parameters) async throws -> Input,
         body: @Sendable @escaping (Input) async throws -> Output
-    )
-    where Output: Encodable {
-
+    ) {
         self.name = name
         self.description = description
         self.inputSchema = inputSchema
@@ -48,7 +46,6 @@ public struct MCPTool<Input: Decodable, Output: Encodable>: MCPToolProtocol {
     /// - Important: The parameter must be a valid JSON object that can be decoded into the expected type.
     /// - Warning: This function uses `JSONEncoder` and `JSONDecoder` to encode and decode the parameter, which may not be the most efficient way to handle this.
     public static func extractParameter(_ input: CallTool.Parameters, name: String) throws -> Input {
-
         // check if we received a "name" parameter
         guard let value = input.arguments?[name] else {
             throw MCPServerError.missingparam(name)
@@ -59,5 +56,17 @@ public struct MCPTool<Input: Decodable, Output: Encodable>: MCPToolProtocol {
         let data = try JSONEncoder().encode(value)
         // decode the data into the expected type
         return try JSONDecoder().decode(Input.self, from: data)
+    }
+
+    /// Handles JSON input and returns a result that can be converted to JSON
+    public func handle(jsonInput: CallTool.Parameters) async throws -> Encodable {
+        // Convert JSON input to the tool's input type
+        let input = try await convert(jsonInput)
+
+        // Process with the original tool
+        let output = try await handler(input)
+
+        // Return the output
+        return output
     }
 }

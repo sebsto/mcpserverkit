@@ -37,7 +37,6 @@ let myWeatherTool = MCPTool<String, String>(
         return try MCPTool<String, String>.extractParameter(params, name: "city")
     },
     body: { (input: String) async throws -> String in
-
         let weatherURL = "http://wttr.in/\(input)?format=j1"
         let url = URL(string: weatherURL)
         guard let url else {

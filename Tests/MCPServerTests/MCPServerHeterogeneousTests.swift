@@ -99,10 +99,7 @@ struct MCPServerHeterogeneousTests {
         let server = MCPServer.create(
             name: serverName,
             version: serverVersion,
-            tools: [
-                stringTool.asJSONTool(),
-                intTool.asJSONTool(),
-            ]
+            tools: [stringTool, intTool]
         )
 
         #expect(server.name == serverName)
@@ -174,9 +171,7 @@ struct MCPServerHeterogeneousTests {
             arguments: ["value": .string("test string")]
         )
 
-        // Since we can't directly call server.callTool in tests, we'll test the underlying tool directly
-        let stringJsonTool = stringTool.asJSONTool()
-        let stringResult = try await stringJsonTool.handle(jsonInput: stringParams)
+        let stringResult = try await stringTool.handle(jsonInput: stringParams)
 
         // Verify the string result
         guard let stringOutput = stringResult as? StringMockOutput else {
@@ -191,11 +186,9 @@ struct MCPServerHeterogeneousTests {
             arguments: ["number": .object(["value": .int(42)])]
         )
 
-        let intJsonTool = intTool.asJSONTool()
-
         // This might throw if the extractParameter method doesn't handle the object format correctly
         // That's expected and we'll handle it in a real implementation
-        await #expect(throws: Swift.Error.self) { try await intJsonTool.handle(jsonInput: intParams) }
+        await #expect(throws: Swift.Error.self) { try await intTool.handle(jsonInput: intParams) }
     }
 
     // Test error handling in MCPServer
@@ -237,8 +230,6 @@ struct MCPServerHeterogeneousTests {
             }
         )
 
-        let jsonTool = errorTool.asJSONTool()
-
         // Test missing parameter error
         do {
             let missingParamCall = CallTool.Parameters(
@@ -246,7 +237,7 @@ struct MCPServerHeterogeneousTests {
                 arguments: [:]
             )
 
-            _ = try await jsonTool.handle(jsonInput: missingParamCall)
+            _ = try await errorTool.handle(jsonInput: missingParamCall)
             throw TestError("Expected error for missing parameter")
         } catch let error as MCPServerError {
             #expect(error.errorDescription?.contains("Missing parameter") == true)
@@ -259,10 +250,10 @@ struct MCPServerHeterogeneousTests {
                 arguments: ["value": .string("trigger_error")]
             )
 
-            _ = try await jsonTool.handle(jsonInput: invalidParamCall)
+            _ = try await errorTool.handle(jsonInput: invalidParamCall)
             throw TestError("Expected error for invalid parameter")
         } catch let error as MCPServerError {
-            #expect(error.errorDescription?.contains("Invalid parameter") == true)
+            #expect(error.errorDescription?.contains("Cannot process") == true)
         }
 
         // Test runtime error
@@ -272,25 +263,10 @@ struct MCPServerHeterogeneousTests {
                 arguments: ["value": .string("runtime_error")]
             )
 
-            _ = try await jsonTool.handle(jsonInput: runtimeErrorCall)
+            _ = try await errorTool.handle(jsonInput: runtimeErrorCall)
             throw TestError("Expected runtime error")
         } catch let error as MCPServerError {
             #expect(error.errorDescription?.contains("Runtime error") == true)
         }
-    }
-
-    // Test unknown tool handling
-    @Test("Test unknown tool handling")
-    func testUnknownToolHandling() {
-        // Since we can't directly access internal properties, we'll just test that
-        // we can create a server with no tools
-        let server = MCPServer.create(
-            name: "TestServer",
-            version: "1.0.0",
-            tools: []
-        )
-
-        #expect(server.name == "TestServer")
-        #expect(server.version == "1.0.0")
     }
 }

@@ -11,8 +11,8 @@ let server = MCPServer.create(
     name: "MultiToolServer",
     version: "1.0.0",
     tools: [
-        myWeatherTool.asJSONTool(),  // String input, String output
-        calculatorTool.asJSONTool(),  // CalculatorInput input, Double output
+        myWeatherTool,  // String input, String output
+        calculatorTool,  // CalculatorInput input, Double output
     ]
 )
 
