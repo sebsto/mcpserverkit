@@ -58,7 +58,7 @@ public struct MCPTool<Input: Decodable, Output: Encodable>: MCPToolProtocol {
         return try JSONDecoder().decode(Input.self, from: data)
     }
 
-    /// Handles JSON input and returns a result that can be converted to JSON
+    /// Handles concrete JSON types as input and output
     public func handle(jsonInput: CallTool.Parameters) async throws -> Encodable {
         // Convert JSON input to the tool's input type
         let input = try await convert(jsonInput)

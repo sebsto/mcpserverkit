@@ -10,12 +10,12 @@ import Foundation
 public struct MCPServer: Sendable {
     let name: String
     let version: String
-    let tools: [any MCPToolProtocol]
+    let tools: [any MCPToolProtocol]?
 
     public init(
         name: String,
         version: String,
-        tools: [any MCPToolProtocol]
+        tools: [any MCPToolProtocol]?
     ) {
         self.name = name
         self.version = version
@@ -26,7 +26,7 @@ public struct MCPServer: Sendable {
     public static func create(
         name: String,
         version: String,
-        tools: [any MCPToolProtocol]
+        tools: [any MCPToolProtocol]?
     ) -> MCPServer {
         MCPServer(
             name: name,
@@ -45,15 +45,29 @@ public struct MCPServer: Sendable {
     }
 
     public func startStdioServer() async throws {
+
+        var capabilities = Server.Capabilities()
+        if let tools, tools.count > 0 {
+            capabilities.tools = .init()
+        }
+
         // create the server
         let server = Server(
             name: name,
             version: version,
-            capabilities: .init(
-                tools: .init()
-            )
+            capabilities: capabilities
         )
 
+        if let tools {
+            await registerTools(server, tools: tools)
+        }
+
+        // start the server with the stdio transport
+        try await server.start(transport: StdioTransport())
+        await server.waitUntilCompleted()
+    }
+
+    private func registerTools(_ server: Server, tools: [any MCPToolProtocol]) async {
         // register the tools, part 1 : tools/list
         await server.withMethodHandler(ListTools.self) { params in
             let _tools = try tools.map { tool in
@@ -83,10 +97,5 @@ public struct MCPServer: Sendable {
             // return the result
             return CallTool.Result(content: [.text(String(describing: output))])
         }
-
-        // start the server with the stdio transport
-        try await server.start(transport: StdioTransport())
-
-        await server.waitUntilCompleted()
     }
 }
