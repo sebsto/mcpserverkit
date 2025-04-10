@@ -1,0 +1,1 @@
+{"jsonrpc": "2.0","id": 2,"method": "prompts/get","params": {"name": "current-weather","arguments": {"city": "Lille"}}}

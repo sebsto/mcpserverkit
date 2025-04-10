@@ -8,6 +8,7 @@ public enum MCPServerError: Swift.Error, LocalizedError {
     case missingparam(String)
     case invalidParam(String, String)
     case unknownTool(String)
+    case unknownPrompt(String)
 
     public var errorDescription: String? {
         switch self {
@@ -17,6 +18,8 @@ public enum MCPServerError: Swift.Error, LocalizedError {
             return "Invalid parameter \(name) with value \(value)"
         case .unknownTool(let name):
             return "Unknown tool \(name)"
+        case .unknownPrompt(let name):
+            return "Unknown prompt \(name)"
         }
     }
 }

@@ -13,7 +13,8 @@ let server = MCPServer.create(
     tools: [
         myWeatherTool,  // String input, String output
         calculatorTool,  // CalculatorInput input, Double output
-    ]
+    ],
+    prompts: [myWeatherPrompt],
 )
 
 // Start the server
