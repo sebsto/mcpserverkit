@@ -7,7 +7,7 @@ call-calculator:
 list-prompts:
 	cat json/list_prompts.json | swift run
 get-prompt:
-	cat json/get_prompt.json | swift run
+	cat json/get_prompts.json | swift run
 build:
 	swift build
 test:

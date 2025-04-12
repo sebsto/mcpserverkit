@@ -1,21 +1,21 @@
 {
     "configurations": [
         {
-            "type": "lldb",
+            "type": "swift-lldb",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:mcpserverkit}",
+            "cwd": "${workspaceFolder:MCPSwift}",
             "name": "Debug MCPExampleServer",
-            "program": "${workspaceFolder:mcpserverkit}/.build/debug/MCPExampleServer",
+            "program": "${workspaceFolder:MCPSwift}/.build/debug/MCPExampleServer",
             "preLaunchTask": "swift: Build Debug MCPExampleServer"
         },
         {
-            "type": "lldb",
+            "type": "swift-lldb",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:mcpserverkit}",
+            "cwd": "${workspaceFolder:MCPSwift}",
             "name": "Release MCPExampleServer",
-            "program": "${workspaceFolder:mcpserverkit}/.build/release/MCPExampleServer",
+            "program": "${workspaceFolder:MCPSwift}/.build/release/MCPExampleServer",
             "preLaunchTask": "swift: Build Release MCPExampleServer"
         }
     ]
