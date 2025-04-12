@@ -28,7 +28,6 @@ MCPServerKit is the core library that abstracts away the complexity of the MCP p
 - **MCPServer**: Unified server implementation that supports tools, prompts, and resources
 - **MCPResource**: Type-safe wrapper for MCP resources with support for text and binary data
 - **MCPServerError**: Standardized error handling for MCP servers
-- **JSONBasedMCPTool**: Protocol for tools that work with JSON-based input/output
 
 ### Benefits
 
