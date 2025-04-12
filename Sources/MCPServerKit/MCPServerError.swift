@@ -9,6 +9,7 @@ public enum MCPServerError: Swift.Error, LocalizedError {
     case invalidParam(String, String)
     case unknownTool(String)
     case unknownPrompt(String)
+    case resourceNotFound(String)
 
     public var errorDescription: String? {
         switch self {
@@ -20,6 +21,8 @@ public enum MCPServerError: Swift.Error, LocalizedError {
             return "Unknown tool \(name)"
         case .unknownPrompt(let name):
             return "Unknown prompt \(name)"
+        case .resourceNotFound(let uri):
+            return "Resource not found: \(uri)"
         }
     }
 }

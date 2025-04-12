@@ -12,6 +12,8 @@ Key features:
 - Streamlined server setup and communication
 - Type-safe API for building MCP tools
 - Support for heterogeneous tools with different input/output types
+- Resource management for sharing files and data with LLMs
+- Strongly-typed MIME type handling
 
 The project includes a weather tool example to demonstrate how to implement a functional MCP server using the framework.
 
@@ -23,17 +25,19 @@ MCPServerKit is the core library that abstracts away the complexity of the MCP p
 
 - **MCPToolProtocol**: Generic protocol defining the interface for MCP tools with associated Input and Output types
 - **MCPTool**: A default abstraction for defining tools with schemas and handlers, supporting type-safe input and output
-- **MCPServer**: Unified server implementation that supports both homogeneous and heterogeneous tools
+- **MCPServer**: Unified server implementation that supports tools, prompts, and resources
+- **MCPResource**: Type-safe wrapper for MCP resources with support for text and binary data
 - **MCPServerError**: Standardized error handling for MCP servers
 - **JSONBasedMCPTool**: Protocol for tools that work with JSON-based input/output
 
 ### Benefits
 
-- Reduces boilerplate code when implementing MCP tools
+- Reduces boilerplate code when implementing MCP tools and resources
 - Provides a consistent pattern for tool development
 - Handles the complexities of MCP communication
 - Makes it easy to create and test new tools
 - Allows tools with different input/output types to coexist in the same server
+- Simplifies resource management for sharing files and data with LLMs
 
 ## Requirements
 
@@ -92,7 +96,7 @@ let myTool = MCPTool<String, String>(
     inputSchema: myToolSchema,
     converter: { params in
         // Convert the input parameters to the expected type
-        try await MCPTool<String, String>.extractParameter(params, name: "parameter_name")
+        try MCPTool<String, String>.extractParameter(params, name: "parameter_name")
     },
     body: { (input: String) async throws -> String in
         // Process the input and return a result
@@ -101,50 +105,115 @@ let myTool = MCPTool<String, String>(
 )
 ```
 
-### Setting Up a Server with Homogeneous Tools
+### Creating Resources
 
-If all your tools have the same input and output types, you can use the homogeneous tools factory method:
+Resources allow you to share files, data, and other content with LLMs through the MCP protocol:
 
 ```swift
 import MCPServerKit
 
-// create the server
+// Create text resources with strongly-typed MIME types
+let documentationResource = MCPResource.text(
+    name: "API Documentation",
+    uri: "docs://api-reference",
+    content: "# API Reference\n\nThis document describes...",
+    mimeType: .markdown
+)
+
+// Create binary resources
+let logoResource = MCPResource.binary(
+    name: "Logo",
+    uri: "images://logo",
+    data: imageData,
+    mimeType: .png
+)
+
+// Create resources from files (automatically detects if text or binary)
+let configResource = try MCPResource.file(
+    name: "Configuration",
+    uri: "config://settings",
+    filePath: "/path/to/config.json"
+)
+
+// Create a resource registry
+let registry = MCPResourceRegistry()
+registry.add(documentationResource)
+       .add(logoResource)
+       .add(configResource)
+```
+
+### Setting Up a Server with Tools
+
+```swift
+import MCPServerKit
+
+// Create the server with tools
 let server = MCPServer.create(
     name: "MyMCPServer",
     version: "1.0.0",
-    tools: myTool1, myTool2, myTool3  // all tools have same Input/Output types
-)
-// start the server
-try await server.startStdioServer()
-```
-
-### Setting Up a Server with Heterogeneous Tools
-
-If your tools have different input and output types, use the heterogeneous tools factory method:
-
-```swift
-import MCPServerKit
-
-// Create the server with multiple tools of different types
-let server = MCPServer.create(
-    name: "MultiToolServer",
-    version: "1.0.0",
-    tools: [
-        weatherTool.asJSONTool(),  // String input, String output
-        calculatorTool.asJSONTool() // Different input/output types
-    ]
+    tools: myTool1, myTool2, myTool3
 )
 
 // Start the server
 try await server.startStdioServer()
 ```
 
-## Example: Weather and Calculator Tools
-
-The included example demonstrates a practical implementation using MCPServerKit with multiple tool types:
+### Setting Up a Server with Resources
 
 ```swift
-// Weather tool (String input, String output)
+import MCPServerKit
+
+// Create the server with resources
+let server = MCPServer.create(
+    name: "ResourceServer",
+    version: "1.0.0",
+    resources: registry
+)
+
+// Start the server
+try await server.startStdioServer()
+```
+
+### Setting Up a Server with Both Tools and Resources
+
+```swift
+import MCPServerKit
+
+// Create the server with both tools and resources
+let server = MCPServer.create(
+    name: "FullServer",
+    version: "1.0.0",
+    tools: [weatherTool, calculatorTool],
+    resources: registry
+)
+
+// Start the server
+try await server.startStdioServer()
+```
+
+### Adding Resources to an Existing Server
+
+```swift
+import MCPServerKit
+
+// Create a server
+let server = MCPServer.create(
+    name: "MyServer",
+    version: "1.0.0",
+    tools: [myTool]
+)
+
+// Add resources to the server
+let serverWithResources = server.registerResources(registry)
+
+// Start the server
+try await serverWithResources.startStdioServer()
+```
+
+## Example: Weather Tool with Resources
+
+```swift
+// Weather tool
 let weatherTool = MCPTool<String, String>(
     name: "weather",
     description: "Get weather information for a city",
@@ -161,7 +230,7 @@ let weatherTool = MCPTool<String, String>(
     }
     """,
     converter: { params in
-        try await MCPTool<String, String>.extractParameter(params, name: "city")
+        try MCPTool<String, String>.extractParameter(params, name: "city")
     },
     body: { city in
         // Implementation would fetch weather data
@@ -169,51 +238,27 @@ let weatherTool = MCPTool<String, String>(
     }
 )
 
-// Calculator tool (CalculatorInput input, Double output)
-struct CalculatorInput: Codable {
-    let operation: String
-    let numbers: [Double]
-}
-
-let calculatorTool = MCPTool<CalculatorInput, Double>(
-    name: "calculator",
-    description: "Perform mathematical operations",
-    inputSchema: """
-    {
-        "type": "object",
-        "properties": {
-            "operation": {
-                "type": "string",
-                "enum": ["add", "subtract", "multiply", "divide"]
-            },
-            "numbers": {
-                "type": "array",
-                "items": {
-                    "type": "number"
-                }
-            }
-        },
-        "required": ["operation", "numbers"]
-    }
-    """,
-    converter: { params in
-        try await MCPTool<CalculatorInput, Double>.extractParameter(params, name: "input")
-    },
-    body: { input in
-        switch input.operation {
-        case "add":
-            return input.numbers.reduce(0, +)
-        case "subtract":
-            return input.numbers.dropFirst().reduce(input.numbers[0], -)
-        case "multiply":
-            return input.numbers.reduce(1, *)
-        case "divide":
-            return input.numbers.dropFirst().reduce(input.numbers[0], /)
-        default:
-            throw MCPServerError.invalidParam("operation", input.operation)
-        }
-    }
+// Weather resources
+let registry = MCPResourceRegistry()
+registry.add(
+    MCPResource.text(
+        name: "Weather API Documentation",
+        uri: "docs://weather-api",
+        content: "# Weather API\n\nThis API provides weather information...",
+        mimeType: .markdown
+    )
 )
+
+// Create server with both tool and resources
+let server = MCPServer.create(
+    name: "WeatherServer",
+    version: "1.0.0",
+    tools: [weatherTool],
+    resources: registry
+)
+
+// Start the server
+try await server.startStdioServer()
 ```
 
 ## Integrating with MCP Clients
@@ -224,9 +269,9 @@ Servers built with MCPServerKit can be used with any MCP-compatible client, incl
 - [Claude Dekstop App](https://claude.ai/download)
 - Other AI services that support the Model Context Protocol
 
-To use the Weather example, add this JSON file to tour MCP CLient configuration 
+To use the Weather example, add this JSON file to your MCP Client configuration:
 
-```
+```json
 {
   "mcpServers": {
     "weather": {
