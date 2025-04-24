@@ -1,23 +1,23 @@
-import Testing
+import Foundation
 import MCP
 import MCPServerKit
-import Foundation
+import Testing
 
 @Suite("MCPServerIntegrationTests")
 struct MCPServerIntegrationTests {
-    
+
     struct SimpleInput: Codable {
         let text: String
     }
-    
+
     struct SimpleOutput: Codable, CustomStringConvertible {
         let result: String
-        
+
         var description: String {
-            return result
+            result
         }
     }
-    
+
     // This test verifies that we can convert CallTool.Parameters to our input type
     @Test("Test parameters conversion")
     func testParametersConversion() async throws {
@@ -26,7 +26,7 @@ struct MCPServerIntegrationTests {
             name: "testTool",
             arguments: ["text": .string("Hello world")]
         )
-        
+
         // Create a tool with a converter function
         let tool = MCPTool<SimpleInput, SimpleOutput>(
             name: "testTool",
@@ -34,7 +34,8 @@ struct MCPServerIntegrationTests {
             inputSchema: "{}",
             converter: { params in
                 guard let value = params.arguments?["text"],
-                      case .string(let text) = value else {
+                    case .string(let text) = value
+                else {
                     throw MCPServerError.missingparam("text")
                 }
                 return SimpleInput(text: text)
@@ -43,12 +44,12 @@ struct MCPServerIntegrationTests {
                 return SimpleOutput(result: "Processed: \(input.text)")
             }
         )
-        
+
         // Test the conversion using the tool's converter
         let input = try await tool.convert(parameters)
         #expect(input.text == "Hello world")
     }
-    
+
     // Test the extractParameter helper method
     @Test("Test extractParameter helper")
     func testExtractParameter() async throws {
@@ -57,26 +58,26 @@ struct MCPServerIntegrationTests {
             name: "testTool",
             arguments: ["city": .string("Seattle")]
         )
-        
+
         // Use the helper method to extract the parameter as a String
         let city = try MCPTool<String, String>.extractParameter(parameters, name: "city")
         #expect(city == "Seattle")
-        
+
         // Create parameters with an object
         let objectParams = CallTool.Parameters(
             name: "testTool",
             arguments: ["input": .object(["text": .string("Hello world")])]
         )
-        
+
         // Define a struct that matches the object structure
         struct TestObject: Codable, Equatable {
             let text: String
         }
-        
+
         // Extract the parameter as the TestObject type
         let obj = try MCPTool<TestObject, String>.extractParameter(objectParams, name: "input")
         #expect(obj.text == "Hello world")
-        
+
         // Test with missing parameter
         let emptyParams = CallTool.Parameters(name: "testTool", arguments: [:])
         do {
@@ -86,21 +87,21 @@ struct MCPServerIntegrationTests {
             #expect(error.errorDescription == "Missing parameter city")
         }
     }
-    
+
     // Test error handling for unknown tools
     @Test("Test unknown tool error")
     func testUnknownToolError() {
         let error = MCPServerError.unknownTool("nonExistentTool")
         #expect(error.errorDescription == "Unknown tool nonExistentTool")
     }
-    
+
     // Test error handling for missing parameters
     @Test("Test missing parameter error")
     func testMissingParameterError() {
         let error = MCPServerError.missingparam("requiredParam")
         #expect(error.errorDescription == "Missing parameter requiredParam")
     }
-    
+
     // Test error handling for invalid parameters
     @Test("Test invalid parameter error")
     func testInvalidParameterError() {

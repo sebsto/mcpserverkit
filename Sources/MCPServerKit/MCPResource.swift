@@ -2,7 +2,7 @@ import Foundation
 import MCP
 
 /// A high-level wrapper for MCP Resources that simplifies resource creation and management.
-/// 
+///
 /// `MCPResource` provides a developer-friendly API for working with Model Context Protocol resources,
 /// making it easier to define, register, and manage resources in your MCP server.
 ///
@@ -30,10 +30,10 @@ import MCP
 public struct MCPResource: Hashable, Sendable {
     /// The underlying MCP Resource
     public let resource: Resource
-    
+
     /// The content of this resource
     public let content: Resource.Content
-    
+
     /// Creates a new MCPResource with the specified parameters
     /// - Parameters:
     ///   - name: The resource name
@@ -59,7 +59,7 @@ public struct MCPResource: Hashable, Sendable {
         )
         self.content = content
     }
-    
+
     /// Creates a text-based resource
     /// - Parameters:
     ///   - name: The resource name
@@ -86,7 +86,7 @@ public struct MCPResource: Hashable, Sendable {
             metadata: metadata
         )
     }
-    
+
     /// Creates a text-based resource with a string MIME type
     /// - Parameters:
     ///   - name: The resource name
@@ -113,7 +113,7 @@ public struct MCPResource: Hashable, Sendable {
             metadata: metadata
         )
     }
-    
+
     /// Creates a binary resource
     /// - Parameters:
     ///   - name: The resource name
@@ -140,7 +140,7 @@ public struct MCPResource: Hashable, Sendable {
             metadata: metadata
         )
     }
-    
+
     /// Creates a binary resource with a string MIME type
     /// - Parameters:
     ///   - name: The resource name
@@ -167,7 +167,7 @@ public struct MCPResource: Hashable, Sendable {
             metadata: metadata
         )
     }
-    
+
     /// Creates a file-based resource by reading from the specified file path
     /// - Parameters:
     ///   - name: The resource name
@@ -188,13 +188,14 @@ public struct MCPResource: Hashable, Sendable {
     ) throws -> MCPResource {
         let url = URL(fileURLWithPath: filePath)
         let detectedMimeType = mimeType?.value ?? mimeTypeForFileExtension(url.pathExtension)
-        
+
         let data = try Data(contentsOf: url)
-        
+
         // For text files, create a text resource
-        if let detectedMimeType = detectedMimeType, detectedMimeType.hasPrefix("text/") || 
-           detectedMimeType == MIMEType.json.value || 
-           detectedMimeType == MIMEType.xml.value {
+        if let detectedMimeType = detectedMimeType,
+            detectedMimeType.hasPrefix("text/") || detectedMimeType == MIMEType.json.value
+                || detectedMimeType == MIMEType.xml.value
+        {
             guard let textContent = String(data: data, encoding: .utf8) else {
                 throw MCPResourceError.invalidTextEncoding
             }
@@ -207,7 +208,7 @@ public struct MCPResource: Hashable, Sendable {
                 metadata: metadata
             )
         }
-        
+
         // For binary files, create a binary resource
         return .binary(
             name: name,
@@ -218,7 +219,7 @@ public struct MCPResource: Hashable, Sendable {
             metadata: metadata
         )
     }
-    
+
     /// Creates a file-based resource by reading from the specified file path with a string MIME type
     /// - Parameters:
     ///   - name: The resource name
@@ -239,13 +240,14 @@ public struct MCPResource: Hashable, Sendable {
     ) throws -> MCPResource {
         let url = URL(fileURLWithPath: filePath)
         let detectedMimeType = mimeTypeString ?? mimeTypeForFileExtension(url.pathExtension)
-        
+
         let data = try Data(contentsOf: url)
-        
+
         // For text files, create a text resource
-        if let detectedMimeType = detectedMimeType, detectedMimeType.hasPrefix("text/") || 
-           detectedMimeType == MIMEType.json.value || 
-           detectedMimeType == MIMEType.xml.value {
+        if let detectedMimeType = detectedMimeType,
+            detectedMimeType.hasPrefix("text/") || detectedMimeType == MIMEType.json.value
+                || detectedMimeType == MIMEType.xml.value
+        {
             guard let textContent = String(data: data, encoding: .utf8) else {
                 throw MCPResourceError.invalidTextEncoding
             }
@@ -258,7 +260,7 @@ public struct MCPResource: Hashable, Sendable {
                 metadata: metadata
             )
         }
-        
+
         // For binary files, create a binary resource
         return .binary(
             name: name,
@@ -269,7 +271,7 @@ public struct MCPResource: Hashable, Sendable {
             metadata: metadata
         )
     }
-    
+
     /// MIME type representation for common file types
     public enum MIMEType: String {
         // Text formats
@@ -281,44 +283,42 @@ public struct MCPResource: Hashable, Sendable {
         case xml = "application/xml"
         case markdown = "text/markdown"
         case csv = "text/csv"
-        
+
         // Document formats
         case pdf = "application/pdf"
-        
+
         // Image formats
         case png = "image/png"
         case jpeg = "image/jpeg"
         case gif = "image/gif"
         case svg = "image/svg+xml"
-        
+
         // Audio formats
         case mp3 = "audio/mpeg"
         case wav = "audio/wav"
-        
+
         // Video formats
         case mp4 = "video/mp4"
         case webm = "video/webm"
-        
+
         // Archive formats
         case zip = "application/zip"
-        
+
         /// Get the raw MIME type string
         public var value: String {
-            return rawValue
+            rawValue
         }
-        
+
         /// Determine if this is a text-based MIME type
         public var isText: Bool {
-            return rawValue.hasPrefix("text/") || 
-                   rawValue == "application/json" || 
-                   rawValue == "application/xml"
+            rawValue.hasPrefix("text/") || rawValue == "application/json" || rawValue == "application/xml"
         }
     }
-    
+
     /// Helper function to determine MIME type from file extension
     private static func mimeTypeForFileExtension(_ extension: String) -> String? {
         let fileExtension = `extension`.lowercased()
-        
+
         let mimeType: MIMEType? = {
             switch fileExtension {
             case "txt":
@@ -361,7 +361,7 @@ public struct MCPResource: Hashable, Sendable {
                 return nil
             }
         }()
-        
+
         return mimeType?.value
     }
 }
@@ -380,16 +380,16 @@ public enum MCPResourceError: Swift.Error {
 public final class MCPResourceRegistry: @unchecked Sendable {
     /// The resources in this registry
     public private(set) var resources: [MCPResource] = []
-    
+
     /// Creates a new empty resource registry
     public init() {}
-    
+
     /// Creates a resource registry with the specified resources
     /// - Parameter resources: The resources to include in this registry
     public init(resources: [MCPResource]) {
         self.resources = resources
     }
-    
+
     /// Adds a resource to the registry
     /// - Parameter resource: The resource to add
     /// - Returns: The registry, for chaining
@@ -398,7 +398,7 @@ public final class MCPResourceRegistry: @unchecked Sendable {
         resources.append(resource)
         return self
     }
-    
+
     /// Adds multiple resources to the registry
     /// - Parameter resources: The resources to add
     /// - Returns: The registry, for chaining
@@ -407,7 +407,7 @@ public final class MCPResourceRegistry: @unchecked Sendable {
         self.resources.append(contentsOf: resources)
         return self
     }
-    
+
     /// Adds multiple resources to the registry
     /// - Parameter resources: The resources to add
     /// - Returns: The registry, for chaining
@@ -415,7 +415,7 @@ public final class MCPResourceRegistry: @unchecked Sendable {
     public func add(_ resources: MCPResource...) -> Self {
         add(resources)
     }
-    
+
     /// Removes a resource from the registry
     /// - Parameter uri: The URI of the resource to remove
     /// - Returns: The registry, for chaining
@@ -424,25 +424,23 @@ public final class MCPResourceRegistry: @unchecked Sendable {
         resources.removeAll { $0.resource.uri == uri }
         return self
     }
-    
+
     /// Finds a resource by URI
     /// - Parameter uri: The URI to search for
     /// - Returns: The resource, if found
     public func find(uri: String) -> MCPResource? {
         resources.first { $0.resource.uri == uri }
     }
-    
+
     /// Converts the registry to a list of MCP Resource objects
     /// - Returns: An array of MCP Resource objects
     public func asMCPResources() -> [Resource] {
         resources.map { $0.resource }
     }
-    
+
     /// Converts the registry to a map of MCP Resource.Content objects by URI
     /// - Returns: A dictionary mapping URIs to Resource.Content objects
     public func asContentMap() -> [String: Resource.Content] {
         Dictionary(uniqueKeysWithValues: resources.map { ($0.resource.uri, $0.content) })
     }
 }
-
-

@@ -1,11 +1,12 @@
-import XCTest
-import Testing
 import MCP
+import Testing
+import XCTest
+
 @testable import MCPServerKit
 
 @Suite("MCPServer Resource Tests")
 struct MCPServerResourceTests {
-    
+
     @Test("Create Server With Resources")
     func testCreateServerWithResources() {
         let registry = MCPResourceRegistry()
@@ -17,20 +18,20 @@ struct MCPServerResourceTests {
                 mimeType: .markdown
             )
         )
-        
+
         let server = MCPServer.create(
             name: "ResourceServer",
             version: "1.0.0",
             resources: registry
         )
-        
+
         #expect(server.name == "ResourceServer")
         #expect(server.version == "1.0.0")
         #expect(server.resources != nil)
         #expect(server.resources?.resources.count == 1)
         #expect(server.resources?.resources[0].resource.name == "Documentation")
     }
-    
+
     @Test("Create Server With Tools And Resources")
     func testCreateServerWithToolsAndResources() {
         // Create a tool
@@ -38,17 +39,17 @@ struct MCPServerResourceTests {
             name: "echo",
             description: "Echo the input",
             inputSchema: """
-            {
-                "type": "object",
-                "properties": {
-                    "message": {
-                        "type": "string",
-                        "description": "Message to echo"
-                    }
-                },
-                "required": ["message"]
-            }
-            """,
+                {
+                    "type": "object",
+                    "properties": {
+                        "message": {
+                            "type": "string",
+                            "description": "Message to echo"
+                        }
+                    },
+                    "required": ["message"]
+                }
+                """,
             converter: { params in
                 try MCPTool<String, String>.extractParameter(params, name: "message")
             },
@@ -56,7 +57,7 @@ struct MCPServerResourceTests {
                 return input
             }
         )
-        
+
         // Create resources
         let registry = MCPResourceRegistry()
         registry.add(
@@ -67,7 +68,7 @@ struct MCPServerResourceTests {
                 mimeType: .markdown
             )
         )
-        
+
         // Create server with both tools and resources
         let server = MCPServer.create(
             name: "ToolsAndResourcesServer",
@@ -75,7 +76,7 @@ struct MCPServerResourceTests {
             tools: [tool],
             resources: registry
         )
-        
+
         #expect(server.name == "ToolsAndResourcesServer")
         #expect(server.version == "1.0.0")
         #expect(server.tools != nil)
@@ -85,7 +86,7 @@ struct MCPServerResourceTests {
         #expect(server.resources?.resources.count == 1)
         #expect(server.resources?.resources[0].resource.name == "Documentation")
     }
-    
+
     @Test("Register Resources With Server")
     func testRegisterResourcesWithServer() {
         // Create a server without resources
@@ -94,7 +95,7 @@ struct MCPServerResourceTests {
             version: "1.0.0",
             tools: [any MCPToolProtocol]()
         )
-        
+
         // Create resources
         let registry = MCPResourceRegistry()
         registry.add(
@@ -105,10 +106,10 @@ struct MCPServerResourceTests {
                 mimeType: .markdown
             )
         )
-        
+
         // Register resources with the server
         let serverWithResources = server.registerResources(registry)
-        
+
         #expect(serverWithResources.name == "EmptyServer")
         #expect(serverWithResources.version == "1.0.0")
         #expect(serverWithResources.resources != nil)

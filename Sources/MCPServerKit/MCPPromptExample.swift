@@ -12,16 +12,16 @@ public enum MCPPromptExample {
             builder.parameter("language", description: "the language of the code")
         }
     }
-    
+
     /// Example of rendering a code review prompt
     public static func renderCodeReviewPrompt() throws -> String {
         let prompt = try codeReviewPrompt()
         return try prompt.render(with: [
             "code": "print('Hello, World!')",
-            "language": "Python"
+            "language": "Python",
         ])
     }
-    
+
     /// Example of a greeting prompt
     public static func greetingPrompt() throws -> MCPPrompt {
         try MCPPrompt.build { builder in
@@ -32,16 +32,16 @@ public enum MCPPromptExample {
             builder.parameter("place", description: "The place to welcome to")
         }
     }
-    
+
     /// Example of rendering a greeting prompt
     public static func renderGreetingPrompt() throws -> String {
         let prompt = try greetingPrompt()
         return try prompt.render(with: [
             "name": "Alice",
-            "place": "Wonderland"
+            "place": "Wonderland",
         ])
     }
-    
+
     /// Example of a prompt with nested braces
     public static func nestedBracesPrompt() throws -> MCPPrompt {
         try MCPPrompt.build { builder in
@@ -52,13 +52,13 @@ public enum MCPPromptExample {
             builder.parameter("parameter", description: "A parameter")
         }
     }
-    
+
     /// Example of rendering a prompt with nested braces
     public static func renderNestedBracesPrompt() throws -> String {
         let prompt = try nestedBracesPrompt()
         return try prompt.render(with: [
             "not_a_parameter": "{still_not_a_parameter}",
-            "parameter": "value"
+            "parameter": "value",
         ])
     }
-} 
+}

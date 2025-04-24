@@ -50,8 +50,8 @@ let myWeatherTool = MCPTool<String, String>(
 )
 
 let myWeatherPrompt = try! MCPPrompt.build { builder in
-            builder.name = "current-weather"
-            builder.description = "A prompt asking the current weather for a given city"
-            builder.text("What is the weather today in {city}?")
-            builder.parameter("city", description: "the name of the city to get the weather for")
+    builder.name = "current-weather"
+    builder.description = "A prompt asking the current weather for a given city"
+    builder.text("What is the weather today in {city}?")
+    builder.parameter("city", description: "the name of the city to get the weather for")
 }

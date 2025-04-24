@@ -53,7 +53,7 @@ public struct MCPServer: Sendable {
     ) -> MCPServer {
         create(name: name, version: version, tools: tools)
     }
-    
+
     /// Create a server with a variadic list of prompts
     public static func create(
         name: String,
@@ -85,11 +85,11 @@ public struct MCPServer: Sendable {
         if let tools, tools.count > 0 {
             await registerTools(server, tools: tools)
         }
-        
+
         if let prompts, prompts.count > 0 {
             await registerPrompts(server, prompts: prompts)
         }
-        
+
         if let resources, !resources.resources.isEmpty {
             await registerResources(server, resources: resources)
         }
@@ -130,7 +130,7 @@ public struct MCPServer: Sendable {
             return CallTool.Result(content: [.text(String(describing: output))])
         }
     }
-    
+
     /// Register prompts with the server
     private func registerPrompts(_ server: Server, prompts: [MCPPrompt]) async {
         // register the prompts, part 1 : prompts/list
@@ -138,14 +138,14 @@ public struct MCPServer: Sendable {
             let _prompts = prompts.map { $0.toPrompt() }
             return ListPrompts.Result(prompts: _prompts, nextCursor: nil)
         }
-        
+
         // register the prompts, part 2 : prompts/get
         await server.withMethodHandler(GetPrompt.self) { params in
             // Check if the prompt name is in our list of prompts
             guard let prompt = prompts.first(where: { $0.name == params.name }) else {
                 throw MCPServerError.unknownPrompt(params.name)
             }
-            
+
             // If arguments are provided, render the prompt
             var messages: [Prompt.Message] = []
             if let arguments = params.arguments {
@@ -154,12 +154,12 @@ public struct MCPServer: Sendable {
                 }
                 messages.append(try prompt.toMessage(with: values))
             }
-            
+
             // If no arguments, return empty messages
             return GetPrompt.Result(description: prompt.description, messages: messages)
         }
     }
-    
+
     /// Register resources with the server
     private func registerResources(_ server: Server, resources: MCPResourceRegistry) async {
         // Register resources/list handler
@@ -167,22 +167,22 @@ public struct MCPServer: Sendable {
             let mcpResources = resources.asMCPResources()
             return ListResources.Result(resources: mcpResources, nextCursor: nil)
         }
-        
+
         // Register resources/read handler
         await server.withMethodHandler(ReadResource.self) { params in
             // Find the resource with the requested URI
             guard let resource = resources.find(uri: params.uri) else {
                 throw MCPServerError.resourceNotFound(params.uri)
             }
-            
+
             // Return the resource content
             return ReadResource.Result(contents: [resource.content])
         }
-        
+
         // Register resources/templates/list handler
         await server.withMethodHandler(ListResourceTemplates.self) { _ in
             // For now, we don't support resource templates
-            return ListResourceTemplates.Result(templates: [])
+            ListResourceTemplates.Result(templates: [])
         }
     }
 }
@@ -202,7 +202,7 @@ extension MCPServer {
             resources: registry
         )
     }
-    
+
     /// Create a server with resources
     /// - Parameters:
     ///   - name: The server name
@@ -216,7 +216,7 @@ extension MCPServer {
     ) -> MCPServer {
         create(name: name, version: version, tools: nil, prompts: nil, resources: resources)
     }
-    
+
     /// Create a server with tools and resources
     /// - Parameters:
     ///   - name: The server name
@@ -232,7 +232,7 @@ extension MCPServer {
     ) -> MCPServer {
         create(name: name, version: version, tools: tools, prompts: nil, resources: resources)
     }
-    
+
     /// Create a server with prompts and resources
     /// - Parameters:
     ///   - name: The server name
