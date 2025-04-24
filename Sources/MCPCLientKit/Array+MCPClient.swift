@@ -27,12 +27,12 @@ extension Array where Element == MCPClient {
     }
 
     // // return a single MCP client by tool name
-    public func clientForTool(named toolName: String) async throws -> Client? {
+    public func clientForTool(named toolName: String) -> Client? {
         self.first { $0.hasTool(named: toolName) }?.client
     }
 
     // public init(from: URL, logger: Logger) async throws {
-		public static func create(from: URL, logger: Logger) async throws -> [MCPClient] {
+    public static func create(from: URL, logger: Logger) async throws -> [MCPClient] {
         let fileManager = FileManager.default
         let mcpFileURL = from.appendingPathComponent("mcp.json")
 
@@ -57,5 +57,30 @@ extension Array where Element == MCPClient {
             clients.append(client)
         }
         return clients
+    }
+    public func callTool(
+        name toolName: String,
+        arguments: [String: MCPValue],
+        logger: Logger = Logger(label: "MCPCLient")
+    ) async throws -> String {
+
+        guard let client = self.clientForTool(named: toolName) else {
+            throw MCPToolError.toolNotFound(name: toolName)
+        }
+
+        let (content, isError) = try await client.callTool(name: toolName, arguments: arguments)
+
+        guard let c = content.first,
+            case let .text(text) = c
+        else {
+            throw MCPToolError.unsupportedToolResponse
+        }
+
+        guard isError == false else {
+            logger.error("Tool returned an error")
+            throw MCPToolError.toolError(message: text)
+        }
+
+        return text
     }
 }

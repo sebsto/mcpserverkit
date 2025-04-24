@@ -157,6 +157,8 @@ public enum MCPToolError: Swift.Error, CustomStringConvertible {
     case fileNotFound(path: String)
     case invalidFormat(reason: String)
     case toolNotFound(name: String)
+    case toolError(message: String)
+    case unsupportedToolResponse
 
     public var description: String {
         switch self {
@@ -166,6 +168,10 @@ public enum MCPToolError: Swift.Error, CustomStringConvertible {
             return "Invalid MCP configuration format: \(reason)"
         case .toolNotFound(let name):
             return "Tool '\(name)' not found in MCP configuration"
+        case .toolError(let message):
+            return "Tool error: \(message)"
+        case .unsupportedToolResponse:
+            return "Only text responses are supported at the moment"
         }
     }
 }
