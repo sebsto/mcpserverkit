@@ -9,9 +9,10 @@ let package = Package(
     products: [
         .executable(name: "MCPExampleServer", targets: ["MCPExampleServer"]),
         .library(name: "MCPServerKit", targets: ["MCPServerKit"]),
+        .library(name: "MCPClientKit", targets: ["MCPClientKit"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", from: "0.7.0"),
+        .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", branch: "main"),
     ],
     targets: [
         .executableTarget(
@@ -27,6 +28,13 @@ let package = Package(
                 .product(name: "MCP", package: "swift-sdk"),
             ],
             path: "Sources/MCPServerKit"
+        ),
+        .target(
+            name: "MCPClientKit",
+            dependencies: [
+                .product(name: "MCP", package: "swift-sdk"),
+            ],
+            path: "Sources/MCPClientKit"
         ),
         .testTarget(
             name: "MCPServerTests",
