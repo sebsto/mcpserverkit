@@ -63,10 +63,6 @@ public struct MCPClient {
         try await client.connect(transport: transport)
         logger.trace("Connected to MCP server")
 
-        // Initialize the connection
-        let result = try await client.initialize()
-        logger.trace("Connection initialized", metadata: ["result": "\(result)"])
-
         // collect the list of tools available in the MCP server
         // var cursor: String? = nil
         (self.tools, _) = try await client.listTools()
