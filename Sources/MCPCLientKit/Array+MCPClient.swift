@@ -67,11 +67,21 @@ extension Array where Element == MCPClient {
         guard let client = self.clientForTool(named: toolName) else {
             throw MCPToolError.toolNotFound(name: toolName)
         }
-        logger.trace("Tool found, going to call it", metadata: ["toolName": "\(toolName)"])
-        // Check if the tool is available
-        let (content, isError) = try await client.callTool(name: toolName, arguments: arguments)
+        logger.trace(
+            "Tool found, going to call it",
+            metadata: ["toolName": "\(toolName)", "arguments": "\(arguments)"]
+        )
 
-        logger.trace("Tool called", metadata: ["toolName": "\(toolName)"])
+        // call the tool with the provided arguments
+        let (content, isError) = try await client.callTool(name: toolName, arguments: arguments)
+        logger.debug(
+            "Tool called",
+            metadata: ["toolName": "\(toolName)"]
+        )
+        logger.trace(
+            "Tool result",
+            metadata: ["content": "\(content)", "isError": "\(String(describing: isError))"]
+        )
 
         guard let c = content.first,
             case let .text(text) = c
@@ -80,9 +90,7 @@ extension Array where Element == MCPClient {
             throw MCPToolError.unsupportedToolResponse
         }
         // Check if the tool returned an error
-        print(isError)
-        guard let isError,
-              isError == false
+        guard isError == nil
         else {
             logger.error("Tool returned an error")
             throw MCPToolError.toolError(message: text)
