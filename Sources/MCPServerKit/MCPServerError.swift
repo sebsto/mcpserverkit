@@ -1,5 +1,5 @@
 #if canImport(FoundationEssentials)
-import FoundatioNEssentials
+import FoundationEssentials
 #else
 import Foundation
 #endif
