@@ -92,11 +92,6 @@ struct FXRateTool: MCPToolProtocol {
         
         return FXRatesInput(sourceCurrency: input.sourceCurrency.uppercased(), targetCurrency: input.targetCurrency.uppercased())
     }
-    
-    func handle(jsonInput: CallTool.Parameters) async throws -> Encodable {
-        let input = try await convert(jsonInput)
-        return try await handler(input: input)
-    }
 }
 
 // Optional: Create a prompt for the FX rates tool

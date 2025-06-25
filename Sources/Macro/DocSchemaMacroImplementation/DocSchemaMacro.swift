@@ -151,6 +151,10 @@ public struct DocSchemaMacro: MemberMacro {
             properties.append(generateInputSchemaProperty(from: schemaInfo, in: structDecl, context: context))
         }
 
+        // Always generate the generic handle method
+        let handleMethod = generateHandleMethod(in: structDecl)
+        properties.append(handleMethod)
+
         return properties
     }
     
@@ -410,5 +414,27 @@ public struct DocSchemaMacro: MemberMacro {
                (normalizedDocType == "string" && normalizedFuncType == "String") ||
                (normalizedDocType == "number" && (normalizedFuncType == "Double" || normalizedFuncType == "Int")) ||
                (normalizedDocType == "boolean" && normalizedFuncType == "Bool")
+    }
+    
+    private static func generateHandleMethod(in structDecl: StructDeclSyntax) -> DeclSyntax {
+        // Check if handle method already exists
+        for member in structDecl.memberBlock.members {
+            if let functionDecl = member.decl.as(FunctionDeclSyntax.self),
+               functionDecl.name.text == "handle" {
+                // Method already exists, don't generate it
+                return "" as DeclSyntax
+            }
+        }
+        
+        let accessModifier = getAccessModifier(from: structDecl)
+        
+        let handleMethod: DeclSyntax = """
+        \(raw: accessModifier)func handle(jsonInput: CallTool.Parameters) async throws -> Encodable {
+            let input = try await convert(jsonInput)
+            return try await handler(input: input)
+        }
+        """
+        
+        return handleMethod
     }
 }

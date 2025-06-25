@@ -63,5 +63,5 @@
 /// - When using schema parameter: The type must conform to `Schema` protocol (added automatically by the @SchemaDefinition macro)
 /// - When using DocC mode: The handler function must have DocC comments with parameter descriptions
 /// - Parameter names in DocC must match function parameter names (for DocC mode)
-@attached(member, names: named(name), named(description), named(inputSchema))
+@attached(member, names: named(name), named(description), named(inputSchema), named(handle))
 public macro DocSchema(name: String? = nil, description: String? = nil, schema: Schema.Type? = nil) = #externalMacro(module: "DocSchemaMacroImplementation", type: "DocSchemaMacro")
