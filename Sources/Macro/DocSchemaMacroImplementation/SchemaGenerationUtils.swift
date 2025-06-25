@@ -77,7 +77,8 @@ public struct SchemaGenerationUtils {
                         
                         // Add description to property schema if available
                         if let propertyDescription = docComment {
-                            properties.append("\"\(propertyName)\": { \"type\": \"\(jsonType)\", \"description\": \"\(propertyDescription)\" }")
+                            let escapedDescription = escapeJsonString(propertyDescription)
+                            properties.append("\"\(propertyName)\": { \"type\": \"\(jsonType)\", \"description\": \"\(escapedDescription)\" }")
                         } else {
                             properties.append("\"\(propertyName)\": { \"type\": \"\(jsonType)\" }")
                         }
@@ -96,7 +97,8 @@ public struct SchemaGenerationUtils {
         var schema = "{ \"type\": \"object\", \"properties\": { \(propertiesJson) }"
         
         if let description = description {
-            schema = "{ \"type\": \"object\", \"description\": \"\(description)\", \"properties\": { \(propertiesJson) }"
+            let escapedDescription = escapeJsonString(description)
+            schema = "{ \"type\": \"object\", \"description\": \"\(escapedDescription)\", \"properties\": { \(propertiesJson) }"
         }
         
         if !required.isEmpty {
@@ -108,6 +110,16 @@ public struct SchemaGenerationUtils {
         return schema
     }
     
+    /// Escape special characters in strings for JSON
+    public static func escapeJsonString(_ string: String) -> String {
+        return string
+            .replacingOccurrences(of: "\\", with: "\\\\")  // Escape backslashes first
+            .replacingOccurrences(of: "\"", with: "\\\"")  // Escape quotes
+            .replacingOccurrences(of: "\n", with: "\\n")   // Escape newlines
+            .replacingOccurrences(of: "\r", with: "\\r")   // Escape carriage returns
+            .replacingOccurrences(of: "\t", with: "\\t")   // Escape tabs
+    }
+
     /// Clean and escape JSON for string literals
     public static func cleanAndEscapeJson(_ json: String) -> String {
         let cleanedJson = json

@@ -20,10 +20,18 @@ public struct SchemaDefinitionMacro: MemberMacro, ExtensionMacro {
         let accessLevel = SchemaGenerationUtils.extractAccessLevel(from: structDecl)
         let accessModifier = accessLevel.map { "\($0) " } ?? ""
         
-        let escapedSchemaJson = SchemaGenerationUtils.cleanAndEscapeJson(schemaJson)
+        // Clean the JSON but don't escape quotes - SwiftSyntax will handle that
+        let cleanedJson = schemaJson
+            .replacingOccurrences(of: "\n", with: "")
+            .replacingOccurrences(of: "  ", with: " ")
+            .trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
         
-        let propertyCode = "\(accessModifier) static var schema: String { return \"\(escapedSchemaJson)\" }"
-        let schemaProperty: DeclSyntax = "\(raw: propertyCode)"
+        // Use SwiftSyntax to properly create the string literal
+        let schemaProperty: DeclSyntax = """
+        \(raw: accessModifier)static var schema: String {
+            return \(literal: cleanedJson)
+        }
+        """
         
         return [schemaProperty]
     }

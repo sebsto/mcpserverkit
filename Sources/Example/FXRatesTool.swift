@@ -1,7 +1,6 @@
 import MCP
 import MCPServerKit
 import DocSchemaMacro
-    /// Example: "USD" for US Dollar, "EUR" for Euro.
 
 #if canImport(FoundationEssentials)
 import FoundationEssentials
@@ -18,11 +17,13 @@ import Foundation
 struct FXRatesInput: Codable {
     /// The source currency code (e.g., USD, EUR, GBP)
     /// Must be a valid 3-letter ISO 4217 currency code.
+    /// Example: "USD" for US Dollar, "EUR" for Euro.
     /// RegEx pattern: ^[A-Z]{3}$   
     let sourceCurrency: String
     
     /// The target currency code (e.g., USD, EUR, GBP)
     /// Must be a valid 3-letter ISO 4217 currency code.
+    /// Example: "USD" for US Dollar, "EUR" for Euro.
     /// RegEx pattern: ^[A-Z]{3}$
     let targetCurrency: String
     
