@@ -17,6 +17,60 @@
             "name": "Release MCPExampleServer",
             "program": "${workspaceFolder:mcpserverkit}/.build/release/MCPExampleServer",
             "preLaunchTask": "swift: Build Release MCPExampleServer"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:mcpserverkit}",
+            "name": "Debug MCPExample",
+            "program": "${workspaceFolder:mcpserverkit}/.build/debug/MCPExample",
+            "preLaunchTask": "swift: Build Debug MCPExample"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:mcpserverkit}",
+            "name": "Release MCPExample",
+            "program": "${workspaceFolder:mcpserverkit}/.build/release/MCPExample",
+            "preLaunchTask": "swift: Build Release MCPExample"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:mcpserverkit}",
+            "name": "Debug FXRatesServer",
+            "program": "${workspaceFolder:mcpserverkit}/.build/debug/FXRatesServer",
+            "preLaunchTask": "swift: Build Debug FXRatesServer"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:mcpserverkit}",
+            "name": "Release FXRatesServer",
+            "program": "${workspaceFolder:mcpserverkit}/.build/release/FXRatesServer",
+            "preLaunchTask": "swift: Build Release FXRatesServer"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:mcpserverkit}",
+            "name": "Debug DocSchemaMacroClient",
+            "program": "${workspaceFolder:mcpserverkit}/.build/debug/DocSchemaMacroClient",
+            "preLaunchTask": "swift: Build Debug DocSchemaMacroClient"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:mcpserverkit}",
+            "name": "Release DocSchemaMacroClient",
+            "program": "${workspaceFolder:mcpserverkit}/.build/release/DocSchemaMacroClient",
+            "preLaunchTask": "swift: Build Release DocSchemaMacroClient"
         }
     ]
 }

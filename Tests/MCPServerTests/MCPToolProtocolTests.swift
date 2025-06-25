@@ -26,7 +26,7 @@ struct MCPToolProtocolTests {
         let mockHandler: @Sendable (I) async throws -> O
         let mockConverter: @Sendable (CallTool.Parameters) async throws -> I
 
-        func handler(_ input: I) async throws -> O {
+        func handler(input: I) async throws -> O {
             try await mockHandler(input)
         }
 
@@ -36,7 +36,7 @@ struct MCPToolProtocolTests {
 
         func handle(jsonInput: CallTool.Parameters) async throws -> Encodable {
             let input = try await convert(jsonInput)
-            return try await handler(input)
+            return try await handler(input: input)
         }
     }
 
@@ -81,7 +81,7 @@ struct MCPToolProtocolTests {
         #expect(tool.description == "A test tool")
 
         let input = TestInput(message: "Hello")
-        let output = try await tool.handler(input)
+        let output = try await tool.handler(input: input)
 
         #expect(output.response == "Echo: Hello")
 

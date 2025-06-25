@@ -13,9 +13,16 @@ let server = MCPServer.create(
     tools: [
         myWeatherTool,  // String input, String output
         calculatorTool,  // CalculatorInput input, Double output
+        FXRateTool(),    // FXRatesInput input, String output
     ],
-    prompts: [myWeatherPrompt],
+    prompts: [myWeatherPrompt, fxRatesPrompt],
 )
 
 // Start the server
 try await server.startStdioServer()
+
+// let fxr = FXRateTool()
+// print("FXRatesTool loaded")
+// print(fxr.name)
+// print(fxr.description)
+// print(fxr.inputSchema)

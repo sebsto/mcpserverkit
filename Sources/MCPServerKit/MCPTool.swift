@@ -1,7 +1,7 @@
 import MCP
 
 #if canImport(FoundationEssentials)
-import FoundatioNEssentials
+import FoundationEssentials
 #else
 import Foundation
 #endif
@@ -27,7 +27,7 @@ public struct MCPTool<Input: Decodable, Output: Encodable>: MCPToolProtocol {
         self.body = body
     }
 
-    public func handler(_ input: Input) async throws -> Output {
+    public func handler(input: Input) async throws -> Output {
         try await self.body(input)
     }
 
@@ -61,10 +61,10 @@ public struct MCPTool<Input: Decodable, Output: Encodable>: MCPToolProtocol {
     /// Handles concrete JSON types as input and output
     public func handle(jsonInput: CallTool.Parameters) async throws -> Encodable {
         // Convert JSON input to the tool's input type
-        let input = try await convert(jsonInput)
+        let convertedInput = try await convert(jsonInput)
 
         // Process with the original tool
-        let output = try await handler(input)
+        let output = try await handler(input: convertedInput)
 
         // Return the output
         return output

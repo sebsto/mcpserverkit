@@ -1,6 +1,11 @@
 import MCP
 import Testing
-import XCTest
+
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
+import Foundation
+#endif
 
 @testable import MCPServerKit
 

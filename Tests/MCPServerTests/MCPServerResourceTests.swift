@@ -1,6 +1,5 @@
 import MCP
 import Testing
-import XCTest
 
 @testable import MCPServerKit
 

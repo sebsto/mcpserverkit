@@ -61,7 +61,7 @@ extension Array where Element == MCPClient {
     public func callTool(
         name toolName: String,
         arguments: [String: MCPValue],
-        logger: Logger = Logger(label: "MCPCLient")
+        logger: Logger = Logger(label: "MCPClient")
     ) async throws -> String {
 
         guard let client = self.clientForTool(named: toolName) else {

@@ -73,7 +73,7 @@ struct MCPToolTests {
         )
 
         let input = TestInput(query: "What is the weather?")
-        let output = try await tool.handler(input)
+        let output = try await tool.handler(input: input)
 
         #expect(output.answer == "Response to: What is the weather?")
     }
@@ -113,13 +113,13 @@ struct MCPToolTests {
 
         // Test with valid input
         let validInput = TestInput(query: "valid query")
-        let output = try await tool.handler(validInput)
+        let output = try await tool.handler(input: validInput)
         #expect(output.answer == "Valid query: valid query")
 
         // Test with invalid input that should throw
         let invalidInput = TestInput(query: "")
         do {
-            _ = try await tool.handler(invalidInput)
+            _ = try await tool.handler(input: invalidInput)
             #expect(Bool(false), "Expected error was not thrown")
         } catch let error as TestError {
             #expect(error == .invalidQuery)
