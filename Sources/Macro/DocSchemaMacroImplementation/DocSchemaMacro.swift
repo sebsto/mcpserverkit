@@ -124,29 +124,30 @@ public struct DocSchemaMacro: MemberMacro {
         }
         
         let (name, description, schema) = try extractMacroArguments(from: node)
-        let (handlerFunc, docComment) = try findHandlerFunctionWithDocComment(in: structDecl)
-        let schemaInfo = try parseDocComment(docComment, for: handlerFunc)
-        try validateParameterConsistency(schemaInfo: schemaInfo, handlerFunc: handlerFunc)
         
         var properties: [DeclSyntax] = []
         
-        if let name  {
+        if let name {
             if let nameProperty = try generateNameProperty(name: name, in: structDecl) {
                 properties.append(nameProperty)
             }
         }
         
-        if let description  {
+        if let description {
             if let descriptionProperty = try generateDescriptionProperty(description: description, in: structDecl) {
                 properties.append(descriptionProperty)
             }
         }
         
-        // if schema is provided, use it directly. Otherwise generate it from the schemaInfo
+        // If schema is provided, use it directly. Otherwise generate it from DocC comments
         if let schema {
             let schemaProperty = generateSchemaInstanceInputSchemaProperty(from: schema, in: structDecl, context: context)
             properties.append(schemaProperty)
         } else {
+            // Only when no schema is provided, require and process DocC comments
+            let (handlerFunc, docComment) = try findHandlerFunctionWithDocComment(in: structDecl)
+            let schemaInfo = try parseDocComment(docComment, for: handlerFunc)
+            try validateParameterConsistency(schemaInfo: schemaInfo, handlerFunc: handlerFunc)
             properties.append(generateInputSchemaProperty(from: schemaInfo, in: structDecl, context: context))
         }
 

@@ -8,12 +8,11 @@ import FoundationEssentials
 import Foundation
 #endif
 
-/// This tool provides foreign exchange rates between currencies using the Hexarate API.
+// This tool provides foreign exchange rates between currencies using the Hexarate API.
 
-/// Input structure for the FX rates tool.
-/// This structure defines the parameters required to fetch foreign exchange rates.
-/// It includes the source and target currency codes, which must be valid 3-letter ISO 4217 currency codes.
 @SchemaDefinition
+// Input structure for the FX rates tool.
+// The docc headers will be used to generate the description in the JSON schema 
 struct FXRatesInput: Codable {
     /// The source currency code (e.g., USD, EUR, GBP)
     /// Must be a valid 3-letter ISO 4217 currency code.
@@ -60,27 +59,8 @@ struct FXRatesInput: Codable {
 struct FXRateTool: MCPToolProtocol {
     typealias Input = FXRatesInput
     typealias Output = String
-    
-    /// Fetches foreign exchange rates from the Hexarate API.
-    ///
-    /// This function constructs a request to the Hexarate API to retrieve the current
-    /// exchange rate between two currencies. The API returns real-time foreign exchange
-    /// data in JSON format.
-    ///
-    /// - Parameter input: A `FXRatesInput` structure containing the source and target currency codes.
-    ///   Both currency codes must be valid 3-letter ISO 4217 currency codes (e.g., USD, EUR, GBP).
-    ///
-    /// - Returns: A JSON string containing the raw API response from Hexarate, which includes:
-    ///   - `status_code`: HTTP status code of the API response
-    ///   - `data`: Object containing exchange rate information
-    ///     - `base`: The source currency code
-    ///     - `target`: The target currency code  
-    ///     - `mid`: The current exchange rate (middle rate)
-    ///     - `unit`: The unit amount (typically 1)
-    ///     - `timestamp`: ISO 8601 timestamp of when the rate was last updated
-    ///
-    /// - Throws: `MCPServerError.invalidParam` if the URL cannot be constructed from the provided currency codes,
-    ///   or any network-related errors from `URLSession.shared.data(from:)`.
+
+    // Fetches foreign exchange rates from the Hexarate API.
     func handler(input: FXRatesInput) async throws -> String {
         // Construct the API URL using the Hexarate API
         let fxURL = "https://hexarate.paikama.co/api/rates/latest/\(input.sourceCurrency)?target=\(input.targetCurrency)"
