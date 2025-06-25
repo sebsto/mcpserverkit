@@ -5,7 +5,7 @@ import SwiftSyntaxMacros
 import Foundation
 import DocSchemaShared
 
-enum DocSchemaError: Error, CustomStringConvertible {
+enum ToolError: Error, CustomStringConvertible {
     case unsupportedDeclaration
     case missingInputType
     case missingHandlerFunction
@@ -15,7 +15,7 @@ enum DocSchemaError: Error, CustomStringConvertible {
     var description: String {
         switch self {
         case .unsupportedDeclaration:
-            return "DocSchema can only be applied to structs that implement MCPToolProtocol"
+            return "Tool macro can only be applied to structs that implement MCPToolProtocol"
         case .missingInputType:
             return "Could not determine Input type from MCPToolProtocol conformance"
         case .missingHandlerFunction:
@@ -74,7 +74,7 @@ struct DocCommentParser {
             }
 
             guard description != nil else {
-                throw DocSchemaError.parameterMismatch(paramName)
+                throw ToolError.parameterMismatch(paramName)
             }
             
             let paramInfo = ParameterInfo(
@@ -90,7 +90,7 @@ struct DocCommentParser {
     }
 }
 
-public struct DocSchemaMacro: MemberMacro {
+public struct ToolMacro: MemberMacro {
     
     // Helper function to get access modifier string
     private static func getAccessModifier(from structDecl: StructDeclSyntax) -> String {
@@ -120,7 +120,7 @@ public struct DocSchemaMacro: MemberMacro {
     ) throws -> [DeclSyntax] {
         
         guard let structDecl = declaration.as(StructDeclSyntax.self) else {
-            throw DocSchemaError.unsupportedDeclaration
+            throw ToolError.unsupportedDeclaration
         }
         
         let (name, description, schema) = try extractMacroArguments(from: node)
@@ -335,14 +335,14 @@ public struct DocSchemaMacro: MemberMacro {
                 
                 let docComment = extractDocComment(from: functionDecl)
                 if docComment.isEmpty {
-                    throw DocSchemaError.missingDocComment
+                    throw ToolError.missingDocComment
                 }
                 
                 return (functionDecl, docComment)
             }
         }
         
-        throw DocSchemaError.missingHandlerFunction
+        throw ToolError.missingHandlerFunction
     }
     
     private static func extractDocComment(from functionDecl: FunctionDeclSyntax) -> String {
@@ -376,7 +376,7 @@ public struct DocSchemaMacro: MemberMacro {
         let functionParams = handlerFunc.signature.parameterClause.parameters
         
         if schemaInfo.parameters.count != functionParams.count {
-            throw DocSchemaError.parameterMismatch(
+            throw ToolError.parameterMismatch(
                 "DocC comment has \(schemaInfo.parameters.count) parameters, but function has \(functionParams.count)"
             )
         }
@@ -392,13 +392,13 @@ public struct DocSchemaMacro: MemberMacro {
                 let docParamName = docParam.name
                 // the below should never happen because we check that in doc parsing
                 if docParamName != expectedParamName {
-                    throw DocSchemaError.parameterMismatch(
+                    throw ToolError.parameterMismatch(
                         "Parameter \(index): DocC has '\(docParamName)' but function has '\(expectedParamName)'"
                     )
                 }
                 
                 if !isTypeCompatible(docType: docParam.type, funcType: funcParamType) {
-                    throw DocSchemaError.parameterMismatch(
+                    throw ToolError.parameterMismatch(
                         "Parameter '\(funcParamName)': DocC type '\(docParam.type)' doesn't match function type '\(funcParamType)'"
                     )
                 }

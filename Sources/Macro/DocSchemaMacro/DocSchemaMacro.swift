@@ -16,7 +16,7 @@
 ///     let unit: String?
 /// }
 ///
-/// @DocSchema(name: "weather", description: "Get weather information", schema: WeatherInput.self)
+/// @Tool(name: "weather", description: "Get weather information", schema: WeatherInput.self)
 /// struct WeatherTool: MCPToolProtocol {
 ///     // The macro will use WeatherInput.schema for inputSchema
 /// }
@@ -24,7 +24,7 @@
 ///
 /// Usage with DocC comments:
 /// ```swift
-/// @DocSchema(name: "weather", description: "Get weather information")
+/// @Tool(name: "weather", description: "Get weather information")
 /// struct WeatherTool: MCPToolProtocol {
 ///     typealias Input = String
 ///     
@@ -64,4 +64,4 @@
 /// - When using DocC mode: The handler function must have DocC comments with parameter descriptions
 /// - Parameter names in DocC must match function parameter names (for DocC mode)
 @attached(member, names: named(name), named(description), named(inputSchema), named(handle))
-public macro DocSchema(name: String? = nil, description: String? = nil, schema: Schema.Type? = nil) = #externalMacro(module: "DocSchemaMacroImplementation", type: "DocSchemaMacro")
+public macro Tool(name: String? = nil, description: String? = nil, schema: Schema.Type? = nil) = #externalMacro(module: "DocSchemaMacroImplementation", type: "ToolMacro")

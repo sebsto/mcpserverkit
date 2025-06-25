@@ -4,7 +4,7 @@ import MCPServerKit
 import MCP
 
 // Example 1: Simple string input with DocC-generated schema
-@DocSchema(name: "weather", description: "Get weather information for a city")
+@Tool(name: "weather", description: "Get weather information for a city")
 struct WeatherTool: MCPToolProtocol {
     typealias Input = String
     typealias Output = String
@@ -27,7 +27,7 @@ struct WeatherTool: MCPToolProtocol {
 }
 
 // Example 2: Complex input with multiple parameters and detailed descriptions
-@DocSchema(name: "calculator", description: "Perform basic arithmetic operations")
+@Tool(name: "calculator", description: "Perform basic arithmetic operations")
 struct CalculatorTool: MCPToolProtocol {
 
     struct CalculatorInput: Codable {
@@ -74,7 +74,7 @@ struct CalculatorTool: MCPToolProtocol {
 }
 
 // Example 3: Tool with existing properties (should only generate inputSchema)
-@DocSchema
+@Tool
 struct ExistingPropertiesTool: MCPToolProtocol {
     typealias Input = String
     typealias Output = String
@@ -111,7 +111,7 @@ struct ExternalCalculatorInput: Codable {
     let operation: String
 }
 
-@DocSchema(name: "external-calculator", description: "Perform arithmetic", schema: ExternalCalculatorInput.self)
+@Tool(name: "external-calculator", description: "Perform arithmetic", schema: ExternalCalculatorInput.self)
 struct ExternalCalculatorTool: MCPToolProtocol {
     typealias Input = ExternalCalculatorInput
     typealias Output = Double
