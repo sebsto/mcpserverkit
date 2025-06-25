@@ -3,8 +3,8 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 import Foundation
-@testable import DocSchemaMacro
-@testable import DocSchemaMacroImplementation
+@testable import ToolMacro
+@testable import ToolMacroImplementation
 
 @Suite("SchemaDefinitionMacro Tests")
 struct SchemaDefinitionMacroTests {

@@ -64,4 +64,4 @@
 /// - When using DocC mode: The handler function must have DocC comments with parameter descriptions
 /// - Parameter names in DocC must match function parameter names (for DocC mode)
 @attached(member, names: named(name), named(description), named(inputSchema), named(handle))
-public macro Tool(name: String? = nil, description: String? = nil, schema: Schema.Type? = nil) = #externalMacro(module: "DocSchemaMacroImplementation", type: "ToolMacro")
+public macro Tool(name: String? = nil, description: String? = nil, schema: Schema.Type? = nil) = #externalMacro(module: "ToolMacroImplementation", type: "ToolMacro")

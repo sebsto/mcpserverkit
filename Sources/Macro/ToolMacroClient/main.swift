@@ -1,5 +1,5 @@
 import Foundation
-import DocSchemaMacro
+import ToolMacro
 import MCPServerKit
 import MCP
 
@@ -150,7 +150,7 @@ struct ExternalCalculatorTool: MCPToolProtocol {
 
 // Demonstration
 @main
-struct DocSchemaMacroClient {
+struct ToolMacroClient {
     static func main() async {
         print("=== MCP Tool DocC Schema Generation Demo ===\n")
         

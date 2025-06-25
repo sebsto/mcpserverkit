@@ -3,7 +3,7 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 import Foundation
-import DocSchemaShared
+import ToolShared
 
 enum ToolError: Error, CustomStringConvertible {
     case unsupportedDeclaration

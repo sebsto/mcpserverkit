@@ -59,18 +59,18 @@
             "request": "launch",
             "args": [],
             "cwd": "${workspaceFolder:mcpserverkit}",
-            "name": "Debug DocSchemaMacroClient",
-            "program": "${workspaceFolder:mcpserverkit}/.build/debug/DocSchemaMacroClient",
-            "preLaunchTask": "swift: Build Debug DocSchemaMacroClient"
+            "name": "Debug ToolMacroClient",
+            "program": "${workspaceFolder:mcpserverkit}/.build/debug/ToolMacroClient",
+            "preLaunchTask": "swift: Build Debug ToolMacroClient"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
             "cwd": "${workspaceFolder:mcpserverkit}",
-            "name": "Release DocSchemaMacroClient",
-            "program": "${workspaceFolder:mcpserverkit}/.build/release/DocSchemaMacroClient",
-            "preLaunchTask": "swift: Build Release DocSchemaMacroClient"
+            "name": "Release ToolMacroClient",
+            "program": "${workspaceFolder:mcpserverkit}/.build/release/ToolMacroClient",
+            "preLaunchTask": "swift: Build Release ToolMacroClient"
         }
     ]
 }

@@ -2,8 +2,8 @@ import Testing
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
-@testable import DocSchemaMacro
-@testable import DocSchemaMacroImplementation
+@testable import ToolMacro
+@testable import ToolMacroImplementation
 
 @Suite("SchemaGenerationUtils Tests")
 struct SchemaGenerationUtilsTests {

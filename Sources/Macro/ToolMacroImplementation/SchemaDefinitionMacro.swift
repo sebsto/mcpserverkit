@@ -3,7 +3,7 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 import Foundation
-import DocSchemaShared
+import ToolShared
 
 /// A macro that generates an OpenAPI schema for a type
 public struct SchemaDefinitionMacro: MemberMacro, ExtensionMacro {

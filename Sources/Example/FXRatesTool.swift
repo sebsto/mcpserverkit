@@ -1,6 +1,6 @@
 import MCP
 import MCPServerKit
-import DocSchemaMacro
+import ToolMacro
 
 #if canImport(FoundationEssentials)
 import FoundationEssentials

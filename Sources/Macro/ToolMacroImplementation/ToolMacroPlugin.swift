@@ -1,7 +1,7 @@
 import SwiftCompilerPlugin
 import SwiftSyntaxMacros
 
-@main struct DocSchemaMacroPlugin: CompilerPlugin {
+@main struct ToolMacroPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
         SchemaDefinitionMacro.self,
         ToolMacro.self,

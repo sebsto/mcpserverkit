@@ -1,4 +1,4 @@
-@_exported import DocSchemaShared
+@_exported import ToolShared
 
 /// A macro that adds a static `schema` property containing an OpenAPI-compatible JSON schema definition.
 ///
@@ -36,8 +36,8 @@
 /// - Apply to structs that need schema definitions
 /// - Struct should be `Codable` for consistency with JSON operations
 ///
-/// This macro is commonly used with `@DocSchema` to provide schema definitions
+/// This macro is commonly used with `@Tool` to provide schema definitions
 /// for MCP tool input types.
 @attached(member, names: named(schema))
 @attached(extension, conformances: Schema)
-public macro SchemaDefinition() = #externalMacro(module: "DocSchemaMacroImplementation", type: "SchemaDefinitionMacro")
+public macro SchemaDefinition() = #externalMacro(module: "ToolMacroImplementation", type: "SchemaDefinitionMacro")

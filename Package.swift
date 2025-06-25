@@ -10,7 +10,7 @@ let package = Package(
     ],
     products: [
         .executable(name: "MCPExample", targets: ["MCPExample"]),
-        .executable(name: "DocSchemaMacroClient", targets: ["DocSchemaMacroClient"]),
+        .executable(name: "ToolMacroClient", targets: ["ToolMacroClient"]),
         .library(name: "MCPServerKit", targets: ["MCPServerKit"]),
         .library(name: "MCPClientKit", targets: ["MCPClientKit"]),
     ],
@@ -25,17 +25,17 @@ let package = Package(
             name: "MCPExample",
             dependencies: [
                 .target(name: "MCPServerKit"),
-                .target(name: "DocSchemaMacro")
+                .target(name: "ToolMacro")
             ],
             path: "Sources/Example"
         ),
         .executableTarget(
-            name: "DocSchemaMacroClient",
+            name: "ToolMacroClient",
             dependencies: [
                 .target(name: "MCPServerKit"),
-                .target(name: "DocSchemaMacro")
+                .target(name: "ToolMacro")
             ],
-            path: "Sources/Macro/DocSchemaMacroClient"
+            path: "Sources/Macro/ToolMacroClient"
         ),
         .target(
             name: "MCPServerKit",
@@ -60,41 +60,41 @@ let package = Package(
 
         // shared types and protocols for the schema macro system
         .target(
-            name: "DocSchemaShared",
+            name: "ToolShared",
             dependencies: [],
-            path: "Sources/Macro/DocSchemaShared"
+            path: "Sources/Macro/ToolShared"
         ),
 
         // a macro to generate JSON Schema based on DocC comments
         .macro(
-            name: "DocSchemaMacroImplementation",
+            name: "ToolMacroImplementation",
             dependencies: [
-                "DocSchemaShared",
+                "ToolShared",
                 .product(name: "SwiftSyntax", package: "swift-syntax"),
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
                 .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
                 .product(name: "SwiftDiagnostics", package: "swift-syntax"),
             ],
-            path: "Sources/Macro/DocSchemaMacroImplementation"
+            path: "Sources/Macro/ToolMacroImplementation"
         ),
         
         // a library that exposes the macro to users
         .target(
-            name: "DocSchemaMacro",
+            name: "ToolMacro",
             dependencies: [
-                "DocSchemaShared",
-                "DocSchemaMacroImplementation",
+                "ToolShared",
+                "ToolMacroImplementation",
             ],
-            path: "Sources/Macro/DocSchemaMacro"
+            path: "Sources/Macro/ToolMacro"
         ),
 
         // Tests for the macro implementation
         .testTarget(
-            name: "DocSchemaMacroTests",
+            name: "ToolMacroTests",
             dependencies: [
-                "DocSchemaShared",
-                "DocSchemaMacro", 
-                "DocSchemaMacroImplementation",
+                "ToolShared",
+                "ToolMacro", 
+                "ToolMacroImplementation",
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
                 .product(name: "SwiftSyntax", package: "swift-syntax"),
                 .product(name: "SwiftDiagnostics", package: "swift-syntax"),
