@@ -48,11 +48,6 @@ let calculatorTool = MCPTool<CalculatorInput, Double>(
     name: "calculator",
     description: "Performs basic arithmetic operations (add, subtract, multiply, divide)",
     inputSchema: calculatorSchema,
-    converter: { params in
-        // Extract the parameters and create a CalculatorInput
-        let data = try JSONEncoder().encode(params.arguments)
-        return try JSONDecoder().decode(CalculatorInput.self, from: data)
-    },
     body: { (input: CalculatorInput) async throws -> Double in
         // Perform the calculation based on the operation
         switch input.operation {

@@ -23,3 +23,16 @@ public protocol MCPToolProtocol<Input, Output>: Sendable {
     // handle JSON input and return a result that can be converted to JSON
     func handle(jsonInput: CallTool.Parameters) async throws -> Encodable
 }
+
+// Default implementations for tools with Codable Input types
+public extension MCPToolProtocol where Input: Codable, Output: Encodable {
+    func convert(_ input: CallTool.Parameters) async throws -> Input {
+        let data = try JSONEncoder().encode(input.arguments)
+        return try JSONDecoder().decode(Input.self, from: data)
+    }
+    
+    func handle(jsonInput: CallTool.Parameters) async throws -> Encodable {
+        let convertedInput = try await convert(jsonInput)
+        return try await handler(input: convertedInput)
+    }
+}

@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "example": {
-      "command": ".build/debug/MCPExampleServer",
+      "command": ".build/debug/MCPExample",
       "args": []
     }
   }

@@ -32,29 +32,6 @@ struct FXRatesInput: Codable {
     }
 }
 
-// JSON schema for the FX rates tool input
-// let fxRatesToolSchema = """
-// {
-//     "type": "object",
-//     "properties": {
-//         "source_currency": {
-//             "description": "The source currency code (e.g., USD, EUR, GBP)",
-//             "type": "string",
-//             "pattern": "^[A-Z]{3}$"
-//         },
-//         "target_currency": {
-//             "description": "The target currency code (e.g., USD, EUR, GBP)",
-//             "type": "string",
-//             "pattern": "^[A-Z]{3}$"
-//         }
-//     },
-//     "required": [
-//         "source_currency",
-//         "target_currency"
-//     ]
-// }
-// """
-
 @Tool(name: "foreign_exchange_rates", description: "Get current foreign exchange rates between two currencies. This tool uses the Hexarate API to provide real-time exchange rates. Supports major world currencies using standard 3-letter currency codes (ISO 4217). Returns the current exchange rate from the source currency to the target currency.", schema: FXRatesInput.self)
 struct FXRateTool: MCPToolProtocol {
     typealias Input = FXRatesInput
@@ -73,25 +50,7 @@ struct FXRateTool: MCPToolProtocol {
         // return the data as a string
         return String(decoding: data, as: UTF8.self)
     }
-    
-    func convert(_ params: CallTool.Parameters) async throws -> FXRatesInput {
-        // Extract the parameters and create a FXRatesInput using the same pattern as calculator
-        let data = try JSONEncoder().encode(params.arguments)
-        let input = try JSONDecoder().decode(FXRatesInput.self, from: data)
-        
-        // Validate currency codes (should be 3 uppercase letters) using Swift 6 regex
-        let currencyRegex = /^[A-Z]{3}$/
-        
-        guard input.sourceCurrency.wholeMatch(of: currencyRegex) != nil else {
-            throw MCPServerError.invalidParam("source_currency", "Must be a 3-letter currency code (e.g., USD)")
-        }
-        
-        guard input.targetCurrency.wholeMatch(of: currencyRegex) != nil else {
-            throw MCPServerError.invalidParam("target_currency", "Must be a 3-letter currency code (e.g., EUR)")
-        }
-        
-        return FXRatesInput(sourceCurrency: input.sourceCurrency.uppercased(), targetCurrency: input.targetCurrency.uppercased())
-    }
+
 }
 
 // Optional: Create a prompt for the FX rates tool

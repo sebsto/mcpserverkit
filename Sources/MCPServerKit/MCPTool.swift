@@ -10,29 +10,47 @@ public struct MCPTool<Input: Decodable, Output: Encodable>: MCPToolProtocol {
     public let name: String
     public let description: String
     public let inputSchema: String
-    public let converter: @Sendable (CallTool.Parameters) async throws -> Input
+    public let customConverter: (@Sendable (CallTool.Parameters) async throws -> Input)?
     public let body: @Sendable (Input) async throws -> Output
 
     public init(
         name: String,
         description: String,
         inputSchema: String,
-        converter: @Sendable @escaping (CallTool.Parameters) async throws -> Input,
+        converter: @escaping @Sendable (CallTool.Parameters) async throws -> Input,
         body: @Sendable @escaping (Input) async throws -> Output
     ) {
         self.name = name
         self.description = description
         self.inputSchema = inputSchema
-        self.converter = converter
+        self.customConverter = converter
         self.body = body
     }
+    public init(
+        name: String,
+        description: String,
+        inputSchema: String,
+        body: @Sendable @escaping (Input) async throws -> Output
+    ) {
+        self.name = name
+        self.description = description
+        self.inputSchema = inputSchema
+        self.customConverter = nil
+        self.body = body
+    }    
 
     public func handler(input: Input) async throws -> Output {
         try await self.body(input)
     }
 
     public func convert(_ input: CallTool.Parameters) async throws -> Input {
-        try await self.converter(input)
+        if let converter = self.customConverter {
+            // Use the provided converter if available
+            return try await converter(input)
+        } else {
+            // Default conversion using the static method
+            return try Self.extractParameter(input, name: "input")
+        }
     }
 
     /// Extracts a parameter from the input dictionary and decodes it into the expected type.
