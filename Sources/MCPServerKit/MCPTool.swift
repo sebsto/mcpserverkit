@@ -6,6 +6,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
+/// A MCPTool implementation that deals with JSON input and output
 public struct MCPTool<Input: Decodable, Output: Encodable>: MCPToolProtocol {
     public let name: String
     public let description: String
@@ -76,15 +77,4 @@ public struct MCPTool<Input: Decodable, Output: Encodable>: MCPToolProtocol {
         return try JSONDecoder().decode(Input.self, from: data)
     }
 
-    /// Handles concrete JSON types as input and output
-    public func handle(jsonInput: CallTool.Parameters) async throws -> Encodable {
-        // Convert JSON input to the tool's input type
-        let convertedInput = try await convert(jsonInput)
-
-        // Process with the original tool
-        let output = try await handler(input: convertedInput)
-
-        // Return the output
-        return output
-    }
 }
