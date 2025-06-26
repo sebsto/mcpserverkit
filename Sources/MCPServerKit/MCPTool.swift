@@ -38,7 +38,7 @@ public struct MCPTool<Input: Decodable, Output: Encodable>: MCPToolProtocol {
         self.inputSchema = inputSchema
         self.customConverter = nil
         self.body = body
-    }    
+    }
 
     public func handler(input: Input) async throws -> Output {
         try await self.body(input)

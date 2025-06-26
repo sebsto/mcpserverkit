@@ -12,14 +12,14 @@ import Foundation
 
 @SchemaDefinition
 // Input structure for the FX rates tool.
-// The docc headers will be used to generate the description in the JSON schema 
+// The docc headers will be used to generate the description in the JSON schema
 struct FXRatesInput: Codable {
     /// The source currency code (e.g., USD, EUR, GBP)
     /// Must be a valid 3-letter ISO 4217 currency code.
     /// Example: "USD" for US Dollar, "EUR" for Euro.
-    /// RegEx pattern: ^[A-Z]{3}$   
+    /// RegEx pattern: ^[A-Z]{3}$
     let sourceCurrency: String
-    
+
     /// The target currency code (e.g., USD, EUR, GBP)
     /// Must be a valid 3-letter ISO 4217 currency code.
     /// Example: "USD" for US Dollar, "EUR" for Euro.
@@ -27,7 +27,12 @@ struct FXRatesInput: Codable {
     let targetCurrency: String
 }
 
-@Tool(name: "foreign_exchange_rates", description: "Get current foreign exchange rates between two currencies. This tool uses the Hexarate API to provide real-time exchange rates. Supports major world currencies using standard 3-letter currency codes (ISO 4217). Returns the current exchange rate from the source currency to the target currency.", schema: FXRatesInput.self)
+@Tool(
+    name: "foreign_exchange_rates",
+    description:
+        "Get current foreign exchange rates between two currencies. This tool uses the Hexarate API to provide real-time exchange rates. Supports major world currencies using standard 3-letter currency codes (ISO 4217). Returns the current exchange rate from the source currency to the target currency.",
+    schema: FXRatesInput.self
+)
 struct FXRateTool: MCPToolProtocol {
     typealias Input = FXRatesInput
     typealias Output = String
@@ -35,7 +40,8 @@ struct FXRateTool: MCPToolProtocol {
     // Fetches foreign exchange rates from the Hexarate API.
     func handler(input: FXRatesInput) async throws -> String {
         // Construct the API URL using the Hexarate API
-        let fxURL = "https://hexarate.paikama.co/api/rates/latest/\(input.sourceCurrency)?target=\(input.targetCurrency)"
+        let fxURL =
+            "https://hexarate.paikama.co/api/rates/latest/\(input.sourceCurrency)?target=\(input.targetCurrency)"
         let url = URL(string: fxURL)
         guard let url else {
             throw MCPServerError.invalidParam("currency", "\(input.sourceCurrency) or \(input.targetCurrency)")

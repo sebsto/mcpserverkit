@@ -1,13 +1,13 @@
 import MCP
 import Testing
 
+@testable import MCPServerKit
+
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #else
 import Foundation
 #endif
-
-@testable import MCPServerKit
 
 @Suite("MCPResource Tests")
 struct MCPResourceTests {

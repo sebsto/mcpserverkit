@@ -27,13 +27,13 @@
 /// @Tool(name: "weather", description: "Get weather information")
 /// struct WeatherTool: MCPToolProtocol {
 ///     typealias Input = String
-///     
+///
 ///     /// Get weather information for a specific city
 ///     /// - Parameter city: The city name to get the weather for
 ///     func handler(input city: String) async throws -> String {
 ///         // Implementation
 ///     }
-///     
+///
 ///     // The macro will generate schema from DocC comments:
 ///     // var inputSchema: String {
 ///     //     return """
@@ -64,4 +64,5 @@
 /// - When using DocC mode: The handler function must have DocC comments with parameter descriptions
 /// - Parameter names in DocC must match function parameter names (for DocC mode)
 @attached(member, names: named(name), named(description), named(inputSchema), named(handle))
-public macro Tool(name: String? = nil, description: String? = nil, schema: Schema.Type? = nil) = #externalMacro(module: "ToolMacroImplementation", type: "ToolMacro")
+public macro Tool(name: String? = nil, description: String? = nil, schema: Schema.Type? = nil) =
+    #externalMacro(module: "ToolMacroImplementation", type: "ToolMacro")

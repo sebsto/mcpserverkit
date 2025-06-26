@@ -1,29 +1,30 @@
-import Testing
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
+import Testing
+
 @testable import ToolMacro
 @testable import ToolMacroImplementation
 
 @Suite("SchemaGenerationUtils Tests")
 struct SchemaGenerationUtilsTests {
-    
+
     @Test("Extract doc comment from trivia")
     func testExtractDocCommentFromTrivia() {
         // Create trivia with doc comments
         let trivia = Trivia(pieces: [
             .docLineComment("/// This is a test comment"),
             .newlines(1),
-            .docLineComment("/// Another line")
+            .docLineComment("/// Another line"),
         ])
-        
+
         // Extract the doc comment
         let docComment = SchemaGenerationUtils.extractDocCommentFromTrivia(trivia)
-        
+
         // Verify the result
         #expect(docComment == "This is a test comment Another line")
     }
-    
+
     @Test("Generate schema type from Swift type")
     func testGenerateTypeSchema() {
         // Test various Swift types
@@ -33,27 +34,29 @@ struct SchemaGenerationUtilsTests {
         #expect(SchemaGenerationUtils.generateTypeSchema("Bool") == "boolean")
         #expect(SchemaGenerationUtils.generateTypeSchema("CustomType") == "object")
     }
-    
+
     @Test("Clean and escape JSON")
     func testCleanAndEscapeJson() {
         // Create a JSON string with newlines and spaces
         let json = """
-        {
-          "type": "object",
-          "properties": {
-            "name": { "type": "string" }
-          }
-        }
-        """
-        
+            {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" }
+              }
+            }
+            """
+
         // Clean and escape the JSON
         let cleanedJson = SchemaGenerationUtils.cleanAndEscapeJson(json)
-        
+
         // The actual implementation might have different whitespace handling
         // So we'll compare without whitespace
         let normalizedCleaned = cleanedJson.replacingOccurrences(of: " ", with: "")
-        let normalizedExpected = "{\\\"type\\\":\\\"object\\\",\\\"properties\\\":{\\\"name\\\":{\\\"type\\\":\\\"string\\\"}}}".replacingOccurrences(of: " ", with: "")
-        
+        let normalizedExpected =
+            "{\\\"type\\\":\\\"object\\\",\\\"properties\\\":{\\\"name\\\":{\\\"type\\\":\\\"string\\\"}}}"
+            .replacingOccurrences(of: " ", with: "")
+
         // Verify the result
         #expect(normalizedCleaned == normalizedExpected)
     }

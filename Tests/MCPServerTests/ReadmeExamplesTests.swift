@@ -1,13 +1,13 @@
 import MCP
 import Testing
 
+@testable import MCPServerKit
+
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #else
 import Foundation
 #endif
-
-@testable import MCPServerKit
 
 /// This test suite verifies that all code examples in the README.md file actually compile
 @Suite("README Examples Tests")

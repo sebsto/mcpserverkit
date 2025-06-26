@@ -1,7 +1,6 @@
+import CompilerPluginSupport
 // swift-tools-version:6.1
 import PackageDescription
-import CompilerPluginSupport
-
 
 let package = Package(
     name: "MCPSwift",
@@ -24,14 +23,14 @@ let package = Package(
         .executableTarget(
             name: "MCPExample",
             dependencies: [
-                .target(name: "MCPServerKit"),
+                .target(name: "MCPServerKit")
             ],
             path: "Sources/Example"
         ),
         .executableTarget(
             name: "ToolMacroClient",
             dependencies: [
-                .target(name: "MCPServerKit"),
+                .target(name: "MCPServerKit")
             ],
             path: "Sources/Macro/ToolMacroClient"
         ),
@@ -39,7 +38,7 @@ let package = Package(
             name: "MCPServerKit",
             dependencies: [
                 .product(name: "MCP", package: "swift-sdk"),
-                "ToolMacro"
+                "ToolMacro",
             ],
             path: "Sources/MCPServerKit"
         ),
@@ -76,7 +75,7 @@ let package = Package(
             ],
             path: "Sources/Macro/ToolMacroImplementation"
         ),
-        
+
         // a library that exposes the macro to users
         // TODO : should we make this a trait (enable by default and user can opt-out) ?
         .target(
@@ -93,7 +92,7 @@ let package = Package(
             name: "ToolMacroTests",
             dependencies: [
                 "ToolShared",
-                "ToolMacro", 
+                "ToolMacro",
                 "ToolMacroImplementation",
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
                 .product(name: "SwiftSyntax", package: "swift-syntax"),
