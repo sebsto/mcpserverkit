@@ -4,6 +4,8 @@ call-weather:
 	cat json/call_weather_tool.json | swift run MCPExample
 call-calculator:
 	cat json/call_calculator_tool.json | swift run MCPExample
+call-fxrate:
+	cat json/call_fxrate_tool.json | swift run MCPExample
 list-prompts:
 	cat json/list_prompts.json | swift run MCPExample
 get-prompt:

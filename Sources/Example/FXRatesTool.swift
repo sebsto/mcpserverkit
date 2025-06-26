@@ -25,11 +25,6 @@ struct FXRatesInput: Codable {
     /// Example: "USD" for US Dollar, "EUR" for Euro.
     /// RegEx pattern: ^[A-Z]{3}$
     let targetCurrency: String
-    
-    enum CodingKeys: String, CodingKey {
-        case sourceCurrency = "source_currency"
-        case targetCurrency = "target_currency"
-    }
 }
 
 @Tool(name: "foreign_exchange_rates", description: "Get current foreign exchange rates between two currencies. This tool uses the Hexarate API to provide real-time exchange rates. Supports major world currencies using standard 3-letter currency codes (ISO 4217). Returns the current exchange rate from the source currency to the target currency.", schema: FXRatesInput.self)
