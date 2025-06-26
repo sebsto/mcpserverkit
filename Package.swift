@@ -11,7 +11,7 @@ let package = Package(
     products: [
         .executable(name: "MCPExample", targets: ["MCPExample"]),
         .executable(name: "ToolMacroClient", targets: ["ToolMacroClient"]),
-        .library(name: "MCPServerKit", targets: ["MCPServerKit"]),
+        .library(name: "MCPServerKit", targets: ["MCPServerKit", "ToolMacro"]),
         .library(name: "MCPClientKit", targets: ["MCPClientKit"]),
     ],
     dependencies: [
@@ -25,7 +25,6 @@ let package = Package(
             name: "MCPExample",
             dependencies: [
                 .target(name: "MCPServerKit"),
-                .target(name: "ToolMacro")
             ],
             path: "Sources/Example"
         ),
@@ -33,14 +32,14 @@ let package = Package(
             name: "ToolMacroClient",
             dependencies: [
                 .target(name: "MCPServerKit"),
-                .target(name: "ToolMacro")
             ],
             path: "Sources/Macro/ToolMacroClient"
         ),
         .target(
             name: "MCPServerKit",
             dependencies: [
-                .product(name: "MCP", package: "swift-sdk")
+                .product(name: "MCP", package: "swift-sdk"),
+                "ToolMacro"
             ],
             path: "Sources/MCPServerKit"
         ),
@@ -79,6 +78,7 @@ let package = Package(
         ),
         
         // a library that exposes the macro to users
+        // TODO : should we make this a trait (enable by default and user can opt-out) ?
         .target(
             name: "ToolMacro",
             dependencies: [
