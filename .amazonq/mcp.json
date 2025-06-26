@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "example": {
+    "MCPExample": {
       "command": ".build/debug/MCPExample",
-      "args": []
+      "timeout": 60000
     }
   }
 }
