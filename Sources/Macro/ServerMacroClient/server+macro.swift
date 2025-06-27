@@ -2,6 +2,7 @@ import MCPServerKit
 import ToolMacro
 import ServerMacro
 
+// create a tool
 @Tool(name: "Hello", description: "Say hello")
 struct SayHello: MCPToolProtocol {
     /// Say Hello
@@ -9,7 +10,7 @@ struct SayHello: MCPToolProtocol {
     func handler(input: String) async throws -> String { return "Hello \(input)" }
 }
 
-// Create a simple struct to hold our server
+// Create a server
 @Server(name: "Say Hello Server",
         version: "1.0.0",
         description: "A simple server that says hello",
