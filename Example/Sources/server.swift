@@ -39,7 +39,7 @@ import Foundation
         calculatorTool,  // CalculatorInput input, Double output
         FXRateTool(),  // FXRatesInput input, String output
     ],
-    // prompts: [myWeatherPrompt, fxRatesPrompt],
+    prompts: [myWeatherPrompt, fxRatesPrompt],
     type: .stdio)
 @main
 struct MultiToolServer {}

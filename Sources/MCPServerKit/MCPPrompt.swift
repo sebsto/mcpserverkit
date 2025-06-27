@@ -76,7 +76,7 @@ public enum PromptError: Swift.Error {
 }
 
 /// A type-safe prompt with parameters
-public struct MCPPrompt: Sendable {
+public struct MCPPrompt: Sendable, MCPPromptProtocol {
     public let name: String
     public let description: String
     public let template: String
