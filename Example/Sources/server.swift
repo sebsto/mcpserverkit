@@ -1,4 +1,6 @@
 import MCPServerKit
+import ToolMacro
+import ServerMacro
 
 #if canImport(FoundationEssentials)
 import FoundationEssentials
@@ -6,20 +8,45 @@ import FoundationEssentials
 import Foundation
 #endif
 
+//
+// EXAMPLE WITHOUT MACROS
+//
+
 // Create the server with multiple tools of different types
-let server = MCPServer.create(
+// let server = MCPServer.create(
+//     name: "MultiToolServer",
+//     version: "1.0.0",
+//     tools: [
+//         myWeatherTool,  // String input, String output
+//         calculatorTool,  // CalculatorInput input, Double output
+//         FXRateTool(),  // FXRatesInput input, String output
+//     ],
+//     prompts: [myWeatherPrompt, fxRatesPrompt],
+// )
+
+// Start the server
+// try await server.startStdioServer()
+
+//
+// EXAMPLE WITH MACROS
+//
+@Server(
     name: "MultiToolServer",
     version: "1.0.0",
+    description: "A server that provides multiple tools",
     tools: [
         myWeatherTool,  // String input, String output
         calculatorTool,  // CalculatorInput input, Double output
         FXRateTool(),  // FXRatesInput input, String output
     ],
-    prompts: [myWeatherPrompt, fxRatesPrompt],
-)
+    // prompts: [myWeatherPrompt, fxRatesPrompt],
+    type: .stdio)
+@main
+struct MultiToolServer {}
 
-// Start the server
-try await server.startStdioServer()
+//
+// EXAMPLE CALLING A TOOL WITHOUT SERVER (just for debugging)
+//
 
 // let fxr = FXRateTool()
 // print("FXRatesTool loaded")
