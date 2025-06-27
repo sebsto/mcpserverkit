@@ -7,6 +7,7 @@ A high-level Swift framework for building Model Context Protocol (MCP) servers w
 MCPSwift provides `MCPServerKit`, a high-level and easy-to-use API built on top of [the official MCP Swift SDK](https://github.com/modelcontextprotocol/swift-sdk). This framework simplifies the process of creating MCP-compatible tools and servers in Swift.
 
 Key features:
+- **Swift Macros**: Automatic tool schema generation and simplified server setup
 - Simplified tool creation and registration
 - Standardized error handling
 - Streamlined server setup and communication
@@ -15,9 +16,172 @@ Key features:
 - Resource management for sharing files and data with LLMs
 - Strongly-typed MIME type handling
 
-The project includes a weather tool example to demonstrate how to implement a functional MCP server using the framework.
+The project includes examples demonstrating both macro-based and traditional approaches to implementing MCP servers.
 
-## MCPServerKit
+## Quick Start with Macros (Recommended)
+
+MCPSwift provides powerful Swift macros that dramatically reduce boilerplate code and automatically generate JSON schemas from your Swift types.
+
+### Creating Tools with Macros
+
+#### Basic Tool with Simple Types
+
+```swift
+import MCPServerKit
+import ToolMacro
+
+@Tool(name: "greet", description: "Greet someone by name")
+struct GreetTool: MCPToolProtocol {
+    /// Greet a person
+    /// - Parameter input: The name of the person to greet
+    func handler(input: String) async throws -> String {
+        return "Hello, \(input)!"
+    }
+}
+```
+
+#### Advanced Tool with Custom Struct
+
+```swift
+import MCPServerKit
+import ToolMacro
+
+// Define input structure with automatic schema generation
+@SchemaDefinition
+struct CalculatorInput: Codable {
+    /// First number for the calculation
+    let a: Double
+    
+    /// Second number for the calculation  
+    let b: Double
+    
+    /// Operation to perform (add, subtract, multiply, divide)
+    /// Valid values: "add", "subtract", "multiply", "divide"
+    let operation: String
+}
+
+@Tool(
+    name: "calculator",
+    description: "Performs basic arithmetic operations",
+    schema: CalculatorInput.self
+)
+struct CalculatorTool: MCPToolProtocol {
+    typealias Input = CalculatorInput
+    typealias Output = Double
+    
+    /// Perform arithmetic calculation
+    /// - Parameter input: The calculation parameters
+    func handler(input: CalculatorInput) async throws -> Double {
+        switch input.operation {
+        case "add":
+            return input.a + input.b
+        case "subtract":
+            return input.a - input.b
+        case "multiply":
+            return input.a * input.b
+        case "divide":
+            guard input.b != 0 else {
+                throw MCPServerError.invalidParam("b", "Cannot divide by zero")
+            }
+            return input.a / input.b
+        default:
+            throw MCPServerError.invalidParam("operation", "Unknown operation: \(input.operation)")
+        }
+    }
+}
+```
+
+### Creating Servers with Macros
+
+#### Simple Server without Prompts
+
+```swift
+import MCPServerKit
+import ServerMacro
+
+@Server(
+    name: "CalculatorServer",
+    version: "1.0.0",
+    description: "A server that performs calculations",
+    tools: [
+        GreetTool(),
+        CalculatorTool()
+    ],
+    type: .stdio
+)
+@main
+struct CalculatorServer {}
+
+// The macro automatically generates:
+// public static func main() async throws {
+//     let server = MCPServer.create(
+//         name: "CalculatorServer",
+//         version: "1.0.0",
+//         tools: [GreetTool(), CalculatorTool()]
+//     )
+//     try await server.startStdioServer()
+// }
+```
+
+#### Server with Tools and Prompts
+
+```swift
+import MCPServerKit
+import ServerMacro
+
+// Create prompts for your server
+let greetingPrompt = try! MCPPrompt.build { builder in
+    builder.name = "friendly-greeting"
+    builder.description = "Generate a friendly greeting"
+    builder.text("Create a warm, friendly greeting for {name} in {language}")
+    builder.parameter("name", description: "The person's name")
+    builder.parameter("language", description: "The language for the greeting")
+}
+
+let calculationPrompt = try! MCPPrompt.build { builder in
+    builder.name = "math-explanation"
+    builder.description = "Explain a mathematical calculation"
+    builder.text("Explain how to calculate {operation} of {a} and {b}")
+    builder.parameter("operation", description: "The mathematical operation")
+    builder.parameter("a", description: "First number")
+    builder.parameter("b", description: "Second number")
+}
+
+@Server(
+    name: "MultiToolServer",
+    version: "1.0.0",
+    description: "A server with tools and prompts",
+    tools: [
+        GreetTool(),
+        CalculatorTool()
+    ],
+    prompts: [greetingPrompt, calculationPrompt],
+    type: .stdio
+)
+@main
+struct MultiToolServer {}
+
+// The macro automatically generates:
+// public static func main() async throws {
+//     let server = MCPServer.create(
+//         name: "MultiToolServer",
+//         version: "1.0.0",
+//         tools: [GreetTool(), CalculatorTool()],
+//         prompts: [greetingPrompt, calculationPrompt]
+//     )
+//     try await server.startStdioServer()
+// }
+```
+
+### Benefits of Using Macros
+
+- **Automatic Schema Generation**: JSON schemas are generated from your Swift types and DocC comments
+- **Type Safety**: Compile-time validation of your tool definitions
+- **Reduced Boilerplate**: No need to manually write JSON schemas or server setup code
+- **Documentation Integration**: DocC comments become parameter descriptions in the schema
+- **Easy Server Setup**: Single macro generates complete server with main function
+
+## MCPServerKit (Traditional Approach)
 
 MCPServerKit is the core library that abstracts away the complexity of the MCP protocol, allowing developers to focus on building their tools rather than managing protocol details.
 
@@ -41,7 +205,7 @@ MCPServerKit is the core library that abstracts away the complexity of the MCP p
 ## Requirements
 
 - macOS 15 or later
-- Swift 6.1 or later
+- Swift 6.2 or later
 - Xcode 16 or later (recommended for development)
 
 ## Installation
@@ -62,10 +226,13 @@ swift build
 ## Project Structure
 
 - **MCPServerKit**: The core library for building MCP servers and tools
-- **MCPExampleServer**: An example implementation that demonstrates how to use MCPServerKit
+- **ServerMacro**: Swift macros for automatic server generation
+- **ToolMacro**: Swift macros for automatic tool schema generation
+- **ServerShared**: Shared types and protocols for macro system
+- **Example**: Example implementations demonstrating both macro and traditional approaches
 - **Tests**: Unit tests for the server components
 
-## Using MCPServerKit
+## Using MCPServerKit (Traditional Approach)
 
 ### Creating a Tool
 
@@ -265,16 +432,16 @@ try await server.startStdioServer()
 Servers built with MCPServerKit can be used with any MCP-compatible client, including:
 
 - [Amazon Q Developer CLI](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/command-line-installing.html)
-- [Claude Dekstop App](https://claude.ai/download)
+- [Claude Desktop App](https://claude.ai/download)
 - Other AI services that support the Model Context Protocol
 
-To use the Weather example, add this JSON file to your MCP Client configuration:
+To use your server, add this JSON configuration to your MCP Client:
 
 ```json
 {
   "mcpServers": {
-    "weather": {
-      "command": ".build/debug/MCPWeatherServer",
+    "your-server": {
+      "command": ".build/debug/YourServerExecutable",
       "args": []
     }
   }
