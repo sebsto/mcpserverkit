@@ -10,6 +10,7 @@ let package = Package(
     products: [
         .executable(name: "MCPExample", targets: ["MCPExample"]),
         .executable(name: "ToolMacroClient", targets: ["ToolMacroClient"]),
+        .executable(name: "ServerMacroClient", targets: ["ServerMacroClient"]),
         .library(name: "MCPServerKit", targets: ["MCPServerKit", "ToolMacro"]),
         .library(name: "MCPClientKit", targets: ["MCPClientKit"]),
     ],
@@ -38,7 +39,7 @@ let package = Package(
             name: "MCPServerKit",
             dependencies: [
                 .product(name: "MCP", package: "swift-sdk"),
-                "ToolMacro",
+                "ToolMacro","ServerMacro"
             ],
             path: "Sources/MCPServerKit"
         ),
@@ -98,6 +99,34 @@ let package = Package(
                 .product(name: "SwiftSyntax", package: "swift-syntax"),
                 .product(name: "SwiftDiagnostics", package: "swift-syntax"),
             ]
+        ),
+
+        // A macro to simplifying writing MCPServers
+        .macro(
+            name: "ServerMacroImplementation",
+            dependencies: [
+                .product(name: "SwiftSyntax", package: "swift-syntax"),
+                .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+                .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
+                .product(name: "SwiftDiagnostics", package: "swift-syntax"),
+            ],
+            path: "Sources/Macro/ServerMacroImplementation"
+        ),        
+        // a library that exposes the macro to users
+        // TODO : should we make this a trait (enable by default and user can opt-out) ?
+        .target(
+            name: "ServerMacro",
+            dependencies: [
+                "ServerMacroImplementation",
+            ],
+            path: "Sources/Macro/ServerMacro"
+        ),
+        .executableTarget(
+            name: "ServerMacroClient",
+            dependencies: [
+                .target(name: "MCPServerKit")
+            ],
+            path: "Sources/Macro/ServerMacroClient"
         ),
     ]
 )
