@@ -1,3 +1,5 @@
+import ServerShared
+
 // Enum for different server types
 public enum ServerType {
     case stdio
@@ -8,4 +10,10 @@ public enum ServerType {
 
 // Macro declaration
 @attached(member, names: arbitrary)
-public macro Server(type: ServerType) = #externalMacro(module: "ServerMacroImplementation", type: "ServerMacro")
+public macro Server(
+    name: String,
+    version: String,
+    description: String? = nil,
+    tools: [any MCPToolProtocol],
+    type: ServerType
+) = #externalMacro(module: "ServerMacroImplementation", type: "ServerMacro")

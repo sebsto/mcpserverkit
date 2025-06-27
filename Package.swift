@@ -8,7 +8,6 @@ let package = Package(
         .macOS(.v15)
     ],
     products: [
-        .executable(name: "MCPExample", targets: ["MCPExample"]),
         .executable(name: "ToolMacroClient", targets: ["ToolMacroClient"]),
         .executable(name: "ServerMacroClient", targets: ["ServerMacroClient"]),
         .library(name: "MCPServerKit", targets: ["MCPServerKit", "ToolMacro"]),
@@ -20,14 +19,6 @@ let package = Package(
         // .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", branch: "main")
     ],
     targets: [
-        //TODO: should be moved to an Examples directory
-        .executableTarget(
-            name: "MCPExample",
-            dependencies: [
-                .target(name: "MCPServerKit")
-            ],
-            path: "Sources/Example"
-        ),
         .executableTarget(
             name: "ToolMacroClient",
             dependencies: [
@@ -39,6 +30,7 @@ let package = Package(
             name: "MCPServerKit",
             dependencies: [
                 .product(name: "MCP", package: "swift-sdk"),
+                "ServerShared",
                 "ToolMacro","ServerMacro"
             ],
             path: "Sources/MCPServerKit"
@@ -62,6 +54,15 @@ let package = Package(
             name: "ToolShared",
             dependencies: [],
             path: "Sources/Macro/ToolShared"
+        ),
+
+        // shared types and protocols for the server macro system
+        .target(
+            name: "ServerShared",
+            dependencies: [
+                .product(name: "MCP", package: "swift-sdk")
+            ],
+            path: "Sources/ServerShared"
         ),
 
         // a macro to generate JSON Schema based on DocC comments
@@ -117,6 +118,7 @@ let package = Package(
         .target(
             name: "ServerMacro",
             dependencies: [
+                "ServerShared",
                 "ServerMacroImplementation",
             ],
             path: "Sources/Macro/ServerMacro"
