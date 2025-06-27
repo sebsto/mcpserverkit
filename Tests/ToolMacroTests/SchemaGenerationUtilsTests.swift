@@ -60,4 +60,31 @@ struct SchemaGenerationUtilsTests {
         // Verify the result
         #expect(normalizedCleaned == normalizedExpected)
     }
+    
+    @Test("Non-optional fields appear in required section of schema")
+    func testNonOptionalFieldsInRequiredSection() async throws {
+        // Create a struct declaration directly using SwiftSyntaxBuilder
+        let structDecl = try StructDeclSyntax("struct TestStruct {}") {
+            DeclSyntax("var requiredField: String")
+            DeclSyntax("var optionalField: Int?")
+            DeclSyntax("var anotherRequired: Bool")
+        }
+        
+        // Generate schema JSON from the struct
+        let schemaJson = SchemaGenerationUtils.generateSchemaJson(from: structDecl)
+        
+        // Verify that required fields are in the required section
+        let requiredFieldsInCorrectOrder = schemaJson.contains("\"required\": [\"requiredField\", \"anotherRequired\"]")
+        let requiredFieldsInReverseOrder = schemaJson.contains("\"required\": [\"anotherRequired\", \"requiredField\"]")
+        
+        #expect(requiredFieldsInCorrectOrder || requiredFieldsInReverseOrder, 
+                "Non-optional fields should appear in the required section")
+        
+        // Verify that optional field is not in the required section
+        #expect(!schemaJson.contains("\"required\": [\"optionalField\"]"), 
+                "Optional fields should not appear in the required section")
+        
+        // Print the generated schema for debugging
+        // print("Generated schema: \(schemaJson)")
+    }
 }
