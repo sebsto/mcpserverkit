@@ -42,7 +42,7 @@ struct ReadmeExamplesTests {
             },
             body: { (input: String) async throws -> String in
                 // Process the input and return a result
-                return "Processed: \(input)"
+                "Processed: \(input)"
             }
         )
 
@@ -88,24 +88,24 @@ struct ReadmeExamplesTests {
             name: "tool1",
             description: "Tool 1",
             inputSchema: "{}",
-            converter: { _ in return "" },
-            body: { _ in return "" }
+            converter: { _ in "" },
+            body: { _ in "" }
         )
 
         let myTool2 = MCPTool<String, String>(
             name: "tool2",
             description: "Tool 2",
             inputSchema: "{}",
-            converter: { _ in return "" },
-            body: { _ in return "" }
+            converter: { _ in "" },
+            body: { _ in "" }
         )
 
         let myTool3 = MCPTool<String, String>(
             name: "tool3",
             description: "Tool 3",
             inputSchema: "{}",
-            converter: { _ in return "" },
-            body: { _ in return "" }
+            converter: { _ in "" },
+            body: { _ in "" }
         )
 
         // Create the server with tools
@@ -157,16 +157,16 @@ struct ReadmeExamplesTests {
             name: "weather",
             description: "Weather tool",
             inputSchema: "{}",
-            converter: { _ in return "" },
-            body: { _ in return "" }
+            converter: { _ in "" },
+            body: { _ in "" }
         )
 
         let calculatorTool = MCPTool<String, String>(
             name: "calculator",
             description: "Calculator tool",
             inputSchema: "{}",
-            converter: { _ in return "" },
-            body: { _ in return "" }
+            converter: { _ in "" },
+            body: { _ in "" }
         )
 
         // Create resources
@@ -203,8 +203,8 @@ struct ReadmeExamplesTests {
             name: "tool",
             description: "Tool",
             inputSchema: "{}",
-            converter: { _ in return "" },
-            body: { _ in return "" }
+            converter: { _ in "" },
+            body: { _ in "" }
         )
 
         // Create a server
@@ -259,7 +259,7 @@ struct ReadmeExamplesTests {
             },
             body: { city in
                 // Implementation would fetch weather data
-                return "Weather for \(city): Sunny, 72°F"
+                "Weather for \(city): Sunny, 72°F"
             }
         )
 

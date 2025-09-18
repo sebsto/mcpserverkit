@@ -53,7 +53,7 @@ struct MCPServerResourceTests {
                 try MCPTool<String, String>.extractParameter(params, name: "message")
             },
             body: { input in
-                return input
+                input
             }
         )
 

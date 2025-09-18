@@ -65,7 +65,7 @@ struct MCPToolProtocolTests {
                 }
                 """,
             mockHandler: { input in
-                return TestOutput(response: "Echo: \(input.message)")
+                TestOutput(response: "Echo: \(input.message)")
             },
             mockConverter: { params in
                 guard let value = params.arguments?["message"],

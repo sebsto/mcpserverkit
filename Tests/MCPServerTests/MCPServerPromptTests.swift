@@ -81,7 +81,7 @@ final class MCPServerPromptTests {
                 try MCPTool<String, String>.extractParameter(params, name: "message")
             },
             body: { message in
-                return message
+                message
             }
         )
 

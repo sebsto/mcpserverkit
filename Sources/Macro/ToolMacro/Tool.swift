@@ -1,4 +1,4 @@
-/// A macro that generates MCP tool properties with JSON schema for input validation.
+/// A macro that generates Bedrock or MCP tool properties with JSON schema for input validation.
 ///
 /// This macro supports two modes of schema generation:
 /// 1. **Schema Type Mode**: When a `schema` parameter is provided with a Schema-conformant type,

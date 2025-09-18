@@ -1,21 +1,23 @@
 import MCPServerKit
-import ToolMacro
 import ServerMacro
+import ToolMacro
 
 // create a tool
 @Tool(name: "Hello", description: "Say hello")
 struct SayHello: MCPToolProtocol {
     /// Say Hello
     /// - Parameter input: the name of the person to say hello to
-    func handler(input: String) async throws -> String { return "Hello \(input)" }
+    func handler(input: String) async throws -> String { "Hello \(input)" }
 }
 
 // Create a server
-@Server(name: "Say Hello Server",
-        version: "1.0.0",
-        description: "A simple server that says hello",
-        tools: [SayHello()],
-        type: .stdio)
+@Server(
+    name: "Say Hello Server",
+    version: "1.0.0",
+    description: "A simple server that says hello",
+    tools: [SayHello()],
+    type: .stdio
+)
 @main
 struct MyServer {}
 
@@ -29,4 +31,3 @@ struct MyServer {}
 //     )
 //     try await server.startStdioServer()
 // }
-

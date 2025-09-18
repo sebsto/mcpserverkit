@@ -45,7 +45,7 @@ struct MCPServerTests {
                 return MockInput(value: str)
             },
             body: { input in
-                return MockOutput(result: "Processed: \(input.value)")
+                MockOutput(result: "Processed: \(input.value)")
             }
         )
 
@@ -70,7 +70,7 @@ struct MCPServerTests {
                 return MockInput(value: str)
             },
             body: { input in
-                return MockOutput(result: "Processed: \(input.value)")
+                MockOutput(result: "Processed: \(input.value)")
             }
         )
 
@@ -96,7 +96,7 @@ struct MCPServerTests {
                 return MockInput(value: str)
             },
             body: { input in
-                return MockOutput(result: "Processed: \(input.value)")
+                MockOutput(result: "Processed: \(input.value)")
             }
         )
 

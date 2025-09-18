@@ -44,7 +44,7 @@ struct MCPToolTests {
                 return TestInput(query: query)
             },
             body: { input in
-                return TestOutput(answer: "Response to: \(input.query)")
+                TestOutput(answer: "Response to: \(input.query)")
             }
         )
 
@@ -68,7 +68,7 @@ struct MCPToolTests {
                 return TestInput(query: query)
             },
             body: { input in
-                return TestOutput(answer: "Response to: \(input.query)")
+                TestOutput(answer: "Response to: \(input.query)")
             }
         )
 

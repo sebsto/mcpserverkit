@@ -63,7 +63,7 @@ struct MCPServerHeterogeneousTests {
                 return StringMockInput(value: str)
             },
             body: { input in
-                return StringMockOutput(result: "Processed: \(input.value)")
+                StringMockOutput(result: "Processed: \(input.value)")
             }
         )
 
@@ -91,7 +91,7 @@ struct MCPServerHeterogeneousTests {
                 }
             },
             body: { input in
-                return IntMockOutput(doubled: input.number * 2)
+                IntMockOutput(doubled: input.number * 2)
             }
         )
 
@@ -133,7 +133,7 @@ struct MCPServerHeterogeneousTests {
                 return StringMockInput(value: str)
             },
             body: { input in
-                return StringMockOutput(result: "Processed: \(input.value)")
+                StringMockOutput(result: "Processed: \(input.value)")
             }
         )
 
@@ -161,7 +161,7 @@ struct MCPServerHeterogeneousTests {
                 }
             },
             body: { input in
-                return IntMockOutput(doubled: input.number * 2)
+                IntMockOutput(doubled: input.number * 2)
             }
         )
 

@@ -41,7 +41,7 @@ struct MCPServerIntegrationTests {
                 return SimpleInput(text: text)
             },
             body: { input in
-                return SimpleOutput(result: "Processed: \(input.text)")
+                SimpleOutput(result: "Processed: \(input.text)")
             }
         )
 
