@@ -1,4 +1,4 @@
-import BedrockService
+@_exported import BedrockService
 import Foundation
 import Logging
 
@@ -21,7 +21,7 @@ public struct Agent {
         systemPrompt: String = "",
         model: BedrockModel = .claude_sonnet_v4,
         auth: AuthenticationMethod = .default,
-        region: String = "us-east-1",
+        region: Region = .useast1,
         logger: Logger? = nil
     )
         async throws
@@ -59,7 +59,7 @@ public struct Agent {
         }
 
         self.bedrock = try await BedrockService(
-            region: Region(rawValue: region),
+            region: region,
             // logger: logger,
             authentication: bedrockAuth
         )
