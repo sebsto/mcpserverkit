@@ -71,6 +71,42 @@
             "name": "Release ToolMacroClient",
             "program": "${workspaceFolder:mcpserverkit}/.build/release/ToolMacroClient",
             "preLaunchTask": "swift: Build Release ToolMacroClient"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:mcpserverkit}",
+            "name": "Debug ServerMacroClient",
+            "program": "${workspaceFolder:mcpserverkit}/.build/debug/ServerMacroClient",
+            "preLaunchTask": "swift: Build Debug ServerMacroClient"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:mcpserverkit}",
+            "name": "Release ServerMacroClient",
+            "program": "${workspaceFolder:mcpserverkit}/.build/release/ServerMacroClient",
+            "preLaunchTask": "swift: Build Release ServerMacroClient"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:mcpserverkit}",
+            "name": "Debug AgentClient",
+            "program": "${workspaceFolder:mcpserverkit}/.build/debug/AgentClient",
+            "preLaunchTask": "swift: Build Debug AgentClient"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:mcpserverkit}",
+            "name": "Release AgentClient",
+            "program": "${workspaceFolder:mcpserverkit}/.build/release/AgentClient",
+            "preLaunchTask": "swift: Build Release AgentClient"
         }
     ]
 }
