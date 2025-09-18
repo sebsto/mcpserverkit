@@ -1,5 +1,5 @@
+// swift-tools-version:6.2
 import CompilerPluginSupport
-// swift-tools-version:6.1
 import PackageDescription
 
 let package = Package(
@@ -12,13 +12,36 @@ let package = Package(
         .executable(name: "ServerMacroClient", targets: ["ServerMacroClient"]),
         .library(name: "MCPServerKit", targets: ["MCPServerKit", "ToolMacro"]),
         .library(name: "MCPClientKit", targets: ["MCPClientKit"]),
+        .library(name: "AgentKit", targets: ["AgentKit"]),
+        .executable(name: "AgentClient", targets: ["AgentClient"]),
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-syntax", from: "600.0.1"),
-        .package(path: "../swift-sdk"),
-        // .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", branch: "main")
+        .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", branch: "main"),
+        .package(path: "../swift-bedrock-library"),
     ],
     targets: [
+        .target(
+            name: "AgentKit",
+            dependencies: [
+                .product(name: "BedrockService", package: "swift-bedrock-library")
+            ],
+            path: "Sources/AgentKit/Lib"
+        ),
+        .executableTarget(
+            name: "AgentClient",
+            dependencies: [
+                "AgentKit"
+            ],
+            path: "Sources/AgentKit/Client"
+        ),
+        .executableTarget(
+            name: "ServerMacroClient",
+            dependencies: [
+                .target(name: "MCPServerKit")
+            ],
+            path: "Sources/Macro/ServerMacroClient"
+        ),
         .executableTarget(
             name: "ToolMacroClient",
             dependencies: [
@@ -31,7 +54,7 @@ let package = Package(
             dependencies: [
                 .product(name: "MCP", package: "swift-sdk"),
                 "ServerShared",
-                "ToolMacro","ServerMacro"
+                "ToolMacro", "ServerMacro",
             ],
             path: "Sources/MCPServerKit"
         ),
@@ -112,7 +135,7 @@ let package = Package(
                 .product(name: "SwiftDiagnostics", package: "swift-syntax"),
             ],
             path: "Sources/Macro/ServerMacroImplementation"
-        ),        
+        ),
         // a library that exposes the macro to users
         // TODO : should we make this a trait (enable by default and user can opt-out) ?
         .target(
@@ -122,13 +145,6 @@ let package = Package(
                 "ServerMacroImplementation",
             ],
             path: "Sources/Macro/ServerMacro"
-        ),
-        .executableTarget(
-            name: "ServerMacroClient",
-            dependencies: [
-                .target(name: "MCPServerKit")
-            ],
-            path: "Sources/Macro/ServerMacroClient"
         ),
     ]
 )
