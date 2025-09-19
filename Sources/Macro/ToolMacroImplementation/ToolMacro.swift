@@ -303,9 +303,24 @@ public struct ToolMacro: MemberMacro {
             // }
         }
 
-        // If it's a built-in type, treat it as a primitive type
-        let typeSchema = SchemaGenerationUtils.generateTypeSchema(param.type)
+        // For built-in types, wrap them in an object schema for Bedrock compatibility
+        if isBuiltInType(cleanType) {
+            let typeSchema = SchemaGenerationUtils.generateTypeSchema(param.type)
+            let propertyName = param.name
+            
+            var propertySchema: String
+            if let description = param.description {
+                propertySchema = "\"\(propertyName)\": { \"type\": \"\(typeSchema)\", \"description\": \"\(description)\" }"
+            } else {
+                propertySchema = "\"\(propertyName)\": { \"type\": \"\(typeSchema)\" }"
+            }
+            
+            let required = param.isOptional ? "" : ", \"required\": [\"\(propertyName)\"]"
+            return "{ \"type\": \"object\", \"properties\": { \(propertySchema) }\(required) }"
+        }
 
+        // Fallback for non-built-in types (shouldn't reach here normally)
+        let typeSchema = SchemaGenerationUtils.generateTypeSchema(param.type)
         if let description = param.description {
             return "{ \"type\": \"\(typeSchema)\", \"description\": \"\(description)\" }"
         } else {
