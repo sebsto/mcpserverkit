@@ -1,25 +1,51 @@
 @_exported import BedrockService
 import Foundation
 import Logging
+@_exported import MCPServerKit
+@_exported import ToolMacro
 
-public struct Agent {
+/// A high-level AI agent that provides conversational capabilities using Amazon Bedrock.
+/// 
+/// The Agent struct simplifies interaction with Bedrock models by providing a callable interface
+/// and handling authentication, model configuration, and conversation flow.
+public struct Agent: Sendable {
 
+    /// The Bedrock model used for generating responses.
     public let model: BedrockModel
+    /// The system prompt that defines the agent's behavior and context.
     public let systemPrompt: String
+		/// the list of tools this agent can use to answer questions
+		public let tools: [any ToolProtocol]
 
     private let bedrock: BedrockService
     internal let logger: Logger
 
+    /// Authentication methods supported by the agent.
     public enum AuthenticationMethod {
+        /// Use temporary credentials from a file path.
         case tempCredentials(String)
+        /// Use a named AWS profile.
         case profile(String)
+        /// Use AWS SSO with optional profile name.
         case sso(String?)
+        /// Use default AWS credential chain.
         case `default`
     }
 
+    /// Creates a new Agent instance with the specified configuration.
+    /// 
+    /// - Parameters:
+    ///   - systemPrompt: The system prompt to guide the agent's behavior. Defaults to empty string.
+    ///   - model: The Bedrock model to use. Defaults to Claude Sonnet v4.
+		///   - tools: The tools this agent can use to answer questions
+    ///   - auth: The authentication method. Defaults to default credential chain.
+    ///   - region: The AWS region to use. Defaults to us-east-1.
+    ///   - logger: Optional custom logger. If nil, creates a default logger.
+    /// - Throws: An error if authentication fails or the Bedrock service cannot be initialized.
     public init(
         systemPrompt: String = "",
         model: BedrockModel = .claude_sonnet_v4,
+				tools: [any ToolProtocol] = [],
         auth: AuthenticationMethod = .default,
         region: Region = .useast1,
         logger: Logger? = nil
@@ -29,6 +55,7 @@ public struct Agent {
 
         self.systemPrompt = systemPrompt
         self.model = model
+				self.tools = tools
 
         var logger = logger ?? Logger(label: "AgentKit")
         logger.logLevel =
@@ -60,7 +87,7 @@ public struct Agent {
 
         self.bedrock = try await BedrockService(
             region: region,
-            // logger: logger,
+            logger: logger,
             authentication: bedrockAuth
         )
 
@@ -79,14 +106,27 @@ public struct Agent {
 
     }
 
-    // Enable callable syntax: agent("Hello!")
-    public func callAsFunction(_ message: String) async throws {
+    /// Sends a message to the agent and processes the response.
+    /// 
+    /// This method enables callable syntax, allowing you to use the agent like a function:
+    /// ```swift
+    /// let agent = try await Agent()
+    /// try await agent("Hello, how are you?")
+    /// ```
+    /// 
+    /// - Parameters:
+    ///   - message: The message to send to the agent.
+    ///   - callback: Optional callback function to handle events during processing.
+    /// - Throws: An error if the conversation fails or the model is not supported.
+    public func callAsFunction(_ message: String, callback: AgentCallbackFunction? = nil) async throws {
         try await self.runLoop(
             initialPrompt: message,
             systemPrompt: self.systemPrompt,
             bedrock: self.bedrock,
             model: self.model,
-            logger: self.logger
+						tools: self.tools,
+            logger: self.logger,
+            callback: callback
         )
     }
 

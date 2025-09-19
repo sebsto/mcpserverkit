@@ -8,8 +8,9 @@ extension Agent {
         systemPrompt: String,
         bedrock: BedrockService,
         model: BedrockModel,
-        // tools: [MCPClient],
-        logger: Logger
+        tools: [any ToolProtocol],
+        logger: Logger,
+        callback: AgentCallbackFunction? = nil
     ) async throws {
 
         // verify that the model supports tool usage
@@ -21,15 +22,16 @@ extension Agent {
         // variables we're going to reuse for the duration of the conversation
         var messages: History = []
         var requestBuilder: ConverseRequestBuilder? = nil
-        // convert MCP Tools to Bedrock Tools
-        // let bedrockTools = try await tools.bedrockTools()
+        
+        // convert Tools to Bedrock Tools
+        let bedrockTools = try tools.bedrockTools()
 
         // is it our first request ?
         if requestBuilder == nil {
             requestBuilder = try ConverseRequestBuilder(with: model)
                 .withHistory(messages)
                 .withPrompt(initialPrompt)
-            // .withTools(bedrockTools)
+                .withTools(bedrockTools)
             if !systemPrompt.isEmpty {
                 requestBuilder = try requestBuilder!.withSystemPrompt(systemPrompt)
             }
@@ -37,7 +39,6 @@ extension Agent {
             // if not, we can just add the prompt to the existing request builder
             requestBuilder = try ConverseRequestBuilder(from: requestBuilder!)
                 .withHistory(messages)
-            // .withPrompt(prompt)
         }
 
         // add the prompt to the history
@@ -49,6 +50,11 @@ extension Agent {
         var lastMessageIsText = false
         repeat {
             logger.debug("Calling ConverseStream")
+            print("-----------")
+            bedrockTools.forEach { t in 
+                print(t.inputSchema)
+            }
+            print("-----------")
             let reply = try await bedrock.converseStream(with: requestBuilder!)
             for try await element: ConverseStreamElement in reply.stream {
 
@@ -56,14 +62,28 @@ extension Agent {
                 // otherwise, collect the message.
                 switch element {
                 case .text(_, let text):
-                    print(text, terminator: "")
+                    if let callback {
+                        callback(.text(text))
+                    } else {
+                        print(text, terminator: "")
+                    }
                 case .toolUse(_, let toolUse):
                     logger.trace("Tool Use", metadata: ["toolUse": "\(toolUse.name)"])
+                    if let callback {
+                        callback(.toolUse(toolUse))
+                    }
                 case .messageComplete(let message):
                     messages.append(message)
-                    print("\n")
+                    if let callback {
+                        callback(.message(message))
+                    } else {
+                        print("\n")
+                    }
                 case .metaData(let metadata):
                     logger.trace("Metadata", metadata: ["metadata": "\(metadata)"])
+                    if let callback {
+                        callback(.metaData(metadata))
+                    }
                 default:
                     break
                 }
@@ -112,5 +132,9 @@ extension Agent {
                 }
             }
         } while lastMessageIsText == false
+
+        if let callback {
+            callback(.end)
+        }
     }
 }

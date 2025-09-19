@@ -6,16 +6,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public protocol MCPToolProtocol<Input, Output>: Sendable {
-    associatedtype Input
-    associatedtype Output
-
-    var name: String { get }
-    var description: String { get }
-    var inputSchema: String { get }
-
-    // a generic handler
-    func handler(input: Input) async throws -> Output
+public protocol MCPToolProtocol<Input, Output>: ToolProtocol {
 
     // convert the input from the CallTool.Parameters to the expected type
     func convert(_ input: CallTool.Parameters) async throws -> Input

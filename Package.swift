@@ -24,7 +24,8 @@ let package = Package(
         .target(
             name: "AgentKit",
             dependencies: [
-                .product(name: "BedrockService", package: "swift-bedrock-library")
+                .product(name: "BedrockService", package: "swift-bedrock-library"),
+                "ToolMacro", "MCPServerKit", "MCPClientKit",
             ],
             path: "Sources/AgentKit/Lib"
         ),
