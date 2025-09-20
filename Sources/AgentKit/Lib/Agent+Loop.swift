@@ -50,11 +50,6 @@ extension Agent {
         var lastMessageIsText = false
         repeat {
             logger.debug("Calling ConverseStream")
-            print("-----------")
-            bedrockTools.forEach { t in 
-                print(t.inputSchema)
-            }
-            print("-----------")
             let reply = try await bedrock.converseStream(with: requestBuilder!)
             for try await element: ConverseStreamElement in reply.stream {
 
@@ -96,10 +91,12 @@ extension Agent {
                 let toolUse = msg.getToolUse()
             {
 
-                fatalError("not implemented yet")
-                // logger.trace("Last message", metadata: ["message": "\(msg)"])
-                // logger.debug("Yes, let's use a tool", metadata: ["toolUse": "\(toolUse.name)"])
+                logger.trace("Last message", metadata: ["message": "\(msg)"])
+                logger.debug("Yes, let's use a tool", metadata: ["toolUse": "\(toolUse.name)"])
 
+                let tool = bedrockTools.
+                print(toolUse)
+                break
                 // requestBuilder = try await resolveToolUse(
                 //     bedrock: bedrock,
                 //     requestBuilder: requestBuilder!,
