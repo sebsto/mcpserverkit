@@ -93,26 +93,24 @@ extension Agent {
 
                 logger.trace("Last message", metadata: ["message": "\(msg)"])
                 logger.debug("Yes, let's use a tool", metadata: ["toolUse": "\(toolUse.name)"])
+                
+                // find the tool and call it 
+                requestBuilder = try await resolveToolUse(
+                    bedrock: bedrock,
+                    requestBuilder: requestBuilder!,
+                    tools: tools,
+                    toolUse: toolUse,
+                    messages: &messages,
+                    logger: logger
+                )
 
-                let tool = bedrockTools.
-                print(toolUse)
-                break
-                // requestBuilder = try await resolveToolUse(
-                //     bedrock: bedrock,
-                //     requestBuilder: requestBuilder!,
-                //     tools: tools,
-                //     toolUse: toolUse,
-                //     messages: &messages,
-                //     logger: logger
-                // )
-
-                // // add the tool result to the history
-                // if let toolResult = requestBuilder?.toolResult {
-                //     logger.debug("Tool Result", metadata: ["result": "\(toolResult)"])
-                //     messages.append(.init(toolResult))
-                // } else {
-                //     logger.warning("No tool result found, this is unexpected")
-                // }
+                // add the tool result to the history
+                if let toolResult = requestBuilder?.toolResult {
+                    logger.debug("Tool Result", metadata: ["result": "\(toolResult)"])
+                    messages.append(.init(toolResult))
+                } else {
+                    logger.warning("No tool result found, this is unexpected")
+                }
 
             } else {
                 logger.debug("No, checking if the last message is text")

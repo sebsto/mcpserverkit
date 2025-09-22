@@ -45,7 +45,7 @@ public struct Agent: Sendable {
     public init(
         systemPrompt: String = "",
         model: BedrockModel = .claude_sonnet_v4,
-				tools: [any ToolProtocol] = [],
+		tools: [any ToolProtocol] = [],
         auth: AuthenticationMethod = .default,
         region: Region = .useast1,
         logger: Logger? = nil
