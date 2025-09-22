@@ -1,6 +1,4 @@
 import MCPServerKit
-import ToolMacro
-import ServerMacro
 
 #if canImport(FoundationEssentials)
 import FoundationEssentials
@@ -30,41 +28,49 @@ import Foundation
 //
 // EXAMPLE WITH MACROS
 //
-@Server(
-    name: "MultiToolServer",
-    version: "1.0.0",
-    description: "A server that provides multiple tools",
-    tools: [
-        myWeatherTool,  // String input, String output
-        calculatorTool,  // CalculatorInput input, Double output
-        FXRateTool(),  // FXRatesInput input, String output
-    ],
-    prompts: [myWeatherPrompt, fxRatesPrompt],
-    type: .stdio)
-@main
-struct MultiToolServer {}
+// @Server(
+//     name: "MultiToolServer",
+//     version: "1.0.0",
+//     description: "A server that provides multiple tools",
+//     tools: [
+//         myWeatherTool,  // String input, String output
+//         calculatorTool,  // CalculatorInput input, Double output
+//         FXRateTool(),  // FXRatesInput input, String output
+//     ],
+//     prompts: [myWeatherPrompt, fxRatesPrompt],
+//     type: .stdio)
+// @main
+// struct MultiToolServer {}
 
 //
 // EXAMPLE CALLING A TOOL WITHOUT SERVER (just for debugging)
 //
 
-// let fxr = FXRateTool()
-// print("FXRatesTool loaded")
-// print(fxr.name)
-// print(fxr.description)
-// print(fxr.inputSchema)
+@main 
+struct Test {
+    static func main() async throws {
+        let fxr = FXRateTool()
+        print("FXRatesTool loaded")
+        print(fxr.name)
+        print(fxr.description)
+        print(fxr.inputSchema)
 
-// let input = FXRatesInput(
-//     sourceCurrency: "USD",
-//     targetCurrency: "EUR",
-// )
-// let result = try await fxr.handler(input: input)
-// print(result)
+        let input = FXRatesInput(
+            sourceCurrency: "USD",
+            targetCurrency: "EUR",
+        )
+        let result = try await fxr.handle(input: input)
+        print(result)
 
-// print("----------")
-// print("WetherTool loaded")
-// print(myWeatherTool.name)
-// print(myWeatherTool.description)
-// print(myWeatherTool.inputSchema)
-// let weather = try await myWeatherTool.handler(input: "Brussels")
-// print(weather.prefix(100))
+
+        print("----------")
+        let wt = WeatherTool()
+        print("WetherTool loaded")
+        print(wt.name)
+        print(wt.description)
+        print(wt.inputSchema)
+        let weather = try await wt.handle(input: "Brussels")
+        print(weather.prefix(100))
+
+    }
+}

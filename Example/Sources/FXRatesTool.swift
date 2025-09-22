@@ -1,6 +1,4 @@
-import MCP
 import MCPServerKit
-import ToolMacro
 
 #if canImport(FoundationEssentials)
 import FoundationEssentials
@@ -38,7 +36,7 @@ struct FXRateTool: MCPToolProtocol {
     typealias Output = String
 
     // Fetches foreign exchange rates from the Hexarate API.
-    func handler(input: FXRatesInput) async throws -> String {
+    func handle(input: FXRatesInput) async throws -> String {
         // Construct the API URL using the Hexarate API
         let fxURL =
             "https://hexarate.paikama.co/api/rates/latest/\(input.sourceCurrency)?target=\(input.targetCurrency)"

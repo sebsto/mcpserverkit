@@ -1,4 +1,3 @@
-import MCP
 import MCPServerKit
 
 #if canImport(FoundationEssentials)
@@ -9,46 +8,26 @@ import Foundation
 
 /// This tool performs basic arithmetic operations.
 
-// Define the calculator tool schema
-let calculatorSchema = """
-    {
-        "type": "object",
-        "properties": {
-          "a": {
-            "description": "First number",
-            "type": "number"
-          },
-          "b": {
-            "description": "Second number",
-            "type": "number"
-          },
-          "operation": {
-            "description": "Operation to perform (add, subtract, multiply, divide)",
-            "type": "string",
-            "enum": ["add", "subtract", "multiply", "divide"]
-          }
-        },
-        "required": [
-          "a",
-          "b",
-          "operation"
-        ]
-    }
-    """
 
 // Define a struct for calculator input
+@SchemaDefinition
 struct CalculatorInput: Codable {
+    /// the first operand of the operation
     let a: Double
+    /// the second operand of the operation 
     let b: Double
+    /// the arithmetic operation, expressed as a string : "add", "substract", "multiply", "divide"
     let operation: String
 }
 
 // Create the calculator tool
-let calculatorTool = MCPTool<CalculatorInput, Double>(
+@Tool(
     name: "calculator",
     description: "Performs basic arithmetic operations (add, subtract, multiply, divide)",
-    inputSchema: calculatorSchema,
-    body: { (input: CalculatorInput) async throws -> Double in
+    schema: CalculatorInput.self
+)
+struct CalculatorTool: MCPToolProtocol {
+    func handle (input: CalculatorInput) async throws -> Double {
         // Perform the calculation based on the operation
         switch input.operation {
         case "add":
@@ -66,4 +45,4 @@ let calculatorTool = MCPTool<CalculatorInput, Double>(
             throw MCPServerError.invalidParam("operation", "Unknown operation: \(input.operation)")
         }
     }
-)
+}
