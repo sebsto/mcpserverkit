@@ -32,20 +32,16 @@ extension Agent {
             throw AgentError.toolNotFound(toolUse.name)
         }
 
-        // find its arguments 
-        guard let args = toolUse.input["input"] else {
-            throw AgentError.toolInputNotFound(toolUse.input)
-        }
 
         logger.trace(
             "Tool found, going to call it",
-            metadata: ["name": "\(toolUse.name)", "input": "\(args)"]
+            metadata: ["name": "\(toolUse.name)", "input": "\(toolUse.input)"]
         )
 
         // invoke the tool
         let textResult = try await callTool(
             tool: tool,
-            arguments: args,
+            arguments: toolUse.input,
             logger: logger
         )
         logger.trace("Tool Result", metadata: ["result": "\(textResult)"])
@@ -79,7 +75,6 @@ extension Agent {
             // call the tool with the provided arguments
             result = try await tool.handle(jsonInput: arguments)
             
-
             logger.trace(
                 "Tool result",
                 metadata: ["result": "\(String(describing:result))"]
