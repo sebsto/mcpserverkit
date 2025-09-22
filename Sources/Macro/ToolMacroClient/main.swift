@@ -12,7 +12,7 @@ struct WeatherTool: MCPToolProtocol {
 
     /// Get weather information for a specific city
     /// - Parameter input: The city name to get the weather for
-    func handler(input city: String) async throws -> String {
+    func handle(input city: String) async throws -> String {
         "Weather for \(city): Sunny, 25°C"
     }
 
@@ -22,7 +22,7 @@ struct WeatherTool: MCPToolProtocol {
 
     func handle(jsonInput: CallTool.Parameters) async throws -> Encodable {
         let input = try await convert(jsonInput)
-        return try await handler(input: input)
+        return try await handle(input: input)
     }
 }
 
@@ -44,7 +44,7 @@ struct CalculatorTool: MCPToolProtocol {
 
     /// Perform arithmetic operations on two numbers
     /// - Parameter input: The calculation input with a CalculatorInput object containing two numbers and an operation
-    func handler(input: CalculatorInput) async throws -> Double {
+    func handle(input: CalculatorInput) async throws -> Double {
         switch input.operation {
         case "add":
             return input.a + input.b
@@ -69,7 +69,7 @@ struct CalculatorTool: MCPToolProtocol {
 
     func handle(jsonInput: CallTool.Parameters) async throws -> Encodable {
         let convertedInput = try await convert(jsonInput)
-        return try await handler(input: convertedInput)
+        return try await handle(input: convertedInput)
     }
 }
 
@@ -84,7 +84,7 @@ struct ExistingPropertiesTool: MCPToolProtocol {
 
     /// Process text input with custom transformation
     /// - Parameter input: The text to process and transform
-    func handler(input text: String) async throws -> String {
+    func handle(input text: String) async throws -> String {
         "Processed: \(text.uppercased())"
     }
 
@@ -94,7 +94,7 @@ struct ExistingPropertiesTool: MCPToolProtocol {
 
     func handle(jsonInput: CallTool.Parameters) async throws -> Encodable {
         let convertedInput = try await convert(jsonInput)
-        return try await handler(input: convertedInput)
+        return try await handle(input: convertedInput)
     }
 }
 
@@ -119,7 +119,7 @@ struct ExternalCalculatorTool: MCPToolProtocol {
 
     /// Perform arithmetic operations
     /// - Parameter input: The calculation input
-    func handler(input: ExternalCalculatorInput) async throws -> Double {
+    func handle(input: ExternalCalculatorInput) async throws -> Double {
         switch input.operation {
         case "add":
             return input.a + input.b
@@ -144,7 +144,7 @@ struct ExternalCalculatorTool: MCPToolProtocol {
 
     func handle(jsonInput: CallTool.Parameters) async throws -> Encodable {
         let convertedInput = try await convert(jsonInput)
-        return try await handler(input: convertedInput)
+        return try await handle(input: convertedInput)
     }
 }
 

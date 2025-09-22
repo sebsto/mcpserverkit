@@ -1,12 +1,12 @@
 public protocol ToolProtocol<Input, Output>: Sendable {
-    associatedtype Input
-    associatedtype Output
+    associatedtype Input: Decodable
+    associatedtype Output: Encodable
 
     var name: String { get }
     var description: String { get }
     var inputSchema: String { get }
 
     // a generic handler
-    func handler(input: Input) async throws -> Output
+    func handle(input: Input) async throws -> Output
 }
 

@@ -24,6 +24,6 @@ extension MCPToolProtocol where Input: Decodable, Output: Encodable {
 
     public func handle(jsonInput: CallTool.Parameters) async throws -> Encodable {
         let convertedInput = try await convert(jsonInput)
-        return try await handler(input: convertedInput)
+        return try await handle(input: convertedInput)
     }
 }

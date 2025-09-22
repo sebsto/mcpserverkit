@@ -7,7 +7,7 @@ import ToolMacro
 struct SayHello: MCPToolProtocol {
     /// Say Hello
     /// - Parameter input: the name of the person to say hello to
-    func handler(input: String) async throws -> String { "Hello \(input)" }
+    func handle(input: String) async throws -> String { "Hello \(input)" }
 }
 
 // Create a server

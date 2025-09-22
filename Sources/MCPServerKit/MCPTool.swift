@@ -40,7 +40,7 @@ public struct MCPTool<Input: Decodable, Output: Encodable>: MCPToolProtocol {
         self.body = body
     }
 
-    public func handler(input: Input) async throws -> Output {
+    public func handle(input: Input) async throws -> Output {
         try await self.body(input)
     }
 

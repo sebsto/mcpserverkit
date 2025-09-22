@@ -373,7 +373,7 @@ public struct ToolMacro: MemberMacro {
     ) throws -> (FunctionDeclSyntax, String) {
         for member in structDecl.memberBlock.members {
             if let functionDecl = member.decl.as(FunctionDeclSyntax.self),
-                functionDecl.name.text == "handler"
+                functionDecl.name.text == "handle"
             {
 
                 let docComment = extractDocComment(from: functionDecl)
