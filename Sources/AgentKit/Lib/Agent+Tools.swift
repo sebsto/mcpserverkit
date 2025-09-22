@@ -31,28 +31,22 @@ extension Agent {
         guard let tool = tools.tool(named: toolUse.name) else {
             throw AgentError.toolNotFound(toolUse.name)
         }
-
-
         logger.trace(
             "Tool found, going to call it",
             metadata: ["name": "\(toolUse.name)", "input": "\(toolUse.input)"]
         )
 
         // invoke the tool
-        let textResult = try await callTool(
-            tool: tool,
-            arguments: toolUse.input,
-            logger: logger
-        )
-        logger.trace("Tool Result", metadata: ["result": "\(textResult)"])
+        let result = try await tool.handle(jsonInput: toolUse.input)
+        logger.trace("Tool Result", metadata: ["result": "\(result)"])
 
         // pass the result back to the model
         // when the result is a simple string, we must pass it as a String object 
         // (because the ToolResultBlock's content is an enum that makes the distinction between string and json)
-        if let string = isString(textResult) {
+        if let string = isString(result) {
             return try ConverseRequestBuilder(from: requestBuilder, with: message).withToolResult(string)
         } else {
-            return try ConverseRequestBuilder(from: requestBuilder, with: message).withToolResult(textResult)
+            return try ConverseRequestBuilder(from: requestBuilder, with: message).withToolResult(result)
         }
     }
 
@@ -62,31 +56,6 @@ extension Agent {
         }
         return string
     }
-
-    private func callTool<Tool: ToolProtocol>(
-        tool: Tool,
-        arguments: JSON,
-        logger: Logger
-    ) async throws -> Tool.Output  where Tool.Input: Decodable, Tool.Output: Encodable{
-
-        let result: Tool.Output!
-        do {
-
-            // call the tool with the provided arguments
-            result = try await tool.handle(jsonInput: arguments)
-            
-            logger.trace(
-                "Tool result",
-                metadata: ["result": "\(String(describing:result))"]
-            )
-
-        } catch {
-            logger.error("Tool threw an error: \(error)")
-            throw error
-        }
-
-        return result
-    }    
 }
 
 extension ToolProtocol {
