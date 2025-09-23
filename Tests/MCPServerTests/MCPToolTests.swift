@@ -113,13 +113,13 @@ struct MCPToolTests {
 
         // Test with valid input
         let validInput = TestInput(query: "valid query")
-        let output = try await tool.handler(input: validInput)
+        let output = try await tool.handle(input: validInput)
         #expect(output.answer == "Valid query: valid query")
 
         // Test with invalid input that should throw
         let invalidInput = TestInput(query: "")
         do {
-            _ = try await tool.handler(input: invalidInput)
+            _ = try await tool.handle(input: invalidInput)
             #expect(Bool(false), "Expected error was not thrown")
         } catch let error as TestError {
             #expect(error == .invalidQuery)

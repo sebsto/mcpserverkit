@@ -14,7 +14,7 @@ public macro Server(
     name: String,
     version: String,
     description: String? = nil,
-    tools: [any MCPToolProtocol],
+    tools: [any ToolProtocol],
     prompts: [Any] = [],
     type: ServerType
 ) = #externalMacro(module: "ServerMacroImplementation", type: "ServerMacro")

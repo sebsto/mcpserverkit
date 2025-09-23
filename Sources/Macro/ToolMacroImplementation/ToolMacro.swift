@@ -15,9 +15,9 @@ enum ToolError: Error, CustomStringConvertible {
     var description: String {
         switch self {
         case .unsupportedDeclaration:
-            return "Tool macro can only be applied to structs that implement MCPToolProtocol"
+            return "Tool macro can only be applied to structs that implement ToolProtocol"
         case .missingInputType:
-            return "Could not determine Input type from MCPToolProtocol conformance"
+            return "Could not determine Input type from ToolProtocol conformance"
         case .missingHandlerFunction:
             return "Could not find handler function in the struct"
         case .missingDocComment:

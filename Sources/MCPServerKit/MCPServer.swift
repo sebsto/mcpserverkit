@@ -10,14 +10,14 @@ import Foundation
 public struct MCPServer: Sendable {
     let name: String
     let version: String
-    let tools: [any MCPToolProtocol]?
+    let tools: [any ToolProtocol]?
     let prompts: [MCPPrompt]?
     let resources: MCPResourceRegistry?
 
     public init(
         name: String,
         version: String,
-        tools: [any MCPToolProtocol]?,
+        tools: [any ToolProtocol]?,
         prompts: [MCPPrompt]? = nil,
         resources: MCPResourceRegistry? = nil
     ) {
@@ -32,7 +32,7 @@ public struct MCPServer: Sendable {
     public static func create(
         name: String,
         version: String,
-        tools: [any MCPToolProtocol]?,
+        tools: [any ToolProtocol]?,
         prompts: [MCPPrompt]? = nil,
         resources: MCPResourceRegistry? = nil
     ) -> MCPServer {
@@ -49,7 +49,7 @@ public struct MCPServer: Sendable {
     public static func create(
         name: String,
         version: String,
-        tools: any MCPToolProtocol...
+        tools: any ToolProtocol...
     ) -> MCPServer {
         create(name: name, version: version, tools: tools)
     }
@@ -99,7 +99,7 @@ public struct MCPServer: Sendable {
         await server.waitUntilCompleted()
     }
 
-    private func registerTools(_ server: Server, tools: [any MCPToolProtocol]) async {
+    private func registerTools(_ server: Server, tools: [any ToolProtocol]) async {
         // register the tools, part 1 : tools/list
         await server.withMethodHandler(ListTools.self) { params in
             let _tools = try tools.map { tool in
@@ -227,7 +227,7 @@ extension MCPServer {
     public static func create(
         name: String,
         version: String,
-        tools: [any MCPToolProtocol],
+        tools: [any ToolProtocol],
         resources: MCPResourceRegistry
     ) -> MCPServer {
         create(name: name, version: version, tools: tools, prompts: nil, resources: resources)

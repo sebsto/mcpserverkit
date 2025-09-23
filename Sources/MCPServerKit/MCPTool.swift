@@ -7,7 +7,7 @@ import Foundation
 #endif
 
 /// A MCPTool implementation that deals with JSON input and output
-public struct MCPTool<Input: Decodable, Output: Encodable>: MCPToolProtocol {
+public struct MCPTool<Input: Decodable, Output: Encodable>: ToolProtocol {
     public let name: String
     public let description: String
     public let inputSchema: String

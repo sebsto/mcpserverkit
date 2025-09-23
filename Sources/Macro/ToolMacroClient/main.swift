@@ -5,7 +5,7 @@ import ToolMacro
 
 // Example 1: Simple string input with DocC-generated schema
 @Tool(name: "weather", description: "Get weather information for a city")
-struct WeatherTool: MCPToolProtocol {
+struct WeatherTool: ToolProtocol {
     typealias Input = String
     typealias Output = String
     // var i = 0
@@ -28,7 +28,7 @@ struct WeatherTool: MCPToolProtocol {
 
 // Example 2: Complex input with multiple parameters and detailed descriptions
 @Tool(name: "calculator", description: "Perform basic arithmetic operations")
-struct CalculatorTool: MCPToolProtocol {
+struct CalculatorTool: ToolProtocol {
 
     struct CalculatorInput: Codable {
         /// First number in the calculation
@@ -75,7 +75,7 @@ struct CalculatorTool: MCPToolProtocol {
 
 // Example 3: Tool with existing properties (should only generate inputSchema)
 @Tool
-struct ExistingPropertiesTool: MCPToolProtocol {
+struct ExistingPropertiesTool: ToolProtocol {
     typealias Input = String
     typealias Output = String
 
@@ -112,7 +112,7 @@ struct ExternalCalculatorInput: Codable {
 }
 
 @Tool(name: "external-calculator", description: "Perform arithmetic", schema: ExternalCalculatorInput.self)
-struct ExternalCalculatorTool: MCPToolProtocol {
+struct ExternalCalculatorTool: ToolProtocol {
     typealias Input = ExternalCalculatorInput
     typealias Output = Double
     var i = 8

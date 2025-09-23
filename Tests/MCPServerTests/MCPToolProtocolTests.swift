@@ -3,8 +3,8 @@ import MCP
 import MCPServerKit
 import Testing
 
-@Suite("MCPToolProtocolTests")
-struct MCPToolProtocolTests {
+@Suite("ToolProtocolTests")
+struct ToolProtocolTests {
 
     // Custom error for test failures
     struct TestError: Swift.Error, CustomStringConvertible {
@@ -15,8 +15,8 @@ struct MCPToolProtocolTests {
         }
     }
 
-    // Mock implementation of MCPToolProtocol for testing
-    struct MockTool<I: Decodable, O: Encodable>: MCPToolProtocol {
+    // Mock implementation of ToolProtocol for testing
+    struct MockTool<I: Decodable, O: Encodable>: ToolProtocol {
         typealias Input = I
         typealias Output = O
 
@@ -26,7 +26,7 @@ struct MCPToolProtocolTests {
         let mockHandler: @Sendable (I) async throws -> O
         let mockConverter: @Sendable (CallTool.Parameters) async throws -> I
 
-        func handler(input: I) async throws -> O {
+        func handle(input: I) async throws -> O {
             try await mockHandler(input)
         }
 
@@ -48,8 +48,8 @@ struct MCPToolProtocolTests {
         let response: String
     }
 
-    @Test("Test MCPToolProtocol conformance")
-    func testMCPToolProtocolConformance() async throws {
+    @Test("Test ToolProtocol conformance")
+    func testToolProtocolConformance() async throws {
         let tool = MockTool<TestInput, TestOutput>(
             name: "testTool",
             description: "A test tool",

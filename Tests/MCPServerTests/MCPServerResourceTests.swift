@@ -92,7 +92,7 @@ struct MCPServerResourceTests {
         let server = MCPServer.create(
             name: "EmptyServer",
             version: "1.0.0",
-            tools: [any MCPToolProtocol]()
+            tools: [any ToolProtocol]()
         )
 
         // Create resources

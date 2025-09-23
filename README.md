@@ -31,10 +31,10 @@ import MCPServerKit
 import ToolMacro
 
 @Tool(name: "greet", description: "Greet someone by name")
-struct GreetTool: MCPToolProtocol {
+struct GreetTool: ToolProtocol {
     /// Greet a person
     /// - Parameter input: The name of the person to greet
-    func handler(input: String) async throws -> String {
+    func handle(input: String) async throws -> String {
         return "Hello, \(input)!"
     }
 }
@@ -65,13 +65,13 @@ struct CalculatorInput: Codable {
     description: "Performs basic arithmetic operations",
     schema: CalculatorInput.self
 )
-struct CalculatorTool: MCPToolProtocol {
+struct CalculatorTool: ToolProtocol {
     typealias Input = CalculatorInput
     typealias Output = Double
     
     /// Perform arithmetic calculation
     /// - Parameter input: The calculation parameters
-    func handler(input: CalculatorInput) async throws -> Double {
+    func handle(input: CalculatorInput) async throws -> Double {
         switch input.operation {
         case "add":
             return input.a + input.b
@@ -187,7 +187,7 @@ MCPServerKit is the core library that abstracts away the complexity of the MCP p
 
 ### Key Components
 
-- **MCPToolProtocol**: Generic protocol defining the interface for MCP tools with associated Input and Output types
+- **ToolProtocol**: Generic protocol defining the interface for MCP tools with associated Input and Output types
 - **MCPTool**: A default abstraction for defining tools with schemas and handlers, supporting type-safe input and output
 - **MCPServer**: Unified server implementation that supports tools, prompts, and resources
 - **MCPResource**: Type-safe wrapper for MCP resources with support for text and binary data

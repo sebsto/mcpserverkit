@@ -17,7 +17,7 @@
 /// }
 ///
 /// @Tool(name: "weather", description: "Get weather information", schema: WeatherInput.self)
-/// struct WeatherTool: MCPToolProtocol {
+/// struct WeatherTool: ToolProtocol {
 ///     // The macro will use WeatherInput.schema for inputSchema
 /// }
 /// ```
@@ -25,7 +25,7 @@
 /// Usage with DocC comments:
 /// ```swift
 /// @Tool(name: "weather", description: "Get weather information")
-/// struct WeatherTool: MCPToolProtocol {
+/// struct WeatherTool: ToolProtocol {
 ///     typealias Input = String
 ///
 ///     /// Get weather information for a specific city

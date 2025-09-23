@@ -26,7 +26,7 @@ struct CalculatorInput: Codable {
     description: "Performs basic arithmetic operations (add, subtract, multiply, divide)",
     schema: CalculatorInput.self
 )
-struct CalculatorTool: MCPToolProtocol {
+struct CalculatorTool: ToolProtocol {
     func handle (input: CalculatorInput) async throws -> Double {
         // Perform the calculation based on the operation
         switch input.operation {
