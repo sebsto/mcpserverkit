@@ -79,3 +79,4 @@ wheels/
 
 # Virtual environments
 .venv
+strands
