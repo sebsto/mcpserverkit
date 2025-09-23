@@ -36,7 +36,7 @@ struct ToolProtocolTests {
 
         func handle(jsonInput: CallTool.Parameters) async throws -> Encodable {
             let input = try await convert(jsonInput)
-            return try await handler(input: input)
+            return try await handle(input: input)
         }
     }
 
@@ -81,7 +81,7 @@ struct ToolProtocolTests {
         #expect(tool.description == "A test tool")
 
         let input = TestInput(message: "Hello")
-        let output = try await tool.handler(input: input)
+        let output = try await tool.handle(input: input)
 
         #expect(output.response == "Echo: Hello")
 

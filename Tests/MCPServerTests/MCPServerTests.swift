@@ -75,7 +75,7 @@ struct MCPServerTests {
         )
 
         let input = MockInput(value: "test")
-        let output = try await tool.handler(input: input)
+        let output = try await tool.handle(input: input)
 
         #expect(output.result == "Processed: test")
     }

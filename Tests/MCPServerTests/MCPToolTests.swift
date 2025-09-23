@@ -73,7 +73,7 @@ struct MCPToolTests {
         )
 
         let input = TestInput(query: "What is the weather?")
-        let output = try await tool.handler(input: input)
+        let output = try await tool.handle(input: input)
 
         #expect(output.answer == "Response to: What is the weather?")
     }
