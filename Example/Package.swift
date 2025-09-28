@@ -10,7 +10,7 @@ let package = Package(
         .executable(name: "MCPExampleServer", targets: ["MCPExampleServer"])
     ],
     dependencies: [
-        .package(name: "MCPServerKit", path: ".."),  // Reference to the parent MCPServerKit package
+        .package(name: "MCPServerKit", path: "..")  // Reference to the parent MCPServerKit package
     ],
     targets: [
         .executableTarget(
@@ -18,6 +18,7 @@ let package = Package(
             dependencies: [
                 .product(name: "MCPServerKit", package: "MCPServerKit")
             ],
+            path: "Sources/Server"
         )
     ]
 )

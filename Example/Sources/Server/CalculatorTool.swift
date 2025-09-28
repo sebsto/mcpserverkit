@@ -8,13 +8,12 @@ import Foundation
 
 /// This tool performs basic arithmetic operations.
 
-
 // Define a struct for calculator input
 @SchemaDefinition
 struct CalculatorInput: Codable {
     /// the first operand of the operation
     let a: Double
-    /// the second operand of the operation 
+    /// the second operand of the operation
     let b: Double
     /// the arithmetic operation, expressed as a string : "add", "substract", "multiply", "divide"
     let operation: String
@@ -27,7 +26,7 @@ struct CalculatorInput: Codable {
     schema: CalculatorInput.self
 )
 struct CalculatorTool: ToolProtocol {
-    func handle (input: CalculatorInput) async throws -> Double {
+    func handle(input: CalculatorInput) async throws -> Double {
         // Perform the calculation based on the operation
         switch input.operation {
         case "add":
