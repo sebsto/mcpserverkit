@@ -1,5 +1,5 @@
 {
-  "name": "amazon_q_default",
+  "name": "q_ide_default",
   "description": "Default agent configuration",
   "prompt": "",
   "mcpServers": {
@@ -52,5 +52,5 @@
     "agentSpawn": [],
     "userPromptSubmit": []
   },
-  "useLegacyMcpJson": false
+  "useLegacyMcpJson": true
 }
