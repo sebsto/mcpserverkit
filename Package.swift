@@ -3,7 +3,7 @@ import CompilerPluginSupport
 import PackageDescription
 
 let package = Package(
-    name: "MCPSwift",
+    name: "AgentKit",
     platforms: [
         .macOS(.v15)
     ],
@@ -139,7 +139,6 @@ let package = Package(
             path: "Sources/Macro/ServerMacroImplementation"
         ),
         // a library that exposes the macro to users
-        // TODO : should we make this a trait (enable by default and user can opt-out) ?
         .target(
             name: "ServerMacro",
             dependencies: [
