@@ -134,6 +134,7 @@ let package = Package(
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
                 .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
                 .product(name: "SwiftDiagnostics", package: "swift-syntax"),
+                "ServerShared",
             ],
             path: "Sources/Macro/ServerMacroImplementation"
         ),

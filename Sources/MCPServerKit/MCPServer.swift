@@ -99,6 +99,9 @@ public struct MCPServer: Sendable {
         await server.waitUntilCompleted()
     }
 
+    public func startHttpServer() async throws {
+    }
+
     private func registerTools(_ server: Server, tools: [any ToolProtocol]) async {
         // register the tools, part 1 : tools/list
         await server.withMethodHandler(ListTools.self) { params in

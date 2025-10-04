@@ -1,5 +1,5 @@
+import ServerShared
 import SwiftCompilerPlugin
-// MCPServerMacroImplementation.swift - New file for macro implementation
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
@@ -28,7 +28,7 @@ public struct ServerMacro: MemberMacro {
         // var serverDescription: String? = ""
         var toolsArray: String = "[]"
         var promptsArray: String = "[]"
-        var serverType: String = "stdio"
+        var serverType: MCPTransport = .stdio
 
         // Parse the arguments
         for argument in argumentList {
@@ -69,7 +69,8 @@ public struct ServerMacro: MemberMacro {
                 }
             case "type":
                 if let memberAccess = argument.expression.as(MemberAccessExprSyntax.self) {
-                    serverType = memberAccess.declName.baseName.text
+                    let typeString = memberAccess.declName.baseName.text
+                    serverType = MCPTransport(rawValue: typeString) ?? .stdio
                 }
             default:
                 break
@@ -79,7 +80,7 @@ public struct ServerMacro: MemberMacro {
         // Generate the appropriate startup code based on server type
         let startupCode: String
         switch serverType {
-        case "stdio":
+        case .stdio:
             startupCode = "try await server.startStdioServer()"
         default:
             startupCode = "try await server.startStdioServer()"
