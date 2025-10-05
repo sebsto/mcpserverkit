@@ -24,11 +24,18 @@ let package = Package(
         ),
     ],
     dependencies: [
+        // to support macros implementation
         .package(url: "https://github.com/swiftlang/swift-syntax", from: "600.0.1"),
-        .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", branch: "main"),
-        .package(path: "../swift-bedrock-library"),
+
         .package(url: "https://github.com/swift-server/swift-service-lifecycle.git", from: "2.8.0"),
+
+        // .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", branch: "main"),
+        // https://github.com/modelcontextprotocol/swift-sdk/issues/110
+        .package(url: "https://github.com/stallent/swift-sdk.git", branch: "streamable_server"),
+        .package(url: "https://github.com/orlandos-nl/SSEKit.git", from: "1.1.0"),
         .package(url: "https://github.com/hummingbird-project/hummingbird.git", from: "2.0.0"),
+
+        .package(path: "../swift-bedrock-library"),
     ],
     targets: [
         .target(
@@ -68,6 +75,11 @@ let package = Package(
                 .product(
                     name: "Hummingbird",
                     package: "hummingbird",
+                    condition: .when(traits: ["MCPHTTPSupport"])
+                ),
+                .product(
+                    name: "SSEKit",
+                    package: "SSEKit",
                     condition: .when(traits: ["MCPHTTPSupport"])
                 ),
                 "ServerShared",

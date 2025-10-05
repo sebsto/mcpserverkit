@@ -1,11 +1,13 @@
 #if MCPHTTPSupport
+import HTTPTypes
 import Hummingbird
 import MCP
 import ServiceLifecycle
 import Logging
+import Foundation
 
 extension MCPServer {
-    public func startHttpServer() async throws {
+    public func startHttpServer(port: Int = 8080) async throws {
         // Register MCP handlers
         if let tools, tools.count > 0 {
             await registerTools(server, tools: tools)
@@ -17,16 +19,28 @@ extension MCPServer {
             await registerResources(server, resources: resources)
         }
 
-        // Create router and add routes
+        // Create router and add MCP endpoint
         let router = Router()
-        router.get("hello") { request, _ -> String in
-            "Hello"
+
+        router.addRoutes(
+            StreamableMCPController(
+                path: "mcp",
+                stateful: false,
+                jsonResponses: true,
+                server: self.server,
+                logger: logger
+            ).endpoints
+        )
+
+        router.addMiddleware {
+            // logging middleware
+            LogRequestsMiddleware(.trace)
         }
 
         // Create Hummingbird application
         let app = Application(
             router: router,
-            configuration: .init(address: .hostname("127.0.0.1", port: 8080)),
+            configuration: .init(address: .hostname("127.0.0.1", port: port)),
             logger: self.logger
         )
 

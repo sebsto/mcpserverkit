@@ -1,4 +1,5 @@
 import AgentKit
+import Logging
 
 #if canImport(FoundationEssentials)
 import FoundationEssentials
@@ -14,6 +15,8 @@ import Foundation
 struct Test {
     static func main() async throws {
 
+        var logger = Logger(label: "MultiToolServer")
+        logger.logLevel = .trace
         // Create the server with multiple tools of different types
         try await MCPServer.withMCPServer(
             name: "MultiToolServer",
@@ -25,6 +28,7 @@ struct Test {
                 FXRateTool(),  // FXRatesInput input, String output
             ],
             prompts: [myWeatherPrompt, fxRatesPrompt],
+            logger: logger
         ) { server in
             // Start the server
             try await server.run()

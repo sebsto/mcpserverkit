@@ -9,7 +9,7 @@ import Foundation
 /// This tool returns current weather and weather forecast for a given city.
 
 @Tool(
-    name: "Weather tool",
+    name: "weather",
     description:
         "This tool returns current weather and weather forecast for a given city. It returns current data and forecasted data, such as temperature in celsius and farenheit, humidity, rain level in milimiters and inches, wind speed in kmh and mph and direction, pressure in milibar and inches, visibility, weather description."
 )
