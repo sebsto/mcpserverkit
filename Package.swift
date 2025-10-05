@@ -15,10 +15,20 @@ let package = Package(
         .library(name: "AgentKit", targets: ["AgentKit"]),
         .executable(name: "AgentClient", targets: ["AgentClient"]),
     ],
+    traits: [
+        "MCPHTTPSupport",
+        .default(
+            enabledTraits: [
+                "MCPHTTPSupport"
+            ]
+        ),
+    ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-syntax", from: "600.0.1"),
         .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", branch: "main"),
         .package(path: "../swift-bedrock-library"),
+        .package(url: "https://github.com/swift-server/swift-service-lifecycle.git", from: "2.8.0"),
+        .package(url: "https://github.com/hummingbird-project/hummingbird.git", from: "2.0.0"),
     ],
     targets: [
         .target(
@@ -54,8 +64,15 @@ let package = Package(
             name: "MCPServerKit",
             dependencies: [
                 .product(name: "MCP", package: "swift-sdk"),
+                .product(name: "ServiceLifecycle", package: "swift-service-lifecycle"),
+                .product(
+                    name: "Hummingbird",
+                    package: "hummingbird",
+                    condition: .when(traits: ["MCPHTTPSupport"])
+                ),
                 "ServerShared",
-                "ToolMacro", "ServerMacro",
+                "ToolMacro",
+                "ServerMacro",
             ],
             path: "Sources/MCPServerKit"
         ),
