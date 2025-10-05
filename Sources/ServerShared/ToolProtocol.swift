@@ -9,4 +9,3 @@ public protocol ToolProtocol<Input, Output>: Sendable {
     // a generic handler
     func handle(input: Input) async throws -> Output
 }
-

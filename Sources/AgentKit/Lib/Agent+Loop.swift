@@ -22,7 +22,7 @@ extension Agent {
         // variables we're going to reuse for the duration of the conversation
         var messages: History = []
         var requestBuilder: ConverseRequestBuilder? = nil
-        
+
         // convert Tools to Bedrock Tools
         let bedrockTools = try tools.bedrockTools()
 
@@ -31,7 +31,11 @@ extension Agent {
             requestBuilder = try ConverseRequestBuilder(with: model)
                 .withHistory(messages)
                 .withPrompt(initialPrompt)
-                .withTools(bedrockTools)
+
+            if bedrockTools.count > 0 {
+                requestBuilder = try requestBuilder!.withTools(bedrockTools)
+            }
+
             if !systemPrompt.isEmpty {
                 requestBuilder = try requestBuilder!.withSystemPrompt(systemPrompt)
             }
@@ -93,8 +97,8 @@ extension Agent {
 
                 logger.trace("Last message", metadata: ["message": "\(msg)"])
                 logger.debug("Yes, let's use a tool", metadata: ["toolUse": "\(toolUse.name)"])
-                
-                // find the tool and call it 
+
+                // find the tool and call it
                 requestBuilder = try await resolveToolUse(
                     bedrock: bedrock,
                     requestBuilder: requestBuilder!,

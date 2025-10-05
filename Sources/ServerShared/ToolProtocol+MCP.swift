@@ -6,7 +6,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-// Default implementations for MCP tools 
+// Default implementations for MCP tools
 extension ToolProtocol {
     public func convert(_ input: CallTool.Parameters) async throws -> Input {
         let data = try JSONEncoder().encode(input.arguments)

@@ -5,10 +5,10 @@ extension Agent {
 
     /// Metadata type alias for response metadata from Bedrock service.
     public typealias MetaData = ResponseMetadata
-    
+
     /// Tool use type alias for tool use blocks from Bedrock service.
     public typealias ToolUse = ToolUseBlock
-		
+
     /// Function type for handling agent callback events.
     /// - Parameter event: The callback event to handle.
     public typealias AgentCallbackFunction = (AgentCallbackEvent) -> Void
@@ -26,6 +26,5 @@ extension Agent {
         /// Agent execution has ended.
         case end
     }
-
 
 }

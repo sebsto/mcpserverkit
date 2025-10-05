@@ -307,14 +307,15 @@ public struct ToolMacro: MemberMacro {
         if isBuiltInType(cleanType) {
             let typeSchema = SchemaGenerationUtils.generateTypeSchema(param.type)
             let propertyName = param.name
-            
+
             var propertySchema: String
             if let description = param.description {
-                propertySchema = "\"\(propertyName)\": { \"type\": \"\(typeSchema)\", \"description\": \"\(description)\" }"
+                propertySchema =
+                    "\"\(propertyName)\": { \"type\": \"\(typeSchema)\", \"description\": \"\(description)\" }"
             } else {
                 propertySchema = "\"\(propertyName)\": { \"type\": \"\(typeSchema)\" }"
             }
-            
+
             let required = param.isOptional ? "" : ", \"required\": [\"\(propertyName)\"]"
             return "{ \"type\": \"object\", \"properties\": { \(propertySchema) }\(required) }"
         }

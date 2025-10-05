@@ -1,5 +1,5 @@
 extension Agent {
-		/// Stream events from an agent asynchronously.
+    /// Stream events from an agent asynchronously.
     ///
     /// - Parameter message: The message to send to the agent.
     /// - Returns: An async throwing stream of events from the agent.

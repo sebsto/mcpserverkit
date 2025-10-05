@@ -2,7 +2,7 @@ import BedrockService
 
 #if canImport(FoundationEssentials)
 import FoundationEssentials
-#else 
+#else
 import Foundation
 #endif
 
@@ -10,7 +10,7 @@ import Foundation
 extension ToolProtocol {
     // convert the input from the JSON to the expected type
     public func convert(_ input: JSON) async throws -> Input {
-        // when Tool handler is (input:Input), decode the "input" key 
+        // when Tool handler is (input:Input), decode the "input" key
         if let value: Input = input["input"] {
             return value
         } else {
@@ -22,5 +22,5 @@ extension ToolProtocol {
     public func handle(jsonInput: JSON) async throws -> Output {
         let convertedInput = try await convert(jsonInput)
         return try await handle(input: convertedInput)
-    }		
+    }
 }

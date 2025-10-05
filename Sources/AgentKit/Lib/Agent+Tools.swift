@@ -8,9 +8,9 @@ import Foundation
 #endif
 
 extension Agent {
-	var toolNames: [String] {
-		self.tools.map { $0.name }
-	}
+    var toolNames: [String] {
+        self.tools.map { $0.name }
+    }
 
     func resolveToolUse(
         bedrock: BedrockService,
@@ -41,7 +41,7 @@ extension Agent {
         logger.trace("Tool Result", metadata: ["result": "\(result)"])
 
         // pass the result back to the model
-        // when the result is a simple string, we must pass it as a String object 
+        // when the result is a simple string, we must pass it as a String object
         // (because the ToolResultBlock's content is an enum that makes the distinction between string and json)
         if let string = isString(result) {
             return try ConverseRequestBuilder(from: requestBuilder, with: message).withToolResult(string)
@@ -51,7 +51,7 @@ extension Agent {
     }
 
     private func isString(_ value: Encodable) -> String? {
-        guard let string = try? String(data: JSONEncoder().encode(value), encoding: .utf8) else { 
+        guard let string = try? String(data: JSONEncoder().encode(value), encoding: .utf8) else {
             return nil
         }
         return string
@@ -60,16 +60,16 @@ extension Agent {
 
 extension ToolProtocol {
     public func bedrockTool() throws -> Tool {
-			let json = try JSON(from: self.inputSchema)
-			return try Tool(name: self.name, inputSchema: json, description: self.description)
-		}
+        let json = try JSON(from: self.inputSchema)
+        return try Tool(name: self.name, inputSchema: json, description: self.description)
+    }
 }
 
 extension Array where Element == any ToolProtocol {
-	public func bedrockTools() throws -> [Tool] {
-		try self.map { try $0.bedrockTool() }
-	}
+    public func bedrockTools() throws -> [Tool] {
+        try self.map { try $0.bedrockTool() }
+    }
     public func tool(named toolName: String) -> (any ToolProtocol)? {
-        self.first(where: { $0.name == toolName }) 
+        self.first(where: { $0.name == toolName })
     }
 }
