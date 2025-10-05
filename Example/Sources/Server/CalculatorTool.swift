@@ -1,4 +1,4 @@
-import MCPServerKit
+import AgentKit
 
 #if canImport(FoundationEssentials)
 import FoundationEssentials

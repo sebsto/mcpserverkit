@@ -1,4 +1,4 @@
-import MCPServerKit
+import AgentKit
 
 #if canImport(FoundationEssentials)
 import FoundationEssentials
@@ -15,19 +15,20 @@ struct Test {
     static func main() async throws {
 
         // Create the server with multiple tools of different types
-        let server = MCPServer.create(
+        try await MCPServer.withMCPServer(
             name: "MultiToolServer",
             version: "1.0.0",
+            transport: .http,
             tools: [
                 WeatherTool(),  // String input, String output
                 CalculatorTool(),  // CalculatorInput input, Double output
                 FXRateTool(),  // FXRatesInput input, String output
             ],
             prompts: [myWeatherPrompt, fxRatesPrompt],
-        )
-
-        // Start the server
-        try await server.startStdioServer()
+        ) { server in
+            // Start the server
+            try await server.run()
+        }
     }
 }
 
