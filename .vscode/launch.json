@@ -4,109 +4,101 @@
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:mcpserverkit}",
+            "cwd": "${workspaceFolder:AgentKit}",
             "name": "Debug MCPExampleServer",
-            "program": "${workspaceFolder:mcpserverkit}/.build/debug/MCPExampleServer",
-            "preLaunchTask": "swift: Build Debug MCPExampleServer"
+            "program": "${workspaceFolder:AgentKit}/.build/debug/MCPExampleServer",
+            "preLaunchTask": "swift: Build All"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:mcpserverkit}",
+            "cwd": "${workspaceFolder:AgentKit}",
             "name": "Release MCPExampleServer",
-            "program": "${workspaceFolder:mcpserverkit}/.build/release/MCPExampleServer",
-            "preLaunchTask": "swift: Build Release MCPExampleServer"
+            "program": "${workspaceFolder:AgentKit}/.build/release/MCPExampleServer",
+            "preLaunchTask": "swift: Build All - Release"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:mcpserverkit}",
+            "cwd": "${workspaceFolder:AgentKit}",
             "name": "Debug MCPExample",
-            "program": "${workspaceFolder:mcpserverkit}/.build/debug/MCPExample",
-            "preLaunchTask": "swift: Build Debug MCPExample"
+            "program": "${workspaceFolder:AgentKit}/.build/debug/MCPExample",
+            "preLaunchTask": "swift: Build All"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:mcpserverkit}",
+            "cwd": "${workspaceFolder:AgentKit}",
             "name": "Release MCPExample",
-            "program": "${workspaceFolder:mcpserverkit}/.build/release/MCPExample",
-            "preLaunchTask": "swift: Build Release MCPExample"
+            "program": "${workspaceFolder:AgentKit}/.build/release/MCPExample",
+            "preLaunchTask": "swift: Build All - Release"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:mcpserverkit}",
+            "cwd": "${workspaceFolder:AgentKit}",
             "name": "Debug FXRatesServer",
-            "program": "${workspaceFolder:mcpserverkit}/.build/debug/FXRatesServer",
-            "preLaunchTask": "swift: Build Debug FXRatesServer"
+            "program": "${workspaceFolder:AgentKit}/.build/debug/FXRatesServer",
+            "preLaunchTask": "swift: Build All"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:mcpserverkit}",
+            "cwd": "${workspaceFolder:AgentKit}",
             "name": "Release FXRatesServer",
-            "program": "${workspaceFolder:mcpserverkit}/.build/release/FXRatesServer",
-            "preLaunchTask": "swift: Build Release FXRatesServer"
+            "program": "${workspaceFolder:AgentKit}/.build/release/FXRatesServer",
+            "preLaunchTask": "swift: Build All - Release"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:mcpserverkit}",
+            "cwd": "${workspaceFolder:AgentKit}",
             "name": "Debug ToolMacroClient",
-            "program": "${workspaceFolder:mcpserverkit}/.build/debug/ToolMacroClient",
-            "preLaunchTask": "swift: Build Debug ToolMacroClient"
+            "program": "${workspaceFolder:AgentKit}/.build/debug/ToolMacroClient",
+            "preLaunchTask": "swift: Build All"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:mcpserverkit}",
+            "cwd": "${workspaceFolder:AgentKit}",
             "name": "Release ToolMacroClient",
-            "program": "${workspaceFolder:mcpserverkit}/.build/release/ToolMacroClient",
-            "preLaunchTask": "swift: Build Release ToolMacroClient"
+            "program": "${workspaceFolder:AgentKit}/.build/release/ToolMacroClient",
+            "preLaunchTask": "swift: Build All - Release"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:mcpserverkit}",
+            "cwd": "${workspaceFolder:AgentKit}",
             "name": "Debug ServerMacroClient",
-            "program": "${workspaceFolder:mcpserverkit}/.build/debug/ServerMacroClient",
-            "preLaunchTask": "swift: Build Debug ServerMacroClient"
+            "program": "${workspaceFolder:AgentKit}/.build/debug/ServerMacroClient",
+            "preLaunchTask": "swift: Build All"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:mcpserverkit}",
+            "cwd": "${workspaceFolder:AgentKit}",
             "name": "Release ServerMacroClient",
-            "program": "${workspaceFolder:mcpserverkit}/.build/release/ServerMacroClient",
-            "preLaunchTask": "swift: Build Release ServerMacroClient"
+            "program": "${workspaceFolder:AgentKit}/.build/release/ServerMacroClient",
+            "preLaunchTask": "swift: Build All - Release"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:mcpserverkit}",
+            "cwd": "${workspaceFolder:AgentKit}",
             "name": "Debug AgentClient",
-            "program": "${workspaceFolder:mcpserverkit}/.build/debug/AgentClient",
-            "preLaunchTask": "swift: Build Debug AgentClient"
-        },
-        {
-            "type": "swift",
-            "request": "launch",
-            "args": [],
-            "cwd": "${workspaceFolder:mcpserverkit}",
-            "name": "Release AgentClient",
-            "program": "${workspaceFolder:mcpserverkit}/.build/release/AgentClient",
-            "preLaunchTask": "swift: Build Release AgentClient"
+            "program": "${workspaceFolder:AgentKit}/.build/debug/AgentClient",
+            "env": { "LOG_LEVEL" : "trace"},
+            "preLaunchTask": "swift: Build AgentClient"
         }
     ]
 }

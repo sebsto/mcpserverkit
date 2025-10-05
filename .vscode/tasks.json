@@ -1,0 +1,20 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "swift",
+			"args": [
+				"build",
+				"-c",
+				"debug"
+			],
+			"env": {},
+			"cwd": "/Users/sst/Documents/code/swift/bedrock/AgentKit",
+			"disableTaskQueue": true,
+			"group": "build",
+			"problemMatcher": [],
+			"label": "swift: Build AgentClient",
+			"detail": "swift build -c debug"
+		}
+	]
+}
