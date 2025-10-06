@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "default-server": {
+      "type": "streamable-http",
+      "url": "http://localhost:3000/mcp",
+      "note": "For Streamable HTTP connections, add this URL directly in your MCP Client"
+    },
+    "another-server": {
+      "command": "node",
+      "args": ["build/index.js", "--debug"],
+      "env": {
+        "API_KEY": "your-api-key",
+        "DEBUG": "true"
+      }
+    }
+  }
+}

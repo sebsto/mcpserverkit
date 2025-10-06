@@ -1,10 +1,11 @@
+import MCP
 import MCPServerKit
 import ServerMacro
 import ToolMacro
 
 // create a tool
 @Tool(name: "Hello", description: "Say hello")
-struct SayHello: ToolProtocol {
+struct SayHello {
     /// Say Hello
     /// - Parameter input: the name of the person to say hello to
     func handle(input: String) async throws -> String { "Hello \(input)" }

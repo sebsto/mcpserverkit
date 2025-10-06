@@ -35,7 +35,7 @@ struct MCPServerHeterogeneousTests {
 
     // Test that a MCPServer can be created with heterogeneous tools
     @Test("Test MCPServer initialization with heterogeneous tools")
-    func testMCPServerInitialization() throws {
+    func testMCPServerInitialization() async throws {
         let serverName = "TestServer"
         let serverVersion = "1.0.0"
 
@@ -67,6 +67,15 @@ struct MCPServerHeterogeneousTests {
             }
         )
 
+        // create an instance to be able to call extractParameters below
+        let simpleTool = MCPTool<IntMockInput, IntMockOutput>(
+            name: "",
+            description: "",
+            inputSchema: "",
+            body: { _ in
+                IntMockOutput(doubled: 0)
+            }
+        )
         // Create int tool using extractParameter
         let intTool = MCPTool<IntMockInput, IntMockOutput>(
             name: "intTool",
@@ -85,7 +94,7 @@ struct MCPServerHeterogeneousTests {
             converter: { params in
                 // Using a simpler approach with extractParameter
                 do {
-                    return try MCPTool<IntMockInput, IntMockOutput>.extractParameter(params, name: "number")
+                    return try simpleTool.extractParameter(params, name: "number")
                 } catch {
                     throw MCPServerError.invalidParam("number", "Invalid number format")
                 }
@@ -96,14 +105,16 @@ struct MCPServerHeterogeneousTests {
         )
 
         // Create server with both tools
-        let server = MCPServer.create(
+        try await MCPServer.withMCPServer(
             name: serverName,
             version: serverVersion,
+            transport: .stdio,
             tools: [stringTool, intTool]
-        )
+        ) { server in
 
-        #expect(server.name == serverName)
-        #expect(server.version == serverVersion)
+            #expect(server.name == serverName)
+            #expect(server.version == serverVersion)
+        }
     }
 
     // Test that the MCPServer can handle different tool types
@@ -137,6 +148,15 @@ struct MCPServerHeterogeneousTests {
             }
         )
 
+        // create an instance to be able to call extractParameters below
+        let simpleTool = MCPTool<IntMockInput, IntMockOutput>(
+            name: "",
+            description: "",
+            inputSchema: "",
+            body: { _ in
+                IntMockOutput(doubled: 0)
+            }
+        )
         // Create int tool using extractParameter
         let intTool = MCPTool<IntMockInput, IntMockOutput>(
             name: "intTool",
@@ -155,7 +175,7 @@ struct MCPServerHeterogeneousTests {
             converter: { params in
                 // Using a simpler approach with extractParameter
                 do {
-                    return try MCPTool<IntMockInput, IntMockOutput>.extractParameter(params, name: "number")
+                    return try simpleTool.extractParameter(params, name: "number")
                 } catch {
                     throw MCPServerError.invalidParam("number", "Invalid number format")
                 }

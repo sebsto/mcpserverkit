@@ -2,7 +2,7 @@ import MCP
 
 extension MCPServer {
     /// Register prompts with the server
-    package func registerPrompts(_ server: Server, prompts: [MCPPrompt]) async {
+    package func registerPrompts(prompts: [MCPPrompt]) async {
         // register the prompts, part 1 : prompts/list
         await server.withMethodHandler(ListPrompts.self) { id, params in
             let _prompts = prompts.map { $0.toPrompt() }

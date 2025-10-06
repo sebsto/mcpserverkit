@@ -1,5 +1,6 @@
 import Foundation
 import MCP
+import Synchronization
 
 /// A high-level wrapper for MCP Resources that simplifies resource creation and management.
 ///
@@ -377,17 +378,23 @@ public enum MCPResourceError: Swift.Error {
 }
 
 /// A collection of resources that can be registered with an MCP server
-public final class MCPResourceRegistry: @unchecked Sendable {
+public final class MCPResourceRegistry: Sendable {
+    private let mutex: Mutex<[MCPResource]>
+
     /// The resources in this registry
-    public private(set) var resources: [MCPResource] = []
+    public var resources: [MCPResource] {
+        mutex.withLock { $0 }
+    }
 
     /// Creates a new empty resource registry
-    public init() {}
+    public init() {
+        self.mutex = Mutex([])
+    }
 
     /// Creates a resource registry with the specified resources
     /// - Parameter resources: The resources to include in this registry
     public init(resources: [MCPResource]) {
-        self.resources = resources
+        self.mutex = Mutex(resources)
     }
 
     /// Adds a resource to the registry
@@ -395,7 +402,7 @@ public final class MCPResourceRegistry: @unchecked Sendable {
     /// - Returns: The registry, for chaining
     @discardableResult
     public func add(_ resource: MCPResource) -> Self {
-        resources.append(resource)
+        mutex.withLock { $0.append(resource) }
         return self
     }
 
@@ -404,7 +411,7 @@ public final class MCPResourceRegistry: @unchecked Sendable {
     /// - Returns: The registry, for chaining
     @discardableResult
     public func add(_ resources: [MCPResource]) -> Self {
-        self.resources.append(contentsOf: resources)
+        mutex.withLock { $0.append(contentsOf: resources) }
         return self
     }
 
@@ -421,7 +428,7 @@ public final class MCPResourceRegistry: @unchecked Sendable {
     /// - Returns: The registry, for chaining
     @discardableResult
     public func remove(uri: String) -> Self {
-        resources.removeAll { $0.resource.uri == uri }
+        mutex.withLock { $0.removeAll { $0.resource.uri == uri } }
         return self
     }
 
@@ -429,18 +436,18 @@ public final class MCPResourceRegistry: @unchecked Sendable {
     /// - Parameter uri: The URI to search for
     /// - Returns: The resource, if found
     public func find(uri: String) -> MCPResource? {
-        resources.first { $0.resource.uri == uri }
+        mutex.withLock { $0.first { $0.resource.uri == uri } }
     }
 
     /// Converts the registry to a list of MCP Resource objects
     /// - Returns: An array of MCP Resource objects
-    public func asMCPResources() -> [Resource] {
-        resources.map { $0.resource }
+    public func asMCPSDKResources() -> [Resource] {
+        mutex.withLock { $0.map { $0.resource } }
     }
 
     /// Converts the registry to a map of MCP Resource.Content objects by URI
     /// - Returns: A dictionary mapping URIs to Resource.Content objects
     public func asContentMap() -> [String: Resource.Content] {
-        Dictionary(uniqueKeysWithValues: resources.map { ($0.resource.uri, $0.content) })
+        mutex.withLock { Dictionary(uniqueKeysWithValues: $0.map { ($0.resource.uri, $0.content) }) }
     }
 }

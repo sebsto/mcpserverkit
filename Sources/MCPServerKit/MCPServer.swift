@@ -18,7 +18,7 @@ public struct MCPServer: Sendable {
     let version: String
     let tools: [any ToolProtocol]?
     let prompts: [MCPPrompt]?
-    let resources: MCPResourceRegistry?
+    let resources: MCPResourceRegistry
 
     let logger: Logger
 
@@ -26,7 +26,7 @@ public struct MCPServer: Sendable {
         name: String,
         version: String,
         transport: MCPTransport,
-        tools: [any ToolProtocol]?,
+        tools: [any ToolProtocol]? = nil,
         prompts: [MCPPrompt]? = nil,
         resources: MCPResourceRegistry? = nil,
         logger: Logger
@@ -36,7 +36,7 @@ public struct MCPServer: Sendable {
         self.transport = transport
         self.tools = tools
         self.prompts = prompts
-        self.resources = resources
+        self.resources = resources ?? MCPResourceRegistry()
         self.logger = logger
 
         // create the server
@@ -51,7 +51,7 @@ public struct MCPServer: Sendable {
     public static func withStdioMCPServer(
         name: String,
         version: String,
-        tools: [any ToolProtocol]?,
+        tools: [any ToolProtocol]? = nil,
         prompts: [MCPPrompt]? = nil,
         resources: MCPResourceRegistry? = nil,
         logger: Logger,
@@ -73,7 +73,7 @@ public struct MCPServer: Sendable {
     public static func withHttpMCPServer(
         name: String,
         version: String,
-        tools: [any ToolProtocol]?,
+        tools: [any ToolProtocol]? = nil,
         prompts: [MCPPrompt]? = nil,
         resources: MCPResourceRegistry? = nil,
         logger: Logger,
@@ -96,7 +96,7 @@ public struct MCPServer: Sendable {
         name: String,
         version: String,
         transport: MCPTransport,
-        tools: [any ToolProtocol]?,
+        tools: [any ToolProtocol]? = nil,
         prompts: [MCPPrompt]? = nil,
         resources: MCPResourceRegistry? = nil,
         logger: Logger = Logger(label: "MCPServer"),

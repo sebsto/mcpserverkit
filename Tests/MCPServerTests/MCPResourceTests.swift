@@ -173,7 +173,7 @@ struct MCPResourceTests {
         #expect(registry.find(uri: "binary://sample") != nil)
 
         // Test conversion methods
-        let mcpResources = registry.asMCPResources()
+        let mcpResources = registry.asMCPSDKResources()
         #expect(mcpResources.count == 1)
         #expect(mcpResources[0].name == "Binary")
 

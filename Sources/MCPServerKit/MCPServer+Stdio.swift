@@ -3,15 +3,15 @@ import MCP
 extension MCPServer {
     package func startStdioServer() async throws {
         if let tools, tools.count > 0 {
-            await registerTools(server, tools: tools)
+            await registerTools(tools: tools)
         }
 
         if let prompts, prompts.count > 0 {
-            await registerPrompts(server, prompts: prompts)
+            await registerPrompts(prompts: prompts)
         }
 
-        if let resources, !resources.resources.isEmpty {
-            await registerResources(server, resources: resources)
+        if !resources.resources.isEmpty {
+            await registerResources(resources: resources)
         }
 
         // start the server with the stdio transport

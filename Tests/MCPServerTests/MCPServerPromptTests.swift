@@ -8,7 +8,7 @@ final class MCPServerPromptTests {
 
     // Test creating a server with a single prompt
     @Test("Create Server With Single Prompt")
-    func createServerWithSinglePrompt() throws {
+    func createServerWithSinglePrompt() async throws {
         let prompt = try MCPPrompt.build { builder in
             builder.name = "test-prompt"
             builder.description = "A test prompt"
@@ -16,22 +16,24 @@ final class MCPServerPromptTests {
             builder.parameter("name", description: "The name to greet")
         }
 
-        let server = MCPServer.create(
+        try await MCPServer.withMCPServer(
             name: "TestServer",
             version: "1.0.0",
-            prompts: prompt
-        )
+            transport: .stdio,
+            prompts: [prompt]
+        ) { server in
 
-        #expect(server.name == "TestServer")
-        #expect(server.version == "1.0.0")
-        #expect(server.prompts?.count == 1)
-        #expect(server.prompts?.first?.name == "test-prompt")
-        #expect(server.tools == nil)
+            #expect(server.name == "TestServer")
+            #expect(server.version == "1.0.0")
+            #expect(server.prompts?.count == 1)
+            #expect(server.prompts?.first?.name == "test-prompt")
+            #expect(server.tools == nil)
+        }
     }
 
     // Test creating a server with multiple prompts
     @Test("Create Server With Multiple Prompts")
-    func createServerWithMultiplePrompts() throws {
+    func createServerWithMultiplePrompts() async throws {
         let prompt1 = try MCPPrompt.build { builder in
             builder.name = "greeting"
             builder.description = "A greeting prompt"
@@ -46,21 +48,21 @@ final class MCPServerPromptTests {
             builder.parameter("name", description: "The name to bid farewell")
         }
 
-        let server = MCPServer.create(
+        try await MCPServer.withMCPServer(
             name: "TestServer",
             version: "1.0.0",
-            prompts: prompt1,
-            prompt2
-        )
-
-        #expect(server.prompts?.count == 2)
-        #expect(server.prompts?.map(\.name).contains("greeting") == true)
-        #expect(server.prompts?.map(\.name).contains("farewell") == true)
+            transport: .stdio,
+            prompts: [prompt1, prompt2]
+        ) { server in
+            #expect(server.prompts?.count == 2)
+            #expect(server.prompts?.map(\.name).contains("greeting") == true)
+            #expect(server.prompts?.map(\.name).contains("farewell") == true)
+        }
     }
 
     // Test creating a server with both tools and prompts
     @Test("Create Server With Tools And Prompts")
-    func createServerWithToolsAndPrompts() throws {
+    func createServerWithToolsAndPrompts() async throws {
         // Create a simple tool for testing
         let tool = MCPTool<String, String>(
             name: "echo",
@@ -77,9 +79,6 @@ final class MCPServerPromptTests {
                     "required": ["message"]
                 }
                 """,
-            converter: { params in
-                try MCPTool<String, String>.extractParameter(params, name: "message")
-            },
             body: { message in
                 message
             }
@@ -92,17 +91,18 @@ final class MCPServerPromptTests {
             builder.parameter("name", description: "The name to greet")
         }
 
-        let server = MCPServer.create(
+        try await MCPServer.withMCPServer(
             name: "TestServer",
             version: "1.0.0",
+            transport: .stdio,
             tools: [tool],
             prompts: [prompt]
-        )
-
-        #expect(server.tools?.count == 1)
-        #expect(server.prompts?.count == 1)
-        #expect(server.tools?.first?.name == "echo")
-        #expect(server.prompts?.first?.name == "test-prompt")
+        ) { server in
+            #expect(server.tools?.count == 1)
+            #expect(server.prompts?.count == 1)
+            #expect(server.tools?.first?.name == "echo")
+            #expect(server.prompts?.first?.name == "test-prompt")
+        }
     }
 
     // Test prompt conversion to MCP Prompt
@@ -180,7 +180,7 @@ final class MCPServerPromptTests {
 
     // Test registering prompts with a server
     @Test("Register Prompts With Server")
-    func registerPromptsWithServer() throws {
+    func registerPromptsWithServer() async throws {
         let prompt1 = try MCPPrompt.build { builder in
             builder.name = "greeting"
             builder.description = "A greeting prompt"
@@ -195,17 +195,16 @@ final class MCPServerPromptTests {
             builder.parameter("name", description: "The name to bid farewell")
         }
 
-        // Create a server with the prompts
-        let server = MCPServer.create(
+        try await MCPServer.withMCPServer(
             name: "TestServer",
             version: "1.0.0",
-            prompts: prompt1,
-            prompt2
-        )
-
-        // Verify the server has the prompts
-        #expect(server.prompts?.count == 2)
-        #expect(server.prompts?.contains(where: { $0.name == "greeting" }) == true)
-        #expect(server.prompts?.contains(where: { $0.name == "farewell" }) == true)
+            transport: .stdio,
+            prompts: [prompt1, prompt2]
+        ) { server in
+            // Verify the server has the prompts
+            #expect(server.prompts?.count == 2)
+            #expect(server.prompts?.contains(where: { $0.name == "greeting" }) == true)
+            #expect(server.prompts?.contains(where: { $0.name == "farewell" }) == true)
+        }
     }
 }

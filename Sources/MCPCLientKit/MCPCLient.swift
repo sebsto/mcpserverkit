@@ -27,11 +27,19 @@ public struct MCPClient {
         self.client = Client(name: name, version: version)
         self.logger = logger
 
+        let (command, args) =
+            switch toolConfig {
+            case .stdio(let config):
+                (config.command, config.args)
+            case .http(let config):
+                (config.url, [])
+            }
+
         logger.trace(
             "Launching process",
             metadata: [
-                "command": "\(toolConfig.command)",
-                "arguments": "\(toolConfig.args.joined(separator: " "))",
+                "command": "\(command)",
+                "arguments": "\(args.joined(separator: " "))",
             ]
         )
 
@@ -46,8 +54,8 @@ public struct MCPClient {
         )
 
         self.process = Process()
-        process.executableURL = URL(fileURLWithPath: toolConfig.command)
-        process.arguments = toolConfig.args
+        process.executableURL = URL(fileURLWithPath: command)
+        process.arguments = args
         process.standardInput = serverInputPipe
         process.standardOutput = serverOutputPipe
 
@@ -134,40 +142,6 @@ public struct MCPClient {
             throw error
         } catch {
             throw MCPToolError.fileNotFound(path: mcpFileURL.path)
-        }
-    }
-}
-
-/// Structure representing the MCP configuration file format
-package struct MCPConfiguration: Decodable {
-    let mcpServers: [String: ToolConfiguration]
-
-    package struct ToolConfiguration: Decodable {
-        let command: String
-        let args: [String]
-    }
-}
-
-/// Custom error type for MCP tool command operations
-public enum MCPToolError: Swift.Error, CustomStringConvertible {
-    case fileNotFound(path: String)
-    case invalidFormat(reason: String)
-    case toolNotFound(name: String)
-    case toolError(message: String)
-    case unsupportedToolResponse
-
-    public var description: String {
-        switch self {
-        case .fileNotFound(let path):
-            return "Could not read MCP configuration file at \(path)"
-        case .invalidFormat(let reason):
-            return "Invalid MCP configuration format: \(reason)"
-        case .toolNotFound(let name):
-            return "Tool '\(name)' not found in MCP configuration"
-        case .toolError(let message):
-            return "Tool error: \(message)"
-        case .unsupportedToolResponse:
-            return "Only text responses are supported at the moment"
         }
     }
 }

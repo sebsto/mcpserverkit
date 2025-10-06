@@ -93,6 +93,15 @@ let package = Package(
                 .target(name: "MCPServerKit")
             ]
         ),
+        .testTarget(
+            name: "MCPClientTests",
+            dependencies: [
+                .target(name: "MCPClientKit")
+            ],
+            resources: [
+                .copy("Resources")
+            ]
+        ),
 
         // shared types and protocols for the schema macro system
         .target(

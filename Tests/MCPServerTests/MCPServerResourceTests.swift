@@ -7,7 +7,7 @@ import Testing
 struct MCPServerResourceTests {
 
     @Test("Create Server With Resources")
-    func testCreateServerWithResources() {
+    func testCreateServerWithResources() async throws {
         let registry = MCPResourceRegistry()
         registry.add(
             MCPResource.text(
@@ -18,21 +18,22 @@ struct MCPServerResourceTests {
             )
         )
 
-        let server = MCPServer.create(
+        try await MCPServer.withMCPServer(
             name: "ResourceServer",
             version: "1.0.0",
+            transport: .stdio,
             resources: registry
-        )
+        ) { server in
+            #expect(server.name == "ResourceServer")
+            #expect(server.version == "1.0.0")
+            #expect(server.resources.resources.count == 1)
+            #expect(server.resources.resources[0].resource.name == "Documentation")
+        }
 
-        #expect(server.name == "ResourceServer")
-        #expect(server.version == "1.0.0")
-        #expect(server.resources != nil)
-        #expect(server.resources?.resources.count == 1)
-        #expect(server.resources?.resources[0].resource.name == "Documentation")
     }
 
     @Test("Create Server With Tools And Resources")
-    func testCreateServerWithToolsAndResources() {
+    func testCreateServerWithToolsAndResources() async throws {
         // Create a tool
         let tool = MCPTool<String, String>(
             name: "echo",
@@ -49,9 +50,6 @@ struct MCPServerResourceTests {
                     "required": ["message"]
                 }
                 """,
-            converter: { params in
-                try MCPTool<String, String>.extractParameter(params, name: "message")
-            },
             body: { input in
                 input
             }
@@ -69,50 +67,50 @@ struct MCPServerResourceTests {
         )
 
         // Create server with both tools and resources
-        let server = MCPServer.create(
+        try await MCPServer.withMCPServer(
             name: "ToolsAndResourcesServer",
             version: "1.0.0",
+            transport: .stdio,
             tools: [tool],
             resources: registry
-        )
-
-        #expect(server.name == "ToolsAndResourcesServer")
-        #expect(server.version == "1.0.0")
-        #expect(server.tools != nil)
-        #expect(server.tools?.count == 1)
-        #expect(server.tools?[0].name == "echo")
-        #expect(server.resources != nil)
-        #expect(server.resources?.resources.count == 1)
-        #expect(server.resources?.resources[0].resource.name == "Documentation")
+        ) { server in
+            #expect(server.name == "ToolsAndResourcesServer")
+            #expect(server.version == "1.0.0")
+            #expect(server.tools != nil)
+            #expect(server.tools?.count == 1)
+            #expect(server.tools?[0].name == "echo")
+            #expect(server.resources.resources.count == 1)
+            #expect(server.resources.resources[0].resource.name == "Documentation")
+        }
     }
 
     @Test("Register Resources With Server")
-    func testRegisterResourcesWithServer() {
+    func testRegisterResourcesWithServer() async throws {
         // Create a server without resources
-        let server = MCPServer.create(
+        try await MCPServer.withMCPServer(
             name: "EmptyServer",
             version: "1.0.0",
+            transport: .stdio,
             tools: [any ToolProtocol]()
-        )
-
-        // Create resources
-        let registry = MCPResourceRegistry()
-        registry.add(
-            MCPResource.text(
-                name: "Documentation",
-                uri: "docs://api",
-                content: "# API Documentation",
-                mimeType: .markdown
+        ) { server in
+            // Create resources
+            let registry = MCPResourceRegistry()
+            registry.add(
+                MCPResource.text(
+                    name: "Documentation",
+                    uri: "docs://api",
+                    content: "# API Documentation",
+                    mimeType: .markdown
+                )
             )
-        )
+            // Register resources with the server
+            await server.registerResources(resources: registry)
 
-        // Register resources with the server
-        let serverWithResources = server.registerResources(registry)
+            #expect(server.name == "EmptyServer")
+            #expect(server.version == "1.0.0")
+            #expect(server.resources.resources.count == 1)
+            #expect(server.resources.resources[0].resource.name == "Documentation")
+        }
 
-        #expect(serverWithResources.name == "EmptyServer")
-        #expect(serverWithResources.version == "1.0.0")
-        #expect(serverWithResources.resources != nil)
-        #expect(serverWithResources.resources?.resources.count == 1)
-        #expect(serverWithResources.resources?.resources[0].resource.name == "Documentation")
     }
 }

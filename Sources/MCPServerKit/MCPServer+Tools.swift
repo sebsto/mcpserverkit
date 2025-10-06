@@ -7,7 +7,7 @@ import Foundation
 #endif
 
 extension MCPServer {
-    package func registerTools(_ server: Server, tools: [any ToolProtocol]) async {
+    package func registerTools(tools: [any ToolProtocol]) async {
         // register the tools, part 1 : tools/list
         await server.withMethodHandler(ListTools.self) { id, params in
             let _tools = try tools.map { tool in

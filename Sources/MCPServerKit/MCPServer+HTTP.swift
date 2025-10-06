@@ -10,13 +10,13 @@ extension MCPServer {
     public func startHttpServer(port: Int = 8080) async throws {
         // Register MCP handlers
         if let tools, tools.count > 0 {
-            await registerTools(server, tools: tools)
+            await registerTools(tools: tools)
         }
         if let prompts, prompts.count > 0 {
-            await registerPrompts(server, prompts: prompts)
+            await registerPrompts(prompts: prompts)
         }
-        if let resources, !resources.resources.isEmpty {
-            await registerResources(server, resources: resources)
+        if !resources.resources.isEmpty {
+            await registerResources(resources: resources)
         }
 
         // Create router and add MCP endpoint

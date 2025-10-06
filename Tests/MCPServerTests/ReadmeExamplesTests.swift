@@ -36,10 +36,6 @@ struct ReadmeExamplesTests {
             name: "tool_name",
             description: "Description of what your tool does",
             inputSchema: myToolSchema,
-            converter: { params in
-                // Convert the input parameters to the expected type
-                try MCPTool<String, String>.extractParameter(params, name: "parameter_name")
-            },
             body: { (input: String) async throws -> String in
                 // Process the input and return a result
                 "Processed: \(input)"
@@ -82,7 +78,7 @@ struct ReadmeExamplesTests {
     }
 
     @Test("Setting Up a Server with Tools Example")
-    func testSettingUpServerWithToolsExample() {
+    func testSettingUpServerWithToolsExample() async throws {
         // Create tools
         let myTool1 = MCPTool<String, String>(
             name: "tool1",
@@ -109,22 +105,21 @@ struct ReadmeExamplesTests {
         )
 
         // Create the server with tools
-        let server = MCPServer.create(
+        try await MCPServer.withMCPServer(
             name: "MyMCPServer",
             version: "1.0.0",
-            tools: myTool1,
-            myTool2,
-            myTool3
-        )
-
-        // Verify server was created correctly
-        #expect(server.name == "MyMCPServer")
-        #expect(server.version == "1.0.0")
-        #expect(server.tools?.count == 3)
+            transport: .stdio,
+            tools: [myTool1, myTool2, myTool3]
+        ) { server in
+            // Verify server was created correctly
+            #expect(server.name == "MyMCPServer")
+            #expect(server.version == "1.0.0")
+            #expect(server.tools?.count == 3)
+        }
     }
 
     @Test("Setting Up a Server with Resources Example")
-    func testSettingUpServerWithResourcesExample() {
+    func testSettingUpServerWithResourcesExample() async throws {
         // Create resources
         let resource = MCPResource.text(
             name: "Documentation",
@@ -138,20 +133,21 @@ struct ReadmeExamplesTests {
         registry.add(resource)
 
         // Create the server with resources
-        let server = MCPServer.create(
+        try await MCPServer.withMCPServer(
             name: "ResourceServer",
             version: "1.0.0",
+            transport: .stdio,
             resources: registry
-        )
-
-        // Verify server was created correctly
-        #expect(server.name == "ResourceServer")
-        #expect(server.version == "1.0.0")
-        #expect(server.resources?.resources.count == 1)
+        ) { server in
+            // Verify server was created correctly
+            #expect(server.name == "ResourceServer")
+            #expect(server.version == "1.0.0")
+            #expect(server.resources.resources.count == 1)
+        }
     }
 
     @Test("Setting Up a Server with Both Tools and Resources Example")
-    func testSettingUpServerWithBothToolsAndResourcesExample() {
+    func testSettingUpServerWithBothToolsAndResourcesExample() async throws {
         // Create tools
         let weatherTool = MCPTool<String, String>(
             name: "weather",
@@ -182,22 +178,23 @@ struct ReadmeExamplesTests {
         registry.add(resource)
 
         // Create the server with both tools and resources
-        let server = MCPServer.create(
+        try await MCPServer.withMCPServer(
             name: "FullServer",
             version: "1.0.0",
+            transport: .stdio,
             tools: [weatherTool, calculatorTool],
             resources: registry
-        )
-
-        // Verify server was created correctly
-        #expect(server.name == "FullServer")
-        #expect(server.version == "1.0.0")
-        #expect(server.tools?.count == 2)
-        #expect(server.resources?.resources.count == 1)
+        ) { server in
+            // Verify server was created correctly
+            #expect(server.name == "FullServer")
+            #expect(server.version == "1.0.0")
+            #expect(server.tools?.count == 2)
+            #expect(server.resources.resources.count == 1)
+        }
     }
 
     @Test("Adding Resources to an Existing Server Example")
-    func testAddingResourcesToExistingServerExample() {
+    func testAddingResourcesToExistingServerExample() async throws {
         // Create a tool
         let myTool = MCPTool<String, String>(
             name: "tool",
@@ -208,36 +205,37 @@ struct ReadmeExamplesTests {
         )
 
         // Create a server
-        let server = MCPServer.create(
+        try await MCPServer.withMCPServer(
             name: "MyServer",
             version: "1.0.0",
+            transport: .stdio,
             tools: [myTool]
-        )
+        ) { server in
 
-        // Create resources
-        let resource = MCPResource.text(
-            name: "Documentation",
-            uri: "docs://api",
-            content: "# API Documentation",
-            mimeType: .markdown
-        )
+            // Create resources
+            let resource = MCPResource.text(
+                name: "Documentation",
+                uri: "docs://api",
+                content: "# API Documentation",
+                mimeType: .markdown
+            )
 
-        // Create registry
-        let registry = MCPResourceRegistry()
-        registry.add(resource)
+            // Create registry
+            let registry = MCPResourceRegistry(resources: [resource])
 
-        // Add resources to the server
-        let serverWithResources = server.registerResources(registry)
+            // Add resources to the server
+            await server.registerResources(resources: registry)
 
-        // Verify server was updated correctly
-        #expect(serverWithResources.name == "MyServer")
-        #expect(serverWithResources.version == "1.0.0")
-        #expect(serverWithResources.tools?.count == 1)
-        #expect(serverWithResources.resources?.resources.count == 1)
+            // Verify server was updated correctly
+            #expect(server.name == "MyServer")
+            #expect(server.version == "1.0.0")
+            #expect(server.tools?.count == 1)
+            #expect(server.resources.resources.count == 1)
+        }
     }
 
     @Test("Weather Tool with Resources Example")
-    func testWeatherToolWithResourcesExample() {
+    func testWeatherToolWithResourcesExample() async throws {
         // Weather tool
         let weatherTool = MCPTool<String, String>(
             name: "weather",
@@ -254,9 +252,6 @@ struct ReadmeExamplesTests {
                     "required": ["city"]
                 }
                 """,
-            converter: { params in
-                try MCPTool<String, String>.extractParameter(params, name: "city")
-            },
             body: { city in
                 // Implementation would fetch weather data
                 "Weather for \(city): Sunny, 72°F"
@@ -275,19 +270,21 @@ struct ReadmeExamplesTests {
         )
 
         // Create server with both tool and resources
-        let server = MCPServer.create(
+        try await MCPServer.withMCPServer(
             name: "WeatherServer",
             version: "1.0.0",
+            transport: .stdio,
             tools: [weatherTool],
             resources: registry
-        )
+        ) { server in
 
-        // Verify server was created correctly
-        #expect(server.name == "WeatherServer")
-        #expect(server.version == "1.0.0")
-        #expect(server.tools?.count == 1)
-        #expect(server.tools?[0].name == "weather")
-        #expect(server.resources?.resources.count == 1)
-        #expect(server.resources?.resources[0].resource.name == "Weather API Documentation")
+            // Verify server was created correctly
+            #expect(server.name == "WeatherServer")
+            #expect(server.version == "1.0.0")
+            #expect(server.tools?.count == 1)
+            #expect(server.tools?[0].name == "weather")
+            #expect(server.resources.resources.count == 1)
+            #expect(server.resources.resources[0].resource.name == "Weather API Documentation")
+        }
     }
 }

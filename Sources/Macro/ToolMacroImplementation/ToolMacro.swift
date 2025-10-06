@@ -156,6 +156,11 @@ public struct ToolMacro: MemberMacro, ExtensionMacro {
             try validateParameterConsistency(schemaInfo: schemaInfo, handlerFunc: handlerFunc)
             properties.append(generateInputSchemaProperty(from: schemaInfo, in: structDecl, context: context))
         }
+        
+        // Add customConverter property if it doesn't exist
+        if let customConverterProperty = try generateCustomConverterProperty(in: structDecl) {
+            properties.append(customConverterProperty)
+        }
 
         return properties
     }
@@ -264,6 +269,22 @@ public struct ToolMacro: MemberMacro, ExtensionMacro {
             """
 
         return descriptionProperty
+    }
+    
+    public static func generateCustomConverterProperty(
+        in structDecl: StructDeclSyntax
+    ) throws -> DeclSyntax? {
+        guard !propertyExists(named: "customConverter", in: structDecl) else {
+            return nil  // Property already exists, don't generate it
+        }
+
+        let accessModifier = getAccessModifier(from: structDecl)
+
+        let customConverterProperty: DeclSyntax = """
+            \(raw: accessModifier)var customConverter: (@Sendable (CallTool.Parameters) async throws -> Input)? { nil }
+            """
+
+        return customConverterProperty
     }
 
     private static func generateInputSchemaProperty(

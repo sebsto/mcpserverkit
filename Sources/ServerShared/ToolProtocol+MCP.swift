@@ -18,7 +18,13 @@ extension ToolProtocol {
     }
 
     public func handle(jsonInput: CallTool.Parameters) async throws -> Encodable {
-        let convertedInput = try await convert(jsonInput)
+        let convertedInput: Self.Input!
+        if let customConverter {
+            convertedInput = try await customConverter(jsonInput)
+        } else {
+            convertedInput = try await convert(jsonInput)
+        }
+
         return try await handle(input: convertedInput)
     }
 
