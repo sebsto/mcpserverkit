@@ -14,7 +14,7 @@ extension Agent {
     public typealias AgentCallbackFunction = (AgentCallbackEvent) -> Void
 
     /// Events that can occur during agent execution.
-    public enum AgentCallbackEvent: Sendable {
+    public enum AgentCallbackEvent: Sendable, CustomStringConvertible {
         /// Text content received from the agent.
         case text(String)
         /// Tool use request from the agent.
@@ -25,6 +25,15 @@ extension Agent {
         case metaData(MetaData)
         /// Agent execution has ended.
         case end
+        
+        public var description: String {
+            switch self {
+            case .text(let content):
+                return content
+            default:
+                return ""
+            }
+        }
     }
 
 }
