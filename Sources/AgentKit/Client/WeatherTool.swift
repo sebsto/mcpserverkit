@@ -10,7 +10,7 @@ import Foundation
     name: "weather",
     description: "Get detailled weather information for a city."
 )
-struct WeatherTool: ToolProtocol {
+struct WeatherTool {
     /// Get weather information for a specific city
     /// - Parameter input: The city name to get the weather for
     func handle(input city: String) async throws -> String {

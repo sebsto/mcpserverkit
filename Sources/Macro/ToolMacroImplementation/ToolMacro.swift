@@ -91,7 +91,7 @@ struct DocCommentParser {
     }
 }
 
-public struct ToolMacro: MemberMacro {
+public struct ToolMacro: MemberMacro, ExtensionMacro {
 
     // Helper function to get access modifier string
     private static func getAccessModifier(from structDecl: StructDeclSyntax) -> String {
@@ -158,6 +158,32 @@ public struct ToolMacro: MemberMacro {
         }
 
         return properties
+    }
+
+    public static func expansion(
+        of node: AttributeSyntax,
+        attachedTo declaration: some DeclGroupSyntax,
+        providingExtensionsOf type: some TypeSyntaxProtocol,
+        conformingTo protocols: [TypeSyntax],
+        in context: some MacroExpansionContext
+    ) throws -> [ExtensionDeclSyntax] {
+        
+        guard let structDecl = declaration.as(StructDeclSyntax.self) else {
+            throw ToolError.unsupportedDeclaration
+        }
+        
+        let structName = structDecl.name.text
+        let accessModifier = getAccessModifier(from: structDecl)
+        
+        let extensionDecl: DeclSyntax = """
+            \(raw: accessModifier.isEmpty ? "" : "\(accessModifier.trimmingCharacters(in: .whitespaces)) ")extension \(raw: structName): ToolProtocol {}
+            """
+        
+        guard let extensionSyntax = extensionDecl.as(ExtensionDeclSyntax.self) else {
+            return []
+        }
+        
+        return [extensionSyntax]
     }
 
     private static func extractMacroArguments(

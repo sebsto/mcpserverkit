@@ -5,7 +5,7 @@ import ToolMacro
 
 // Example 1: Simple string input with DocC-generated schema
 @Tool(name: "weather", description: "Get weather information for a city")
-struct WeatherTool: ToolProtocol {
+struct WeatherTool {
     typealias Input = String
     typealias Output = String
     // var i = 0
@@ -15,20 +15,11 @@ struct WeatherTool: ToolProtocol {
     func handle(input city: String) async throws -> String {
         "Weather for \(city): Sunny, 25°C"
     }
-
-    func convert(_ input: CallTool.Parameters) async throws -> String {
-        try MCPTool<String, String>.extractParameter(input, name: "city")
-    }
-
-    func handle(jsonInput: CallTool.Parameters) async throws -> Encodable {
-        let input = try await convert(jsonInput)
-        return try await handle(input: input)
-    }
 }
 
 // Example 2: Complex input with multiple parameters and detailed descriptions
 @Tool(name: "calculator", description: "Perform basic arithmetic operations")
-struct CalculatorTool: ToolProtocol {
+struct CalculatorTool {
 
     struct CalculatorInput: Codable {
         /// First number in the calculation
@@ -61,21 +52,11 @@ struct CalculatorTool: ToolProtocol {
             throw MCPServerError.invalidParam("operation", "Unknown operation: \(input.operation)")
         }
     }
-
-    func convert(_ input: CallTool.Parameters) async throws -> CalculatorInput {
-        let data = try JSONEncoder().encode(input.arguments)
-        return try JSONDecoder().decode(CalculatorInput.self, from: data)
-    }
-
-    func handle(jsonInput: CallTool.Parameters) async throws -> Encodable {
-        let convertedInput = try await convert(jsonInput)
-        return try await handle(input: convertedInput)
-    }
 }
 
 // Example 3: Tool with existing properties (should only generate inputSchema)
 @Tool
-struct ExistingPropertiesTool: ToolProtocol {
+struct ExistingPropertiesTool {
     typealias Input = String
     typealias Output = String
 
@@ -86,15 +67,6 @@ struct ExistingPropertiesTool: ToolProtocol {
     /// - Parameter input: The text to process and transform
     func handle(input text: String) async throws -> String {
         "Processed: \(text.uppercased())"
-    }
-
-    func convert(_ input: CallTool.Parameters) async throws -> String {
-        try MCPTool<String, String>.extractParameter(input, name: "text")
-    }
-
-    func handle(jsonInput: CallTool.Parameters) async throws -> Encodable {
-        let convertedInput = try await convert(jsonInput)
-        return try await handle(input: convertedInput)
     }
 }
 
@@ -112,7 +84,7 @@ struct ExternalCalculatorInput: Codable {
 }
 
 @Tool(name: "external-calculator", description: "Perform arithmetic", schema: ExternalCalculatorInput.self)
-struct ExternalCalculatorTool: ToolProtocol {
+struct ExternalCalculatorTool {
     typealias Input = ExternalCalculatorInput
     typealias Output = Double
     var i = 8
@@ -135,16 +107,6 @@ struct ExternalCalculatorTool: ToolProtocol {
         default:
             throw MCPServerError.invalidParam("operation", "Unknown operation: \(input.operation)")
         }
-    }
-
-    func convert(_ input: CallTool.Parameters) async throws -> ExternalCalculatorInput {
-        let data = try JSONEncoder().encode(input.arguments)
-        return try JSONDecoder().decode(ExternalCalculatorInput.self, from: data)
-    }
-
-    func handle(jsonInput: CallTool.Parameters) async throws -> Encodable {
-        let convertedInput = try await convert(jsonInput)
-        return try await handle(input: convertedInput)
     }
 }
 
