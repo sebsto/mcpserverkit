@@ -1,4 +1,5 @@
-import MCPServerKit
+import AgentKit
+import Logging
 
 #if canImport(FoundationEssentials)
 import FoundationEssentials
@@ -10,38 +11,48 @@ import Foundation
 // EXAMPLE WITHOUT MACROS
 //
 
-// Create the server with multiple tools of different types
-// let server = MCPServer.create(
-//     name: "MultiToolServer",
-//     version: "1.0.0",
-//     tools: [
-//         myWeatherTool,  // String input, String output
-//         calculatorTool,  // CalculatorInput input, Double output
-//         FXRateTool(),  // FXRatesInput input, String output
-//     ],
-//     prompts: [myWeatherPrompt, fxRatesPrompt],
-// )
+@main
+struct Test {
+    static func main() async throws {
 
-// Start the server
-// try await server.startStdioServer()
+        var logger = Logger(label: "MultiToolServer")
+        logger.logLevel = .trace
+        // Create the server with multiple tools of different types
+        try await MCPServer.withMCPServer(
+            name: "MultiToolServer",
+            version: "1.0.0",
+            transport: .http,
+            tools: [
+                WeatherTool(),  // String input, String output
+                CalculatorTool(),  // CalculatorInput input, Double output
+                FXRateTool(),  // FXRatesInput input, String output
+            ],
+            prompts: [myWeatherPrompt, fxRatesPrompt],
+            logger: logger
+        ) { server in
+            // Start the server
+            try await server.run()
+        }
+    }
+}
 
 //
 // EXAMPLE WITH MACROS
 //
-@Server(
-    name: "MultiToolServer",
-    version: "1.0.0",
-    description: "A server that provides multiple tools",
-    tools: [
-        WeatherTool(),  // String input, String output
-        CalculatorTool(),  // CalculatorInput input, Double output
-        FXRateTool(),  // FXRatesInput input, String output
-    ],
-    prompts: [myWeatherPrompt, fxRatesPrompt],
-    type: .stdio
-)
-@main
-struct MultiToolServer {}
+// @Server(
+//     name: "MultiToolServer",
+//     version: "1.0.0",
+//     description: "A server that provides multiple tools",
+//     tools: [
+//         WeatherTool(),  // String input, String output
+//         CalculatorTool(),  // CalculatorInput input, Double output
+//         FXRateTool(),  // FXRatesInput input, String output
+//     ],
+//     prompts: [myWeatherPrompt, fxRatesPrompt],
+//     type: .stdio
+// )
+// @main
+// struct MultiToolServer {}
 
 //
 // EXAMPLE CALLING A TOOL WITHOUT SERVER (just for debugging)

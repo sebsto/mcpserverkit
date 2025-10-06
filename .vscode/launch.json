@@ -4,101 +4,10 @@
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:AgentKit}",
+            "cwd": "${workspaceFolder:AgentKit}/Example",
             "name": "Debug MCPExampleServer",
-            "program": "${workspaceFolder:AgentKit}/.build/debug/MCPExampleServer",
-            "preLaunchTask": "swift: Build All"
+            "program": "${workspaceFolder:AgentKit}/Example/.build/debug/MCPExampleServer",
+            "preLaunchTask": "swift: Build Debug MCPExampleServer"
         },
-        {
-            "type": "swift",
-            "request": "launch",
-            "args": [],
-            "cwd": "${workspaceFolder:AgentKit}",
-            "name": "Release MCPExampleServer",
-            "program": "${workspaceFolder:AgentKit}/.build/release/MCPExampleServer",
-            "preLaunchTask": "swift: Build All - Release"
-        },
-        {
-            "type": "swift",
-            "request": "launch",
-            "args": [],
-            "cwd": "${workspaceFolder:AgentKit}",
-            "name": "Debug MCPExample",
-            "program": "${workspaceFolder:AgentKit}/.build/debug/MCPExample",
-            "preLaunchTask": "swift: Build All"
-        },
-        {
-            "type": "swift",
-            "request": "launch",
-            "args": [],
-            "cwd": "${workspaceFolder:AgentKit}",
-            "name": "Release MCPExample",
-            "program": "${workspaceFolder:AgentKit}/.build/release/MCPExample",
-            "preLaunchTask": "swift: Build All - Release"
-        },
-        {
-            "type": "swift",
-            "request": "launch",
-            "args": [],
-            "cwd": "${workspaceFolder:AgentKit}",
-            "name": "Debug FXRatesServer",
-            "program": "${workspaceFolder:AgentKit}/.build/debug/FXRatesServer",
-            "preLaunchTask": "swift: Build All"
-        },
-        {
-            "type": "swift",
-            "request": "launch",
-            "args": [],
-            "cwd": "${workspaceFolder:AgentKit}",
-            "name": "Release FXRatesServer",
-            "program": "${workspaceFolder:AgentKit}/.build/release/FXRatesServer",
-            "preLaunchTask": "swift: Build All - Release"
-        },
-        {
-            "type": "swift",
-            "request": "launch",
-            "args": [],
-            "cwd": "${workspaceFolder:AgentKit}",
-            "name": "Debug ToolMacroClient",
-            "program": "${workspaceFolder:AgentKit}/.build/debug/ToolMacroClient",
-            "preLaunchTask": "swift: Build All"
-        },
-        {
-            "type": "swift",
-            "request": "launch",
-            "args": [],
-            "cwd": "${workspaceFolder:AgentKit}",
-            "name": "Release ToolMacroClient",
-            "program": "${workspaceFolder:AgentKit}/.build/release/ToolMacroClient",
-            "preLaunchTask": "swift: Build All - Release"
-        },
-        {
-            "type": "swift",
-            "request": "launch",
-            "args": [],
-            "cwd": "${workspaceFolder:AgentKit}",
-            "name": "Debug ServerMacroClient",
-            "program": "${workspaceFolder:AgentKit}/.build/debug/ServerMacroClient",
-            "preLaunchTask": "swift: Build All"
-        },
-        {
-            "type": "swift",
-            "request": "launch",
-            "args": [],
-            "cwd": "${workspaceFolder:AgentKit}",
-            "name": "Release ServerMacroClient",
-            "program": "${workspaceFolder:AgentKit}/.build/release/ServerMacroClient",
-            "preLaunchTask": "swift: Build All - Release"
-        },
-        {
-            "type": "swift",
-            "request": "launch",
-            "args": [],
-            "cwd": "${workspaceFolder:AgentKit}",
-            "name": "Debug AgentClient",
-            "program": "${workspaceFolder:AgentKit}/.build/debug/AgentClient",
-            "env": { "LOG_LEVEL" : "trace"},
-            "preLaunchTask": "swift: Build AgentClient"
-        }
     ]
 }

@@ -15,9 +15,26 @@ let package = Package(
         .library(name: "AgentKit", targets: ["AgentKit"]),
         .executable(name: "AgentClient", targets: ["AgentClient"]),
     ],
+    traits: [
+        "MCPHTTPSupport",
+        .default(
+            enabledTraits: [
+                "MCPHTTPSupport"
+            ]
+        ),
+    ],
     dependencies: [
+        // to support macros implementation
         .package(url: "https://github.com/swiftlang/swift-syntax", from: "600.0.1"),
-        .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", branch: "main"),
+
+        .package(url: "https://github.com/swift-server/swift-service-lifecycle.git", from: "2.8.0"),
+
+        // .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", branch: "main"),
+        // https://github.com/modelcontextprotocol/swift-sdk/issues/110
+        .package(url: "https://github.com/stallent/swift-sdk.git", branch: "streamable_server"),
+        .package(url: "https://github.com/orlandos-nl/SSEKit.git", from: "1.1.0"),
+        .package(url: "https://github.com/hummingbird-project/hummingbird.git", from: "2.0.0"),
+
         .package(path: "../swift-bedrock-library"),
     ],
     targets: [
@@ -54,8 +71,20 @@ let package = Package(
             name: "MCPServerKit",
             dependencies: [
                 .product(name: "MCP", package: "swift-sdk"),
+                .product(name: "ServiceLifecycle", package: "swift-service-lifecycle"),
+                .product(
+                    name: "Hummingbird",
+                    package: "hummingbird",
+                    condition: .when(traits: ["MCPHTTPSupport"])
+                ),
+                .product(
+                    name: "SSEKit",
+                    package: "SSEKit",
+                    condition: .when(traits: ["MCPHTTPSupport"])
+                ),
                 "ServerShared",
-                "ToolMacro", "ServerMacro",
+                "ToolMacro",
+                "ServerMacro",
             ],
             path: "Sources/MCPServerKit"
         ),
@@ -134,6 +163,7 @@ let package = Package(
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
                 .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
                 .product(name: "SwiftDiagnostics", package: "swift-syntax"),
+                "ServerShared",
             ],
             path: "Sources/Macro/ServerMacroImplementation"
         ),

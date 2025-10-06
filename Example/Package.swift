@@ -1,4 +1,4 @@
-// swift-tools-version:6.1
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
@@ -10,13 +10,13 @@ let package = Package(
         .executable(name: "MCPExampleServer", targets: ["MCPExampleServer"])
     ],
     dependencies: [
-        .package(name: "MCPServerKit", path: "..")  // Reference to the parent MCPServerKit package
+        .package(name: "AgentKit", path: "..")  // Reference to the parent MCPServerKit package
     ],
     targets: [
         .executableTarget(
             name: "MCPExampleServer",
             dependencies: [
-                .product(name: "MCPServerKit", package: "MCPServerKit")
+                .product(name: "AgentKit", package: "AgentKit")
             ],
             path: "Sources/Server"
         )
