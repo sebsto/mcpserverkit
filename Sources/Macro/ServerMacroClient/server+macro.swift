@@ -30,4 +30,6 @@ struct MyServer {}
 //         tools: [ SayHello()]
 //     )
 //     try await server.startStdioServer()
+// or
+//     try await server.startHttpServer
 // }

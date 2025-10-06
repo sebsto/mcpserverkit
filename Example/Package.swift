@@ -7,18 +7,26 @@ let package = Package(
         .macOS(.v15)
     ],
     products: [
-        .executable(name: "MCPExampleServer", targets: ["MCPExampleServer"])
+        .executable(name: "Server", targets: ["Server"]),
+        .executable(name: "Client", targets: ["Client"]),
     ],
     dependencies: [
-        .package(name: "AgentKit", path: "..")  // Reference to the parent MCPServerKit package
+        .package(name: "AgentKit", path: "..")
     ],
     targets: [
         .executableTarget(
-            name: "MCPExampleServer",
+            name: "Server",
             dependencies: [
                 .product(name: "AgentKit", package: "AgentKit")
             ],
             path: "Sources/Server"
-        )
+        ),
+        .executableTarget(
+            name: "Client",
+            dependencies: [
+                .product(name: "AgentKit", package: "AgentKit")
+            ],
+            path: "Sources/Client"
+        ),
     ]
 )

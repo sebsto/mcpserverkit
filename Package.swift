@@ -13,7 +13,6 @@ let package = Package(
         .library(name: "MCPServerKit", targets: ["MCPServerKit", "ToolMacro"]),
         .library(name: "MCPClientKit", targets: ["MCPClientKit"]),
         .library(name: "AgentKit", targets: ["AgentKit"]),
-        .executable(name: "AgentClient", targets: ["AgentClient"]),
     ],
     traits: [
         "MCPHTTPSupport",
@@ -44,14 +43,7 @@ let package = Package(
                 .product(name: "BedrockService", package: "swift-bedrock-library"),
                 "ToolMacro", "MCPServerKit", "MCPClientKit",
             ],
-            path: "Sources/AgentKit/Lib"
-        ),
-        .executableTarget(
-            name: "AgentClient",
-            dependencies: [
-                "AgentKit"
-            ],
-            path: "Sources/AgentKit/Client"
+            path: "Sources/AgentKit"
         ),
         .executableTarget(
             name: "ServerMacroClient",
@@ -136,6 +128,7 @@ let package = Package(
         .target(
             name: "ToolMacro",
             dependencies: [
+                "ServerShared",
                 "ToolShared",
                 "ToolMacroImplementation",
             ],
