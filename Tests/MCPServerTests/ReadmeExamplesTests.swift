@@ -84,7 +84,6 @@ struct ReadmeExamplesTests {
             name: "tool1",
             description: "Tool 1",
             inputSchema: "{}",
-            converter: { _ in "" },
             body: { _ in "" }
         )
 
@@ -92,7 +91,6 @@ struct ReadmeExamplesTests {
             name: "tool2",
             description: "Tool 2",
             inputSchema: "{}",
-            converter: { _ in "" },
             body: { _ in "" }
         )
 
@@ -100,7 +98,6 @@ struct ReadmeExamplesTests {
             name: "tool3",
             description: "Tool 3",
             inputSchema: "{}",
-            converter: { _ in "" },
             body: { _ in "" }
         )
 
@@ -153,7 +150,6 @@ struct ReadmeExamplesTests {
             name: "weather",
             description: "Weather tool",
             inputSchema: "{}",
-            converter: { _ in "" },
             body: { _ in "" }
         )
 
@@ -161,7 +157,6 @@ struct ReadmeExamplesTests {
             name: "calculator",
             description: "Calculator tool",
             inputSchema: "{}",
-            converter: { _ in "" },
             body: { _ in "" }
         )
 
@@ -200,7 +195,6 @@ struct ReadmeExamplesTests {
             name: "tool",
             description: "Tool",
             inputSchema: "{}",
-            converter: { _ in "" },
             body: { _ in "" }
         )
 

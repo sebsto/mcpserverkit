@@ -36,14 +36,6 @@ struct MCPServerTests {
             name: name,
             description: description,
             inputSchema: inputSchema,
-            converter: { params in
-                guard let value = params.arguments?["value"],
-                    case .string(let str) = value
-                else {
-                    throw MCPServerError.missingparam("value")
-                }
-                return MockInput(value: str)
-            },
             body: { input in
                 MockOutput(result: "Processed: \(input.value)")
             }
@@ -61,14 +53,6 @@ struct MCPServerTests {
             name: "mockTool",
             description: "A mock tool for testing",
             inputSchema: "{}",
-            converter: { params in
-                guard let value = params.arguments?["value"],
-                    case .string(let str) = value
-                else {
-                    throw MCPServerError.missingparam("value")
-                }
-                return MockInput(value: str)
-            },
             body: { input in
                 MockOutput(result: "Processed: \(input.value)")
             }
@@ -87,14 +71,6 @@ struct MCPServerTests {
             name: "mockTool",
             description: "A mock tool for testing",
             inputSchema: "{}",
-            converter: { params in
-                guard let value = params.arguments?["value"],
-                    case .string(let str) = value
-                else {
-                    throw MCPServerError.missingparam("value")
-                }
-                return MockInput(value: str)
-            },
             body: { input in
                 MockOutput(result: "Processed: \(input.value)")
             }

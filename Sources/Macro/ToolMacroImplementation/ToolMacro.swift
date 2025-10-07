@@ -156,11 +156,6 @@ public struct ToolMacro: MemberMacro, ExtensionMacro {
             try validateParameterConsistency(schemaInfo: schemaInfo, handlerFunc: handlerFunc)
             properties.append(generateInputSchemaProperty(from: schemaInfo, in: structDecl, context: context))
         }
-        
-        // Add customConverter property if it doesn't exist
-        if let customConverterProperty = try generateCustomConverterProperty(in: structDecl) {
-            properties.append(customConverterProperty)
-        }
 
         return properties
     }
@@ -172,22 +167,22 @@ public struct ToolMacro: MemberMacro, ExtensionMacro {
         conformingTo protocols: [TypeSyntax],
         in context: some MacroExpansionContext
     ) throws -> [ExtensionDeclSyntax] {
-        
+
         guard let structDecl = declaration.as(StructDeclSyntax.self) else {
             throw ToolError.unsupportedDeclaration
         }
-        
+
         let structName = structDecl.name.text
         let accessModifier = getAccessModifier(from: structDecl)
-        
+
         let extensionDecl: DeclSyntax = """
             \(raw: accessModifier.isEmpty ? "" : "\(accessModifier.trimmingCharacters(in: .whitespaces)) ")extension \(raw: structName): ToolProtocol {}
             """
-        
+
         guard let extensionSyntax = extensionDecl.as(ExtensionDeclSyntax.self) else {
             return []
         }
-        
+
         return [extensionSyntax]
     }
 
@@ -269,22 +264,6 @@ public struct ToolMacro: MemberMacro, ExtensionMacro {
             """
 
         return descriptionProperty
-    }
-    
-    public static func generateCustomConverterProperty(
-        in structDecl: StructDeclSyntax
-    ) throws -> DeclSyntax? {
-        guard !propertyExists(named: "customConverter", in: structDecl) else {
-            return nil  // Property already exists, don't generate it
-        }
-
-        let accessModifier = getAccessModifier(from: structDecl)
-
-        let customConverterProperty: DeclSyntax = """
-            \(raw: accessModifier)var customConverter: (@Sendable (CallTool.Parameters) async throws -> Input)? { nil }
-            """
-
-        return customConverterProperty
     }
 
     private static func generateInputSchemaProperty(

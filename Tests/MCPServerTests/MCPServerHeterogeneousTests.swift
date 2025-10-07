@@ -54,14 +54,6 @@ struct MCPServerHeterogeneousTests {
                     "required": ["value"]
                 }
                 """,
-            converter: { params in
-                guard let value = params.arguments?["value"],
-                    case let .string(str) = value
-                else {
-                    throw MCPServerError.missingparam("value")
-                }
-                return StringMockInput(value: str)
-            },
             body: { input in
                 StringMockOutput(result: "Processed: \(input.value)")
             }
@@ -82,14 +74,6 @@ struct MCPServerHeterogeneousTests {
                     "required": ["number"]
                 }
                 """,
-            converter: { params in
-                // Using a simpler approach with extractParameter
-                do {
-                    return try MCPTool<IntMockInput, IntMockOutput>.extractParameter(params, name: "number")
-                } catch {
-                    throw MCPServerError.invalidParam("number", "Invalid number format")
-                }
-            },
             body: { input in
                 IntMockOutput(doubled: input.number * 2)
             }
@@ -126,14 +110,6 @@ struct MCPServerHeterogeneousTests {
                     "required": ["value"]
                 }
                 """,
-            converter: { params in
-                guard let value = params.arguments?["value"],
-                    case let .string(str) = value
-                else {
-                    throw MCPServerError.missingparam("value")
-                }
-                return StringMockInput(value: str)
-            },
             body: { input in
                 StringMockOutput(result: "Processed: \(input.value)")
             }
@@ -154,14 +130,6 @@ struct MCPServerHeterogeneousTests {
                     "required": ["number"]
                 }
                 """,
-            converter: { params in
-                // Using a simpler approach with extractParameter
-                do {
-                    return try MCPTool<IntMockInput, IntMockOutput>.extractParameter(params, name: "number")
-                } catch {
-                    throw MCPServerError.invalidParam("number", "Invalid number format")
-                }
-            },
             body: { input in
                 IntMockOutput(doubled: input.number * 2)
             }
@@ -194,10 +162,26 @@ struct MCPServerHeterogeneousTests {
     }
 
     // Test error handling in MCPServer
-    @Test("Test MCPServer error handling")
-    func testMCPServerErrorHandling() async throws {
+    @Test(
+        "Test MCPServer error handling",
+        arguments: [
+            CallTool.Parameters(
+                name: "errorTool",
+                arguments: [:]
+            ),
+            CallTool.Parameters(
+                name: "errorTool",
+                arguments: ["invalid_name": .string("trigger_error")]
+            ),
+            CallTool.Parameters(
+                name: "errorTool",
+                arguments: ["value": .string("runtime_error")]
+            ),
+        ]
+    )
+    func testMCPServerErrorHandling(parameters: CallTool.Parameters) async throws {
         // Create a tool that throws errors
-        let errorTool = MCPTool<StringMockInput, StringMockOutput>(
+        let tool = MCPTool<StringMockInput, StringMockOutput>(
             name: "errorTool",
             description: "A tool that throws errors",
             inputSchema: """
@@ -211,19 +195,6 @@ struct MCPServerHeterogeneousTests {
                     "required": ["value"]
                 }
                 """,
-            converter: { params in
-                guard let value = params.arguments?["value"],
-                    case let .string(str) = value
-                else {
-                    throw MCPServerError.missingparam("value")
-                }
-
-                if str == "trigger_error" {
-                    throw MCPServerError.invalidParam("value", "Cannot process 'trigger_error'")
-                }
-
-                return StringMockInput(value: str)
-            },
             body: { input in
                 if input.value == "runtime_error" {
                     throw MCPServerError.invalidParam("runtime", "Runtime error occurred")
@@ -232,43 +203,25 @@ struct MCPServerHeterogeneousTests {
             }
         )
 
-        // Test missing parameter error
-        do {
-            let missingParamCall = CallTool.Parameters(
-                name: "errorTool",
-                arguments: [:]
-            )
-
-            _ = try await errorTool.handle(jsonInput: missingParamCall)
-            throw TestError("Expected error for missing parameter")
-        } catch let error as MCPServerError {
-            #expect(error.errorDescription?.contains("Missing parameter") == true)
+        let error = await #expect(throws: MCPServerError.self) {
+            let _ = try await tool.handle(jsonInput: parameters)
         }
-
-        // Test invalid parameter error
-        do {
-            let invalidParamCall = CallTool.Parameters(
-                name: "errorTool",
-                arguments: ["value": .string("trigger_error")]
-            )
-
-            _ = try await errorTool.handle(jsonInput: invalidParamCall)
-            throw TestError("Expected error for invalid parameter")
-        } catch let error as MCPServerError {
-            #expect(error.errorDescription?.contains("Cannot process") == true)
+        var expectedErrorMessage: String = "unknown"
+        if parameters.name == "errorTool",
+            let args = parameters.arguments
+        {
+            if args.count == 0 {
+                expectedErrorMessage = "Missing parameter input"
+            } else {
+                for k in args.keys {
+                    if k == "invalid_name" {
+                        expectedErrorMessage = "Missing parameter input"
+                    } else if k == "value" {
+                        expectedErrorMessage = "Runtime error occurred"
+                    }
+                }
+            }
         }
-
-        // Test runtime error
-        do {
-            let runtimeErrorCall = CallTool.Parameters(
-                name: "errorTool",
-                arguments: ["value": .string("runtime_error")]
-            )
-
-            _ = try await errorTool.handle(jsonInput: runtimeErrorCall)
-            throw TestError("Expected runtime error")
-        } catch let error as MCPServerError {
-            #expect(error.errorDescription?.contains("Runtime error") == true)
-        }
+        #expect(error?.errorDescription?.contains(expectedErrorMessage) == true)
     }
 }

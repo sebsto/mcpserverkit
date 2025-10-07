@@ -32,14 +32,6 @@ struct MCPServerIntegrationTests {
             name: "testTool",
             description: "A test tool",
             inputSchema: "{}",
-            converter: { params in
-                guard let value = params.arguments?["text"],
-                    case .string(let text) = value
-                else {
-                    throw MCPServerError.missingparam("text")
-                }
-                return SimpleInput(text: text)
-            },
             body: { input in
                 SimpleOutput(result: "Processed: \(input.text)")
             }

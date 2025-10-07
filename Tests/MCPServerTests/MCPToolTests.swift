@@ -35,14 +35,6 @@ struct MCPToolTests {
             name: name,
             description: description,
             inputSchema: inputSchema,
-            converter: { params in
-                guard let value = params.arguments?["query"],
-                    case .string(let query) = value
-                else {
-                    throw MCPServerError.missingparam("query")
-                }
-                return TestInput(query: query)
-            },
             body: { input in
                 TestOutput(answer: "Response to: \(input.query)")
             }
@@ -59,14 +51,6 @@ struct MCPToolTests {
             name: "queryTool",
             description: "Processes queries",
             inputSchema: "{}",
-            converter: { params in
-                guard let value = params.arguments?["query"],
-                    case .string(let query) = value
-                else {
-                    throw MCPServerError.missingparam("query")
-                }
-                return TestInput(query: query)
-            },
             body: { input in
                 TestOutput(answer: "Response to: \(input.query)")
             }
@@ -95,14 +79,6 @@ struct MCPToolTests {
             name: "errorTool",
             description: "Tool that might throw errors",
             inputSchema: "{}",
-            converter: { params in
-                guard let value = params.arguments?["query"],
-                    case .string(let query) = value
-                else {
-                    throw MCPServerError.missingparam("query")
-                }
-                return TestInput(query: query)
-            },
             body: { input in
                 if input.query.isEmpty {
                     throw TestError.invalidQuery

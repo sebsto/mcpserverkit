@@ -38,7 +38,6 @@ struct ToolProtocolTests {
             let input = try await convert(jsonInput)
             return try await handle(input: input)
         }
-        public let customConverter: (@Sendable (CallTool.Parameters) async throws -> Input)? = nil
     }
 
     struct TestInput: Codable, Equatable {
