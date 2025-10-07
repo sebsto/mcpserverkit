@@ -67,15 +67,6 @@ struct MCPServerHeterogeneousTests {
             }
         )
 
-        // create an instance to be able to call extractParameters below
-        let simpleTool = MCPTool<IntMockInput, IntMockOutput>(
-            name: "",
-            description: "",
-            inputSchema: "",
-            body: { _ in
-                IntMockOutput(doubled: 0)
-            }
-        )
         // Create int tool using extractParameter
         let intTool = MCPTool<IntMockInput, IntMockOutput>(
             name: "intTool",
@@ -94,7 +85,7 @@ struct MCPServerHeterogeneousTests {
             converter: { params in
                 // Using a simpler approach with extractParameter
                 do {
-                    return try simpleTool.extractParameter(params, name: "number")
+                    return try MCPTool<IntMockInput, IntMockOutput>.extractParameter(params, name: "number")
                 } catch {
                     throw MCPServerError.invalidParam("number", "Invalid number format")
                 }
@@ -148,15 +139,6 @@ struct MCPServerHeterogeneousTests {
             }
         )
 
-        // create an instance to be able to call extractParameters below
-        let simpleTool = MCPTool<IntMockInput, IntMockOutput>(
-            name: "",
-            description: "",
-            inputSchema: "",
-            body: { _ in
-                IntMockOutput(doubled: 0)
-            }
-        )
         // Create int tool using extractParameter
         let intTool = MCPTool<IntMockInput, IntMockOutput>(
             name: "intTool",
@@ -175,7 +157,7 @@ struct MCPServerHeterogeneousTests {
             converter: { params in
                 // Using a simpler approach with extractParameter
                 do {
-                    return try simpleTool.extractParameter(params, name: "number")
+                    return try MCPTool<IntMockInput, IntMockOutput>.extractParameter(params, name: "number")
                 } catch {
                     throw MCPServerError.invalidParam("number", "Invalid number format")
                 }

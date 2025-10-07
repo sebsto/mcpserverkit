@@ -13,7 +13,7 @@ extension ToolProtocol {
         if let result = try? JSONDecoder().decode(Input.self, from: data) {
             return result
         } else {
-            return try self.extractParameter(input, name: "input")
+            return try Self.extractParameter(input, name: "input")
         }
     }
 
@@ -38,7 +38,7 @@ extension ToolProtocol {
     /// - Note: This function is generic and can be used with any type that conforms to `Codable`.
     /// - Important: The parameter must be a valid JSON object that can be decoded into the expected type.
     /// - Warning: This function uses `JSONEncoder` and `JSONDecoder` to encode and decode the parameter, which may not be the most efficient way to handle this.
-    public func extractParameter(_ input: CallTool.Parameters, name: String) throws -> Input {
+    public static func extractParameter(_ input: CallTool.Parameters, name: String) throws -> Input {
         // check if we received a "name" parameter
         guard let value: Value = input.arguments?[name] else {
             throw MCPServerError.missingparam(name)

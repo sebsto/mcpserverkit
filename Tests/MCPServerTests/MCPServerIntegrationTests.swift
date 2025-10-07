@@ -60,7 +60,7 @@ struct MCPServerIntegrationTests {
         )
 
         // Use the helper method to extract the parameter as a String
-        let city = try toolString().extractParameter(parameters, name: "city")
+        let city = try MCPTool<String, String>.extractParameter(parameters, name: "city")
         #expect(city == "Seattle")
 
         // Create parameters with an object
@@ -70,13 +70,13 @@ struct MCPServerIntegrationTests {
         )
 
         // Extract the parameter as the TestObject type
-        let obj = try toolTestObject().extractParameter(objectParams, name: "input")
+        let obj = try MCPTool<TestObject, String>.extractParameter(objectParams, name: "input")
         #expect(obj.text == "Hello world")
 
         // Test with missing parameter
         let emptyParams = CallTool.Parameters(name: "testTool", arguments: [:])
         do {
-            _ = try toolString().extractParameter(emptyParams, name: "city")
+            _ = try MCPTool<String, String>.extractParameter(emptyParams, name: "city")
             #expect(Bool(false), "Expected error was not thrown")
         } catch let error as MCPServerError {
             #expect(error.errorDescription == "Missing parameter city")
@@ -102,29 +102,6 @@ struct MCPServerIntegrationTests {
     func testInvalidParameterError() {
         let error = MCPServerError.invalidParam("someParam", "badValue")
         #expect(error.errorDescription == "Invalid parameter someParam with value badValue")
-    }
-
-    // fixture
-    private func toolString() -> MCPTool<String, String> {
-        // Create a tool
-        MCPTool<String, String>(
-            name: "tool",
-            description: "Tool",
-            inputSchema: "{}",
-            converter: { _ in "" },
-            body: { _ in "" }
-        )
-    }
-
-    private func toolTestObject() -> MCPTool<TestObject, String> {
-        // Create a tool
-        MCPTool<TestObject, String>(
-            name: "tool",
-            description: "Tool",
-            inputSchema: "{}",
-            converter: { _ in TestObject(text: "") },
-            body: { _ in "" }
-        )
     }
 
     // Define a struct that matches the object structure
