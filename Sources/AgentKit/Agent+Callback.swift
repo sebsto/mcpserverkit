@@ -25,7 +25,7 @@ extension Agent {
         case metaData(MetaData)
         /// Agent execution has ended.
         case end
-        
+
         public var description: String {
             switch self {
             case .text(let content):

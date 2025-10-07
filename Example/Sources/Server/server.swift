@@ -21,7 +21,7 @@ struct Test {
         try await MCPServer.withMCPServer(
             name: "MultiToolServer",
             version: "1.0.0",
-            transport: .http,
+            transport: .http(port: 8080),
             tools: [
                 WeatherTool(),  // String input, String output
                 CalculatorTool(),  // CalculatorInput input, Double output

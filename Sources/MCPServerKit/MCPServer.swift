@@ -82,7 +82,7 @@ public struct MCPServer: Sendable {
         try await withMCPServer(
             name: name,
             version: version,
-            transport: .http,
+            transport: .http(port: 8080),
             tools: tools,
             prompts: prompts,
             resources: resources,

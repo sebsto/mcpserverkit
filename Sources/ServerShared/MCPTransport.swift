@@ -1,4 +1,4 @@
-public enum MCPTransport: String, CaseIterable, Sendable {
+public enum MCPTransport: Sendable {
     case stdio
-    case http
+    case http(port: Int)
 }

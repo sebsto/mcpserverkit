@@ -28,7 +28,8 @@ public struct ServerMacro: MemberMacro {
         // var serverDescription: String? = ""
         var toolsArray: String = "[]"
         var promptsArray: String = "[]"
-        var serverType: MCPTransport = .stdio
+        var serverType: String = "stdio"
+        var httpPort: Int = 8080
 
         // Parse the arguments
         for argument in argumentList {
@@ -47,12 +48,6 @@ public struct ServerMacro: MemberMacro {
                 {
                     serverVersion = segment.content.text
                 }
-            // Uncomment if you want to support description in the future
-            // case "description":
-            //     if let stringLiteral = argument.expression.as(StringLiteralExprSyntax.self),
-            //        let segment = stringLiteral.segments.first?.as(StringSegmentSyntax.self) {
-            //         serverDescription = segment.content.text
-            //     }
             case "tools":
                 if let arrayExpr = argument.expression.as(ArrayExprSyntax.self) {
                     let elements = arrayExpr.elements.map { element in
@@ -68,21 +63,32 @@ public struct ServerMacro: MemberMacro {
                     promptsArray = "[\(elements.joined(separator: ", "))]"
                 }
             case "type":
-                if let memberAccess = argument.expression.as(MemberAccessExprSyntax.self) {
-                    let typeString = memberAccess.declName.baseName.text
-                    serverType = MCPTransport(rawValue: typeString) ?? .stdio
+                // Handle both .stdio and .http(port: Int) cases
+                let expressionText = argument.expression.description.trimmingCharacters(in: .whitespacesAndNewlines)
+                if expressionText == ".stdio" {
+                    serverType = "stdio"
+                } else if expressionText.hasPrefix(".http(") {
+                    serverType = "http"
+                    // Extract port number from .http(port: 3000) format
+                    let portPattern = #/\.http\(port:\s*(\d+)\)/#
+                    if let match = expressionText.firstMatch(of: portPattern) {
+                        httpPort = Int(match.1) ?? 8080
+                    }
                 }
             default:
                 break
             }
         }
 
-        // Generate the appropriate startup code based on server type
+        // Generate the appropriate transport and startup code based on server type
+        let transportCode: String
         let startupCode: String
-        switch serverType {
-        case .stdio:
+        
+        if serverType == "stdio" {
+            transportCode = ".stdio"
             startupCode = "try await server.startStdioServer()"
-        case .http:
+        } else {
+            transportCode = ".http(port: \(httpPort))"
             startupCode = "try await server.startHttpServer()"
         }
 
@@ -93,7 +99,7 @@ public struct ServerMacro: MemberMacro {
                 try await MCPServer.withMCPServer(
                     name: "\(raw: serverName)",
                     version: "\(raw: serverVersion)",
-                    transport: .\(raw: serverType.rawValue),
+                    transport: \(raw: transportCode),
                     tools: \(raw: toolsArray),
                     prompts: \(raw: promptsArray)
                 ) { server in
