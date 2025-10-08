@@ -19,12 +19,23 @@ struct Test {
 
         let config = try MCPServerConfiguration(from: url)
 
+        // TODO create a [MCPCLient] form an URL
+
         // experiment with stdio server
-        let serverName = "MCPExample-stdio"
-        guard let serverConfig = config[serverName] else {
-            throw MCPToolError.serverNotFound(name: serverName)
+        var serverName = "MCPExample-stdio"
+        // guard let stdioServerConfig = config[serverName] else {
+        //     throw MCPClientError.serverNotFound(name: serverName)
+        // }
+        // let stdioClient = try await MCPClient(with: stdioServerConfig, name: serverName, logger: logger)
+        // print(try await stdioClient.invokeTool(name: "weather", arguments: ["input": "lille"], logger: logger))
+
+        // experiment with http server
+        serverName = "MCPExample-http"
+        guard let httpServerConfig = config[serverName] else {
+            throw MCPClientError.serverNotFound(name: serverName)
         }
-        let client = try await MCPClient(with: serverConfig, name: serverName, logger: logger)
-        print(try await client.invokeTool(name: "weather", arguments: ["input": "lille"], logger: logger))
+        let httpClient = try await MCPClient(with: httpServerConfig, name: serverName, logger: logger)
+        print(try await httpClient.invokeTool(name: "weather", arguments: ["input": "lille"], logger: logger))
+
     }
 }

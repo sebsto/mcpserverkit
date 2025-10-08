@@ -42,9 +42,7 @@ extension MCPServer {
             configuration: .init(address: .hostname("127.0.0.1", port: port)),
             logger: self.logger
         )
-        print("-----")
-        print(self.logger.logLevel)
-        print("-----")
+
         // Create service group with the MCPServer and the HTTP server
         let serviceGroup = ServiceGroup(
             configuration: .init(

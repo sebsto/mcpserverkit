@@ -39,7 +39,7 @@ public class MCPClient {
             )
             break
         case .http(let config):
-        try await MCPClient.startHTTPTool(client: client, url: config.url, logger: logger)
+            try await MCPClient.startHTTPTool(client: client, url: config.url, logger: logger)
             break
         }
 
