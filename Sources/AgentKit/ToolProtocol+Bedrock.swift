@@ -1,4 +1,5 @@
 import BedrockService
+import ServerShared
 
 #if canImport(FoundationEssentials)
 import FoundationEssentials

@@ -2,6 +2,7 @@
 public enum MCPToolError: Swift.Error, CustomStringConvertible {
     case fileNotFound(path: String)
     case invalidFormat(reason: String)
+    case serverNotFound(name: String)
     case toolNotFound(name: String)
     case toolError(message: String)
     case unsupportedToolResponse
@@ -12,6 +13,8 @@ public enum MCPToolError: Swift.Error, CustomStringConvertible {
             return "Could not read MCP configuration file at \(path)"
         case .invalidFormat(let reason):
             return "Invalid MCP configuration format: \(reason)"
+        case .serverNotFound(let name):
+            return "Server '\(name)' not found in MCP configuration"
         case .toolNotFound(let name):
             return "Tool '\(name)' not found in MCP configuration"
         case .toolError(let message):

@@ -1,8 +1,12 @@
-@_exported import BedrockService
-import Foundation
+import BedrockService
 import Logging
-@_exported import MCPServerKit
-@_exported import ToolMacro
+import MCPServerKit
+
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
+import Foundation
+#endif
 
 /// A high-level AI agent that provides conversational capabilities using Amazon Bedrock.
 ///

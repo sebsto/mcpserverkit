@@ -1,6 +1,5 @@
 import Logging
 import MCP
-import System
 
 #if canImport(FoundationEssentials)
 import FoundationEssentials
@@ -8,18 +7,20 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public struct MCPClient {
+/// A MCPClient is teh struct that allows to communicate with a MCP Server
+/// and invoke its tools, get its resources or prompts.
+public class MCPClient {
 
     public let name: String
-    private let process: Process
-    public let client: Client
-    private let logger: Logger
-    package let tools: [Tool]
 
-    package init(
-        with toolConfig: MCPConfiguration.ToolConfiguration,
+    package let client: Client
+    package let logger: Logger
+    public private(set) var tools: [Tool]
+    private var process: Process? = nil
+
+    public init(
+        with serverConfig: MCPServerConfiguration.ServerConfiguration,
         name: String,
-        for server: String,
         version: String = "1.0.0",
         logger: Logger
     ) async throws {
@@ -27,74 +28,63 @@ public struct MCPClient {
         self.client = Client(name: name, version: version)
         self.logger = logger
 
-        let (command, args) =
-            switch toolConfig {
-            case .stdio(let config):
-                (config.command, config.args)
-            case .http(let config):
-                (config.url, [])
-            }
+        // start the process and enumerate all the tools available
+        switch serverConfig {
+        case .stdio(let config):
+            self.process = try await MCPClient.startStdioTool(
+                client: client,
+                command: config.command,
+                args: config.args,
+                logger: self.logger
+            )
+            break
+        case .http(let config):
+            break
+        }
+
+        // get the list of tools
+        (tools, _) = try await client.listTools()
+    }
+
+    deinit {
+        if let process {
+            MCPClient.disconnectAndTerminateServerProcess(client: client, process: process)
+        }
+    }
+
+    public func invokeTool(
+        name toolName: String,
+        arguments: [String: MCPValue],
+        logger: Logger = Logger(label: "MCPClient")
+    ) async throws -> String {
 
         logger.trace(
-            "Launching process",
-            metadata: [
-                "command": "\(command)",
-                "arguments": "\(args.joined(separator: " "))",
-            ]
+            "Going to call a tool",
+            metadata: ["toolName": "\(toolName)", "arguments": "\(arguments)"]
         )
 
-        // Create pipes for the server input and output
-        let serverInputPipe = Pipe()
-        let serverOutputPipe = Pipe()
-        let serverInput: FileDescriptor = FileDescriptor(
-            rawValue: serverInputPipe.fileHandleForWriting.fileDescriptor
-        )
-        let serverOutput: FileDescriptor = FileDescriptor(
-            rawValue: serverOutputPipe.fileHandleForReading.fileDescriptor
+        // call the tool with the provided arguments
+        let (content, isError) = try await self.client.callTool(name: toolName, arguments: arguments)
+
+        logger.trace(
+            "Tool result",
+            metadata: ["content": "\(content)", "isError": "\(String(describing: isError))"]
         )
 
-        self.process = Process()
-        process.executableURL = URL(fileURLWithPath: command)
-        process.arguments = args
-        process.standardInput = serverInputPipe
-        process.standardOutput = serverOutputPipe
-
-        let transport = StdioTransport(
-            input: serverOutput,
-            output: serverInput,
-            logger: logger
-        )
-
-        try process.run()
-        logger.trace("Process launched")
-
-        try await client.connect(transport: transport)
-        logger.trace("Connected to MCP server")
-
-        // collect the list of tools available in the MCP server
-        // var cursor: String? = nil
-        (self.tools, _) = try await client.listTools()
-        logger.trace("Available tools", metadata: ["toolsCount": "\(self.tools.count)"])
-    }
-
-    public init(
-        with serverConfigFile: URL,
-        name: String,
-        for server: String,
-        version: String = "1.0.0",
-        logger: Logger
-    ) async throws {
-
-        let toolConfig = try MCPClient.getMCPToolCommand(in: serverConfigFile, for: server)
-
-        self = try await .init(with: toolConfig, name: name, for: server, logger: logger)
-    }
-
-    public func disconnectAndTerminateServerProcess() async {
-        if self.process.isRunning {
-            await self.client.disconnect()
-            self.process.terminate()
+        guard let c = content.first,
+            case let .text(text) = c
+        else {
+            logger.error("Tool returned an unsupported response (something else than text)")
+            throw MCPToolError.unsupportedToolResponse
         }
+        // Check if the tool returned an error
+        guard isError == nil
+        else {
+            logger.error("Tool returned an error")
+            throw MCPToolError.toolError(message: text)
+        }
+
+        return text
     }
 
     /// Returns the tool with the given name, or nil if not found.
@@ -112,36 +102,4 @@ public struct MCPClient {
         self.tools.map { $0.name }.contains(toolName)
     }
 
-    /// Reads a mcp.json file and returns the command and arguments for a given tool name.
-    /// - Parameter
-    ///      toolName: The name of the tool to look up in the mcp.json file
-    ///      mcpFileURL: The URL of the mcp.json file
-    /// - Returns: The tool configuration containing the command and arguments
-    /// - Throws: MCPToolError if the file can't be read or parsed, or if the tool name is not found
-    private static func getMCPToolCommand(
-        in mcpFileURL: URL,
-        for toolName: String
-    ) throws -> MCPConfiguration.ToolConfiguration {
-
-        // Read the mcp.json file
-        do {
-            let mcpData = try Data(contentsOf: mcpFileURL)
-
-            // Parse the JSON
-            let mcpJSON = try JSONDecoder().decode(MCPConfiguration.self, from: mcpData)
-
-            // Look for the tool
-            guard let toolConfig = mcpJSON.mcpServers[toolName] else {
-                throw MCPToolError.toolNotFound(name: toolName)
-            }
-
-            return toolConfig
-        } catch is DecodingError {
-            throw MCPToolError.invalidFormat(reason: "JSON structure does not match expected format")
-        } catch let error as MCPToolError {
-            throw error
-        } catch {
-            throw MCPToolError.fileNotFound(path: mcpFileURL.path)
-        }
-    }
 }

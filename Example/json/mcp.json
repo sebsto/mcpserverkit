@@ -1,7 +1,8 @@
 {
 	"mcpServers": {
 		"MCPExample-stdio": {
-			"command": "Example/server-stdio",
+			"command": "./server-stdio",
+			"args": [],
 			"disabled": true,
 			"timeout": 60000
 		},

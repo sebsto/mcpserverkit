@@ -5,21 +5,38 @@ import Foundation
 #endif
 
 /// Structure representing the MCP configuration file format
-package struct MCPConfiguration: Codable {
-    let mcpServers: [String: ToolConfiguration]
+public struct MCPServerConfiguration: Codable {
+    let mcpServers: [String: ServerConfiguration]
 
-    package enum ToolConfiguration: Codable {
-        case stdio(ToolConfigurationStdio)
-        case http(ToolConfigurationStreamable)
+    public init(from url: URL) throws {
+        let fileManager = FileManager.default
+
+        // Check if the mcp.json file exists
+        guard fileManager.fileExists(atPath: url.path) else {
+            throw MCPToolError.fileNotFound(path: url.path)
+        }
+
+        // Read the mcp.json file and parse it
+        let mcpData = try Data(contentsOf: url)
+        self = try JSONDecoder().decode(MCPServerConfiguration.self, from: mcpData)
+    }
+
+    public subscript(serverName: String) -> ServerConfiguration? {
+        mcpServers[serverName]
+    }
+
+    public enum ServerConfiguration: Codable {
+        case stdio(ServerConfigurationStdio)
+        case http(ServerConfigurationStreamable)
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
 
             if container.contains(.command) {
-                let stdio = try ToolConfigurationStdio(from: decoder)
+                let stdio = try ServerConfigurationStdio(from: decoder)
                 self = .stdio(stdio)
             } else if container.contains(.url) {
-                let http = try ToolConfigurationStreamable(from: decoder)
+                let http = try ServerConfigurationStreamable(from: decoder)
                 self = .http(http)
             } else {
                 throw DecodingError.dataCorrupted(
@@ -44,14 +61,17 @@ package struct MCPConfiguration: Codable {
             case command, url
         }
     }
-    package struct ToolConfigurationStdio: Codable {
+
+    public struct ServerConfigurationStdio: Codable {
         let command: String
-        let args: [String]
+        let args: [String]?
         let env: [String: String]?
+        let disabled: Bool?
+        let timeout: Int?
     }
-    package struct ToolConfigurationStreamable: Codable {
-        let type: String
+    public struct ServerConfigurationStreamable: Codable {
         let url: String
-        let note: String?
+        let disabled: Bool?
+        let timeout: Int?
     }
 }
