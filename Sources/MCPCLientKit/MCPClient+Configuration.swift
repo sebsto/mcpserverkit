@@ -13,7 +13,7 @@ public struct MCPServerConfiguration: Codable {
 
         // Check if the mcp.json file exists
         guard fileManager.fileExists(atPath: url.path) else {
-            throw MCPToolError.fileNotFound(path: url.path)
+            throw MCPClientError.fileNotFound(path: url.path)
         }
 
         // Read the mcp.json file and parse it

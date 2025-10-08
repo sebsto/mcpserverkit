@@ -39,6 +39,7 @@ public class MCPClient {
             )
             break
         case .http(let config):
+        try await MCPClient.startHTTPTool(client: client, url: config.url, logger: logger)
             break
         }
 
@@ -75,13 +76,13 @@ public class MCPClient {
             case let .text(text) = c
         else {
             logger.error("Tool returned an unsupported response (something else than text)")
-            throw MCPToolError.unsupportedToolResponse
+            throw MCPClientError.unsupportedToolResponse
         }
         // Check if the tool returned an error
         guard isError == nil
         else {
             logger.error("Tool returned an error")
-            throw MCPToolError.toolError(message: text)
+            throw MCPClientError.toolError(message: text)
         }
 
         return text
