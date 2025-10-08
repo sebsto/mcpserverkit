@@ -40,14 +40,12 @@ struct StreamableMCPController {
     private let stateful: Bool
     private let jsonResponses: Bool
     private let server: Server
-    private let logger: Logger
 
-    init(path: String, stateful: Bool, jsonResponses: Bool, server: Server, logger: Logger) {
+    init(path: String, stateful: Bool, jsonResponses: Bool, server: Server) {
         self.path = path
         self.stateful = stateful
         self.jsonResponses = jsonResponses
         self.server = server
-        self.logger = logger
     }
 
     var endpoints: RouteCollection<BasicRequestContext> {
@@ -64,7 +62,7 @@ struct StreamableMCPController {
         guard let accepts = request.headers[.accept],
             accepts.contains("application/json") || accepts.contains("text/event-stream")
         else {
-            logger.trace("Missing Accept header with application/json or text/event-stream")
+            context.logger.trace("Missing Accept header with application/json or text/event-stream")
             return .init(status: .notAcceptable)
         }
 
@@ -72,10 +70,10 @@ struct StreamableMCPController {
 
         let serverRef: ServerRef
         if let ref = await self.idActor.ref(request.headers[.mcpSessionId]) {
-            logger.trace("Found an existing MCP server")
+            context.logger.trace("Found an existing MCP server")
             serverRef = ref
         } else {
-            logger.trace("Creating a new MCP server")
+            context.logger.trace("Creating a new MCP server")
             let transport = StreamableServerTransport()
             try await server.start(transport: transport)
 

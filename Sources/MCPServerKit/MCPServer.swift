@@ -22,7 +22,7 @@ public struct MCPServer: Sendable {
 
     let logger: Logger
 
-    public init(
+    private init(
         name: String,
         version: String,
         transport: MCPTransport,

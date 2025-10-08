@@ -22,20 +22,19 @@ extension MCPServer {
         // Create router and add MCP endpoint
         let router = Router()
 
+        // order matters. Middleware is applied to routes added after this
+        router.addMiddleware {
+            LogRequestsMiddleware(.trace)
+        }
+
         router.addRoutes(
             StreamableMCPController(
                 path: "mcp",
                 stateful: false,
                 jsonResponses: true,
-                server: self.server,
-                logger: logger
+                server: self.server
             ).endpoints
         )
-
-        router.addMiddleware {
-            // logging middleware
-            LogRequestsMiddleware(.trace)
-        }
 
         // Create Hummingbird application
         let app = Application(
@@ -43,7 +42,9 @@ extension MCPServer {
             configuration: .init(address: .hostname("127.0.0.1", port: port)),
             logger: self.logger
         )
-
+        print("-----")
+        print(self.logger.logLevel)
+        print("-----")
         // Create service group with the MCPServer and the HTTP server
         let serviceGroup = ServiceGroup(
             configuration: .init(
