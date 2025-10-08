@@ -1,0 +1,14 @@
+{
+	"mcpServers": {
+		"MCPExample-stdio": {
+			"command": "Example/server-stdio",
+			"disabled": true,
+			"timeout": 60000
+		},
+		"MCPExample-http": {
+			"url": "http://127.0.0.1:8080/mcp",
+			"disabled": false,
+			"timeout": 60000
+		}
+	}
+}

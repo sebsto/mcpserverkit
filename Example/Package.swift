@@ -2,31 +2,39 @@
 import PackageDescription
 
 let package = Package(
-    name: "MCPExampleServer",
+    name: "AIAgentExample",
     platforms: [
         .macOS(.v15)
     ],
     products: [
-        .executable(name: "Server", targets: ["Server"]),
-        .executable(name: "Client", targets: ["Client"]),
+        .executable(name: "MCPClient", targets: ["MCPClient"]),
+        .executable(name: "MCPServer", targets: ["MCPServer"]),
+        .executable(name: "AgentClient", targets: ["AgentClient"]),
     ],
     dependencies: [
         .package(name: "AgentKit", path: "..")
     ],
     targets: [
         .executableTarget(
-            name: "Server",
+            name: "MCPServer",
             dependencies: [
                 .product(name: "AgentKit", package: "AgentKit")
             ],
-            path: "Sources/Server"
+            path: "Sources/MCPServer"
         ),
         .executableTarget(
-            name: "Client",
+            name: "MCPClient",
             dependencies: [
                 .product(name: "AgentKit", package: "AgentKit")
             ],
-            path: "Sources/Client"
+            path: "Sources/MCPClient"
+        ),
+        .executableTarget(
+            name: "AgentClient",
+            dependencies: [
+                .product(name: "AgentKit", package: "AgentKit")
+            ],
+            path: "Sources/AgentClient"
         ),
     ]
 )
