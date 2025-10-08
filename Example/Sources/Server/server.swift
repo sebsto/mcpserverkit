@@ -22,6 +22,7 @@ struct Test {
             name: "MultiToolServer",
             version: "1.0.0",
             transport: .http(port: 8080),
+            // transport: .stdio,
             tools: [
                 WeatherTool(),  // String input, String output
                 CalculatorTool(),  // CalculatorInput input, Double output
