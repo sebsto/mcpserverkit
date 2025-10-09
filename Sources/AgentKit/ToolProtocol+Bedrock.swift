@@ -1,5 +1,5 @@
 import BedrockService
-import ServerShared
+import MCPShared
 
 #if canImport(FoundationEssentials)
 import FoundationEssentials

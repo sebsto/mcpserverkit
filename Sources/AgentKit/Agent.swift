@@ -12,7 +12,7 @@ import Foundation
 ///
 /// The Agent struct simplifies interaction with Bedrock models by providing a callable interface
 /// and handling authentication, model configuration, and conversation flow.
-public struct Agent: Sendable {
+public actor Agent: Sendable {
 
     /// The Bedrock model used for generating responses.
     public let model: BedrockModel
@@ -20,21 +20,11 @@ public struct Agent: Sendable {
     public let systemPrompt: String
     /// the list of tools this agent can use to answer questions
     public let tools: [any ToolProtocol]
+    /// the history of messages 
+    public var messages : [Message]
 
     private let bedrock: BedrockService
     internal let logger: Logger
-
-    /// Authentication methods supported by the agent.
-    public enum AuthenticationMethod {
-        /// Use temporary credentials from a file path.
-        case tempCredentials(String)
-        /// Use a named AWS profile.
-        case profile(String)
-        /// Use AWS SSO with optional profile name.
-        case sso(String?)
-        /// Use default AWS credential chain.
-        case `default`
-    }
 
     /// Creates a new Agent instance with the specified configuration.
     ///
@@ -51,6 +41,7 @@ public struct Agent: Sendable {
         _ initialPrompt: String = "",
         systemPrompt: String = "",
         model: BedrockModel = .claude_sonnet_v4,
+        messages: [Message] = [],
         tools: [any ToolProtocol] = [],
         auth: AuthenticationMethod = .default,
         region: Region = .useast1,
@@ -61,6 +52,7 @@ public struct Agent: Sendable {
     {
 
         self.systemPrompt = systemPrompt
+        self.messages = messages
         self.model = model
         self.tools = tools
 
@@ -113,7 +105,7 @@ public struct Agent: Sendable {
 
         if initialPrompt != "" {
             try await self.runLoop(
-                initialPrompt: initialPrompt,
+                prompt: initialPrompt,
                 systemPrompt: systemPrompt,
                 bedrock: bedrock,
                 model: model,
@@ -139,7 +131,7 @@ public struct Agent: Sendable {
     /// - Throws: An error if the conversation fails or the model is not supported.
     public func callAsFunction(_ message: String, callback: AgentCallbackFunction? = nil) async throws {
         try await self.runLoop(
-            initialPrompt: message,
+            prompt: message,
             systemPrompt: self.systemPrompt,
             bedrock: self.bedrock,
             model: self.model,
@@ -147,6 +139,18 @@ public struct Agent: Sendable {
             logger: self.logger,
             callback: callback
         )
+    }
+
+    /// Authentication methods supported by the agent.
+    public enum AuthenticationMethod {
+        /// Use temporary credentials from a file path.
+        case tempCredentials(String)
+        /// Use a named AWS profile.
+        case profile(String)
+        /// Use AWS SSO with optional profile name.
+        case sso(String?)
+        /// Use default AWS credential chain.
+        case `default`
     }
 
     private enum CredentialsError: Error {

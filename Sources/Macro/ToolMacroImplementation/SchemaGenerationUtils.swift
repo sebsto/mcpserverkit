@@ -1,3 +1,5 @@
+#if MCPMacros
+
 import Foundation
 import SwiftSyntax
 import SwiftSyntaxBuilder
@@ -149,3 +151,5 @@ public struct SchemaGenerationUtils {
         return nil
     }
 }
+
+#endif

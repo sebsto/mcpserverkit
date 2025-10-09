@@ -1,4 +1,6 @@
-import ServerShared
+#if MCPMacros
+
+import MCPShared
 
 // Macro declaration
 @attached(member, names: arbitrary)
@@ -10,3 +12,5 @@ public macro Server(
     prompts: [Any] = [],
     type: MCPTransport
 ) = #externalMacro(module: "ServerMacroImplementation", type: "ServerMacro")
+
+#endif

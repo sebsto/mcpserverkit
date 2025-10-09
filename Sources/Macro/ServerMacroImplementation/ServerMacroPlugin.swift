@@ -1,3 +1,5 @@
+#if MCPMacros
+
 import SwiftCompilerPlugin
 import SwiftSyntaxMacros
 
@@ -7,3 +9,5 @@ struct ServerMacroPlugin: CompilerPlugin {
         ServerMacro.self
     ]
 }
+
+#endif

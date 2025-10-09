@@ -1,3 +1,5 @@
+#if MCPMacros
+
 import Foundation
 import SwiftCompilerPlugin
 import SwiftSyntax
@@ -489,3 +491,5 @@ public struct ToolMacro: MemberMacro, ExtensionMacro {
     }
 
 }
+
+#endif

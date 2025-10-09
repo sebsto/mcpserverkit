@@ -1,3 +1,5 @@
+#if MCPMacros
+
 import MCP
 import MCPServerKit
 import ServerMacro
@@ -34,3 +36,5 @@ struct MyServer {}
 // or
 //     try await server.startHttpServer
 // }
+
+#endif

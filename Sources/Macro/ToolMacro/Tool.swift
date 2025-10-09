@@ -1,4 +1,6 @@
-import ServerShared
+#if MCPMacros
+
+import MCPShared
 
 /// A macro that generates Bedrock or MCP tool properties with JSON schema for input validation.
 ///
@@ -69,3 +71,5 @@ import ServerShared
 @attached(extension, conformances: ToolProtocol)
 public macro Tool(name: String? = nil, description: String? = nil, schema: Schema.Type? = nil) =
     #externalMacro(module: "ToolMacroImplementation", type: "ToolMacro")
+
+#endif

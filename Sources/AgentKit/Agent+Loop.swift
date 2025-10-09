@@ -1,11 +1,11 @@
 import BedrockService
 import Logging
-import ServerShared
+import MCPShared
 
 extension Agent {
 
     internal func runLoop(
-        initialPrompt: String,
+        prompt: String,
         systemPrompt: String,
         bedrock: BedrockService,
         model: BedrockModel,
@@ -21,7 +21,6 @@ extension Agent {
         }
 
         // variables we're going to reuse for the duration of the conversation
-        var messages: History = []
         var requestBuilder: ConverseRequestBuilder? = nil
 
         // convert Tools to Bedrock Tools
@@ -31,7 +30,7 @@ extension Agent {
         if requestBuilder == nil {
             requestBuilder = try ConverseRequestBuilder(with: model)
                 .withHistory(messages)
-                .withPrompt(initialPrompt)
+                .withPrompt(prompt)
 
             if bedrockTools.count > 0 {
                 requestBuilder = try requestBuilder!.withTools(bedrockTools)
@@ -47,7 +46,7 @@ extension Agent {
         }
 
         // add the prompt to the history
-        messages.append(.init(initialPrompt))
+        messages.append(.init(prompt))
 
         // loop on calling the model while the last message is NOT text
         // in other words, has long as we receive toolUse, call the tool, call the model again and iterate until the lats message is text.
@@ -105,7 +104,7 @@ extension Agent {
                     requestBuilder: requestBuilder!,
                     tools: tools,
                     toolUse: toolUse,
-                    messages: &messages,
+                    messages: messages,
                     logger: logger
                 )
 

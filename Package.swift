@@ -16,9 +16,10 @@ let package = Package(
     ],
     traits: [
         "MCPHTTPSupport",
+        "MCPMacros",
         .default(
             enabledTraits: [
-                "MCPHTTPSupport"
+                "MCPHTTPSupport", "MCPMacros"
             ]
         ),
     ],
@@ -31,6 +32,8 @@ let package = Package(
         // .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", branch: "main"),
         // https://github.com/modelcontextprotocol/swift-sdk/issues/110
         .package(url: "https://github.com/stallent/swift-sdk.git", branch: "streamable_server"),
+
+        // for MCP Servers 
         .package(url: "https://github.com/orlandos-nl/SSEKit.git", from: "1.1.0"),
         .package(url: "https://github.com/hummingbird-project/hummingbird.git", from: "2.0.0"),
 
@@ -41,23 +44,10 @@ let package = Package(
             name: "AgentKit",
             dependencies: [
                 .product(name: "BedrockService", package: "swift-bedrock-library"),
-                "ToolMacro", "MCPServerKit", "MCPClientKit",
+                .byNameItem(name: "ToolMacro", condition: .when(traits: ["MCPMacros"])),
+                 "MCPServerKit", "MCPClientKit",
             ],
             path: "Sources/AgentKit"
-        ),
-        .executableTarget(
-            name: "ServerMacroClient",
-            dependencies: [
-                .target(name: "MCPServerKit")
-            ],
-            path: "Sources/Macro/ServerMacroClient"
-        ),
-        .executableTarget(
-            name: "ToolMacroClient",
-            dependencies: [
-                .target(name: "MCPServerKit")
-            ],
-            path: "Sources/Macro/ToolMacroClient"
         ),
         .target(
             name: "MCPServerKit",
@@ -74,9 +64,9 @@ let package = Package(
                     package: "SSEKit",
                     condition: .when(traits: ["MCPHTTPSupport"])
                 ),
-                "ServerShared",
-                "ToolMacro",
-                "ServerMacro",
+                .byNameItem(name: "ToolMacro", condition: .when(traits: ["MCPMacros"])),
+                .byNameItem(name: "ServerMacro", condition: .when(traits: ["MCPMacros"])),
+                "MCPShared",
             ],
             path: "Sources/MCPServerKit"
         ),
@@ -112,11 +102,11 @@ let package = Package(
 
         // shared types and protocols for the server macro system
         .target(
-            name: "ServerShared",
+            name: "MCPShared",
             dependencies: [
                 .product(name: "MCP", package: "swift-sdk")
             ],
-            path: "Sources/ServerShared"
+            path: "Sources/MCPShared"
         ),
 
         // a macro to generate JSON Schema based on DocC comments
@@ -133,11 +123,10 @@ let package = Package(
         ),
 
         // a library that exposes the macro to users
-        // TODO : should we make this a trait (enable by default and user can opt-out) ?
         .target(
             name: "ToolMacro",
             dependencies: [
-                "ServerShared",
+                "MCPShared",
                 "ToolShared",
                 "ToolMacroImplementation",
             ],
@@ -165,7 +154,7 @@ let package = Package(
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
                 .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
                 .product(name: "SwiftDiagnostics", package: "swift-syntax"),
-                "ServerShared",
+                "MCPShared",
             ],
             path: "Sources/Macro/ServerMacroImplementation"
         ),
@@ -173,10 +162,27 @@ let package = Package(
         .target(
             name: "ServerMacro",
             dependencies: [
-                "ServerShared",
+                "MCPShared",
                 "ServerMacroImplementation",
             ],
             path: "Sources/Macro/ServerMacro"
         ),
+
+        // just for testing and development
+        .executableTarget(
+            name: "ServerMacroClient",
+            dependencies: [
+                .target(name: "MCPServerKit")
+            ],
+            path: "Sources/Macro/ServerMacroClient"
+        ),
+        .executableTarget(
+            name: "ToolMacroClient",
+            dependencies: [
+                .target(name: "MCPServerKit")
+            ],
+            path: "Sources/Macro/ToolMacroClient"
+        ),
+
     ]
 )

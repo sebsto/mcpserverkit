@@ -1,3 +1,5 @@
+#if MCPMacros
+
 import Foundation
 import MCP
 import MCPServerKit
@@ -161,3 +163,5 @@ struct ToolMacroClient {
         print("✅ No external JSON libraries required")
     }
 }
+
+#endif

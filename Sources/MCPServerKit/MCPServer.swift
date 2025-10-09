@@ -1,6 +1,6 @@
 import Logging
 import MCP
-import ServerShared
+import MCPShared
 
 #if canImport(FoundationEssentials)
 import FoundationEssentials

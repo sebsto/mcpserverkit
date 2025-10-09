@@ -1,3 +1,5 @@
+#if MCPMacros
+
 import Foundation
 import SwiftCompilerPlugin
 import SwiftSyntax
@@ -48,3 +50,5 @@ public struct SchemaDefinitionMacro: MemberMacro, ExtensionMacro {
         return [schemaExtension]
     }
 }
+
+#endif

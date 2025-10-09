@@ -1,6 +1,6 @@
 import BedrockService
 import Logging
-import ServerShared
+import MCPShared
 
 #if canImport(FoundationEssentials)
 import FoundationEssentials
@@ -18,11 +18,11 @@ extension Agent {
         requestBuilder: ConverseRequestBuilder,
         tools: [any ToolProtocol],
         toolUse: ToolUseBlock,
-        messages: inout History,
+        messages: History,
         logger: Logger
     ) async throws -> ConverseRequestBuilder {
 
-        guard let message = messages.last else {
+        guard messages.last != nil else {
             fatalError(
                 "No last message found in the history to resolve tool use"
             )
@@ -45,9 +45,13 @@ extension Agent {
         // when the result is a simple string, we must pass it as a String object
         // (because the ToolResultBlock's content is an enum that makes the distinction between string and json)
         if let string = isString(result) {
-            return try ConverseRequestBuilder(from: requestBuilder, with: message).withToolResult(string)
+            return try ConverseRequestBuilder(from: requestBuilder)
+                .withToolResult(string)
+                .withHistory(messages)
         } else {
-            return try ConverseRequestBuilder(from: requestBuilder, with: message).withToolResult(result)
+            return try ConverseRequestBuilder(from: requestBuilder)
+                .withToolResult(result)
+                .withHistory(messages)
         }
     }
 

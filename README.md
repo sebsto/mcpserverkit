@@ -228,7 +228,7 @@ swift build
 - **MCPServerKit**: The core library for building MCP servers and tools
 - **ServerMacro**: Swift macros for automatic server generation
 - **ToolMacro**: Swift macros for automatic tool schema generation
-- **ServerShared**: Shared types and protocols for macro system
+- **MCPShared**: Shared types and protocols for macro system
 - **Example**: Example implementations demonstrating both macro and traditional approaches
 - **Tests**: Unit tests for the server components
 

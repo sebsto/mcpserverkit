@@ -1,4 +1,6 @@
-import ServerShared
+#if MCPMacros
+
+import MCPShared
 import SwiftCompilerPlugin
 import SwiftSyntax
 import SwiftSyntaxBuilder
@@ -125,3 +127,5 @@ enum MacroError: Error, CustomStringConvertible {
         }
     }
 }
+
+#endif
