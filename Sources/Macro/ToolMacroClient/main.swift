@@ -164,4 +164,13 @@ struct ToolMacroClient {
     }
 }
 
+#else 
+
+@main
+struct ToolMacroClient {
+    static func main() async {
+        fatalError("Enable the MCPMacros trait to test the @Tool macro")
+    }
+}
+
 #endif

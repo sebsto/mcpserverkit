@@ -1,4 +1,5 @@
 #if MCPMacros
+
 @_exported import ToolShared
 
 /// A macro that adds a static `schema` property containing an OpenAPI-compatible JSON schema definition.

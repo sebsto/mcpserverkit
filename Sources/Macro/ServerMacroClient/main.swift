@@ -37,4 +37,13 @@ struct MyServer {}
 //     try await server.startHttpServer
 // }
 
+#else 
+
+@main
+struct ServerMacroClient {
+    static func main() async {
+        fatalError("Enable the MCPMacros trait to test the @Server macro")
+    }
+}
+
 #endif
