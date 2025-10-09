@@ -8,6 +8,10 @@ import Foundation
 public struct MCPServerConfiguration: Codable {
     let mcpServers: [String: ServerConfiguration]
 
+    public init(mcpServers: [String: ServerConfiguration]) {
+        self.mcpServers = mcpServers
+    }
+    
     public init(from url: URL) throws {
         let fileManager = FileManager.default
 

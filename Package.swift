@@ -93,20 +93,20 @@ let package = Package(
             ]
         ),
 
-        // shared types and protocols for the schema macro system
-        .target(
-            name: "ToolShared",
-            dependencies: [],
-            path: "Sources/Macro/ToolShared"
-        ),
-
-        // shared types and protocols for the server macro system
+        // shared types and protocols for the MCP Clients and Servers
         .target(
             name: "MCPShared",
             dependencies: [
                 .product(name: "MCP", package: "swift-sdk")
             ],
             path: "Sources/MCPShared"
+        ),
+
+        // shared types and protocols for the schema macro system
+        .target(
+            name: "ToolShared",
+            dependencies: [],
+            path: "Sources/Macro/ToolShared"
         ),
 
         // a macro to generate JSON Schema based on DocC comments

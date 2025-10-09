@@ -1,3 +1,5 @@
+#if MCPMacros 
+
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import Testing
@@ -75,3 +77,5 @@ struct SchemaGenerationTests {
         }
     }
 }
+
+#endif

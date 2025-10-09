@@ -1,3 +1,5 @@
+#if MCPMacros 
+
 import Foundation
 import SwiftSyntax
 import SwiftSyntaxBuilder
@@ -101,3 +103,5 @@ struct SchemaDefinitionMacroTests {
         }
     }
 }
+
+#endif

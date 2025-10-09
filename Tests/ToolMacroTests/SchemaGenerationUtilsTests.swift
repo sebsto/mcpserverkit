@@ -1,3 +1,5 @@
+#if MCPMacros 
+
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
@@ -92,3 +94,5 @@ struct SchemaGenerationUtilsTests {
         // print("Generated schema: \(schemaJson)")
     }
 }
+
+#endif

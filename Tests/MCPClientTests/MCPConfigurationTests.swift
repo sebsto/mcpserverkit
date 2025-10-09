@@ -3,12 +3,12 @@ import Foundation
 @testable import MCPClientKit
 
 @Suite("MCP Configuration Tests")
-struct MCPConfigurationTests {
+struct MCPServerConfigurationTests {
     
     @Test("Decode MCP configuration from JSON")
     func testDecodeConfiguration() throws {
         let jsonData = try loadTestFixture()
-        let config = try JSONDecoder().decode(MCPConfiguration.self, from: jsonData)
+        let config = try JSONDecoder().decode(MCPServerConfiguration.self, from: jsonData)
         
         #expect(config.mcpServers.count == 2)
         
@@ -16,9 +16,9 @@ struct MCPConfigurationTests {
         guard case .http(let httpConfig) = config.mcpServers["default-server"] else {
             throw TestError.unexpectedConfigurationType
         }
-        #expect(httpConfig.type == "streamable-http")
-        #expect(httpConfig.url == "http://localhost:3000/mcp")
-        #expect(httpConfig.note == "For Streamable HTTP connections, add this URL directly in your MCP Client")
+        #expect(httpConfig.url == "http://127.0.0.1:8080/mcp")
+        #expect(httpConfig.disabled == false)
+        #expect(httpConfig.timeout == 60000)
         
         // Test stdio configuration
         guard case .stdio(let stdioConfig) = config.mcpServers["another-server"] else {
@@ -32,25 +32,27 @@ struct MCPConfigurationTests {
     
     @Test("Encode MCP configuration to JSON")
     func testEncodeConfiguration() throws {
-        let httpConfig = MCPConfiguration.ToolConfigurationStreamable(
-            type: "streamable-http",
+        let httpConfig = MCPServerConfiguration.ServerConfigurationStreamable(
             url: "http://localhost:3000/mcp",
-            note: "For Streamable HTTP connections, add this URL directly in your MCP Client"
+            disabled: false,
+            timeout: 60000
         )
         
-        let stdioConfig = MCPConfiguration.ToolConfigurationStdio(
+        let stdioConfig = MCPServerConfiguration.ServerConfigurationStdio(
             command: "node",
             args: ["build/index.js", "--debug"],
-            env: ["API_KEY": "your-api-key", "DEBUG": "true"]
+            env: ["API_KEY": "your-api-key", "DEBUG": "true"],
+            disabled: false,
+            timeout: 60000
         )
         
-        let config = MCPConfiguration(mcpServers: [
+        let config = MCPServerConfiguration(mcpServers: [
             "default-server": .http(httpConfig),
             "another-server": .stdio(stdioConfig)
         ])
         
         let encodedData = try JSONEncoder().encode(config)
-        let decodedConfig = try JSONDecoder().decode(MCPConfiguration.self, from: encodedData)
+        let decodedConfig = try JSONDecoder().decode(MCPServerConfiguration.self, from: encodedData)
         
         #expect(decodedConfig.mcpServers.count == 2)
         
