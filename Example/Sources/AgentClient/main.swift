@@ -42,8 +42,11 @@ let configFile = "./json/mcp-http.json"
 let url = URL(fileURLWithPath: configFile)
 
 let agent = try await Agent(mcpConfigFile: url)
-// try await agent(
-//     "What is the weather in Lille today? Give a one paragraph summary with key metrics. Do not use bullet points."
-// )
-print("\(await agent.tools)")
-//try await agent("How much is 100 GBP in EUR?")
+print("This agent has \(await agent.tools.count) tools")
+await agent.tools.forEach { tool in
+    print("- \(tool.toolName)")
+}	
+try await agent(
+    "What is the weather in Lille today? Give a one paragraph summary with key metrics. Do not use bullet points."
+)
+try await agent("How much is 100 GBP in EUR?")
