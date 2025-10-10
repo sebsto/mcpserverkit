@@ -20,7 +20,7 @@ extension MCPClient {
         logger.trace(
             "Creating transport",
             metadata: [
-                "url": "\(url)",
+                "url": "\(url)"
             ]
         )
 

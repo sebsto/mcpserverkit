@@ -11,7 +11,7 @@ public struct MCPServerConfiguration: Codable {
     public init(mcpServers: [String: ServerConfiguration]) {
         self.mcpServers = mcpServers
     }
-    
+
     public init(from url: URL) throws {
         let fileManager = FileManager.default
 

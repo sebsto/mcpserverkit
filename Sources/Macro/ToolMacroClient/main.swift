@@ -164,7 +164,7 @@ struct ToolMacroClient {
     }
 }
 
-#else 
+#else
 
 @main
 struct ToolMacroClient {

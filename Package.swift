@@ -19,7 +19,7 @@ let package = Package(
         "MCPMacros",
         .default(
             enabledTraits: [
-                "MCPHTTPSupport", "MCPMacros"
+                "MCPHTTPSupport", "MCPMacros",
             ]
         ),
     ],
@@ -33,7 +33,7 @@ let package = Package(
         // https://github.com/modelcontextprotocol/swift-sdk/issues/110
         .package(url: "https://github.com/stallent/swift-sdk.git", branch: "streamable_server"),
 
-        // for MCP Servers 
+        // for MCP Servers
         .package(url: "https://github.com/orlandos-nl/SSEKit.git", from: "1.1.0"),
         .package(url: "https://github.com/hummingbird-project/hummingbird.git", from: "2.0.0"),
 
@@ -45,7 +45,7 @@ let package = Package(
             dependencies: [
                 .product(name: "BedrockService", package: "swift-bedrock-library"),
                 .byNameItem(name: "ToolMacro", condition: .when(traits: ["MCPMacros"])),
-                 "MCPServerKit", "MCPClientKit",
+                "MCPServerKit", "MCPClientKit",
             ],
             path: "Sources/AgentKit"
         ),

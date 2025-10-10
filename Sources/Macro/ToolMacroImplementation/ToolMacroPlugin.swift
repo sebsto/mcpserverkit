@@ -11,7 +11,7 @@ struct ToolMacroPlugin: CompilerPlugin {
     ]
 }
 
-#else 
+#else
 
 @main struct MacrosDisabled {
     public static func main() {

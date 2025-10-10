@@ -32,8 +32,8 @@ struct FXRatesInput: Codable {
     schema: FXRatesInput.self
 )
 struct FXRateTool {
-    typealias Input = FXRatesInput
-    typealias Output = String
+    // typealias Input = FXRatesInput
+    // typealias Output = String
 
     // Fetches foreign exchange rates from the Hexarate API.
     func handle(input: FXRatesInput) async throws -> String {

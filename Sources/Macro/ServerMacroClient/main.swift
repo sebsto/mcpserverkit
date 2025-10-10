@@ -37,7 +37,7 @@ struct MyServer {}
 //     try await server.startHttpServer
 // }
 
-#else 
+#else
 
 @main
 struct ServerMacroClient {

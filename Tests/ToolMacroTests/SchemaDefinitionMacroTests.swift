@@ -1,4 +1,4 @@
-#if MCPMacros 
+#if MCPMacros
 
 import Foundation
 import SwiftSyntax

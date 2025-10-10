@@ -10,10 +10,10 @@ struct ServerMacroPlugin: CompilerPlugin {
     ]
 }
 
-#else 
+#else
 
 @main
-struct MacrosDisabled{
+struct MacrosDisabled {
     public static func main() {
         fatalError("Enable the MCPMacros to use the @Server macro")
     }

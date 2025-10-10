@@ -85,7 +85,7 @@ public struct ServerMacro: MemberMacro {
         // Generate the appropriate transport and startup code based on server type
         let transportCode: String
         let startupCode: String
-        
+
         if serverType == "stdio" {
             transportCode = ".stdio"
             startupCode = "try await server.startStdioServer()"
