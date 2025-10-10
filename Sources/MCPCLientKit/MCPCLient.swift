@@ -1,5 +1,7 @@
 import Logging
 import MCP
+import MCPShared
+import Synchronization
 
 #if canImport(FoundationEssentials)
 import FoundationEssentials
@@ -9,14 +11,21 @@ import Foundation
 
 /// A MCPClient is teh struct that allows to communicate with a MCP Server
 /// and invoke its tools, get its resources or prompts.
-public class MCPClient {
+public actor MCPClient: Sendable {
 
     public let name: String
 
     package let client: Client
     package let logger: Logger
-    public private(set) var tools: [Tool]
     private var process: Process? = nil
+
+    // to make MCPCLient Sendable and the compiler happy
+    private let _tools: Mutex<[Tool]>
+    public var tools: [Tool] {
+        get {
+            _tools.withLock { $0 }
+        }
+    }
 
     public init(
         with serverConfig: MCPServerConfiguration.ServerConfiguration,
@@ -43,8 +52,8 @@ public class MCPClient {
             break
         }
 
-        // get the list of tools
-        (tools, _) = try await client.listTools()
+        let (tools, _) = try await client.listTools()
+        _tools = Mutex(tools)
     }
 
     deinit {
@@ -53,6 +62,7 @@ public class MCPClient {
         }
     }
 
+    /// Invoke a tool
     public func invokeTool(
         name toolName: String,
         arguments: [String: MCPValue],
