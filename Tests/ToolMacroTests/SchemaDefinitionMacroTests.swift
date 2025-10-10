@@ -48,7 +48,6 @@ struct SchemaDefinitionMacroTests {
             description: "Test \"quoted\" description"
         )
 
-
         // This should not throw if JSON is valid
         #expect(throws: Never.self) {
             // Try to parse the JSON to verify it's valid

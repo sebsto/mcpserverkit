@@ -2,13 +2,14 @@ import BedrockService
 import Logging
 import MCPShared
 
+import struct BedrockService.Tool
+
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #else
 import Foundation
 #endif
 
-import struct BedrockService.Tool
 public typealias BedrockTool = Tool
 
 extension Agent {

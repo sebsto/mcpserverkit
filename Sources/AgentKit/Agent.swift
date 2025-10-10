@@ -74,11 +74,14 @@ public actor Agent: Sendable {
             } ?? .info
         self.logger = logger
 
-
         // create our bag of tools by combining the local and remote tools
-        let remoteTools = try await Agent.collectTools(mcpTools: mcpTools, mcpConfig: mcpConfig, mcpConfigFile: mcpConfigFile, logger: logger)
+        let remoteTools = try await Agent.collectTools(
+            mcpTools: mcpTools,
+            mcpConfig: mcpConfig,
+            mcpConfigFile: mcpConfigFile,
+            logger: logger
+        )
         self.tools = localTools + remoteTools
-
 
         let bedrockAuth: BedrockAuthentication
         switch auth {

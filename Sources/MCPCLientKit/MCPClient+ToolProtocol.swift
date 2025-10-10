@@ -38,7 +38,7 @@ struct MCPToolWrapper: ToolProtocol, CustomStringConvertible {
     func handle(input: Input) async throws -> Output {
         try await client.invokeTool(name: self.toolName, arguments: input)
     }
-    
+
     var description: String {
         "MCPTool(name: \"\(toolName)\", description: \"\(toolDescription)\")"
     }
