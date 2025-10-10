@@ -40,6 +40,6 @@ struct MCPToolWrapper: ToolProtocol, CustomStringConvertible {
     }
 
     var description: String {
-        "MCPTool(name: \"\(toolName)\", description: \"\(toolDescription)\")"
+        "MCPToolWrapper(\(toolName))"
     }
 }
