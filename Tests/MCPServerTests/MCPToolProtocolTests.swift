@@ -20,8 +20,8 @@ struct ToolProtocolTests {
         typealias Input = I
         typealias Output = O
 
-        let name: String
-        let description: String
+        let toolName: String
+        let toolDescription: String
         let inputSchema: String
         let mockHandler: @Sendable (I) async throws -> O
         let mockConverter: @Sendable (CallTool.Parameters) async throws -> I
@@ -51,8 +51,8 @@ struct ToolProtocolTests {
     @Test("Test ToolProtocol conformance")
     func testToolProtocolConformance() async throws {
         let tool = MockTool<TestInput, TestOutput>(
-            name: "testTool",
-            description: "A test tool",
+            toolName: "testTool",
+            toolDescription: "A test tool",
             inputSchema: """
                 {
                     "type": "object",
@@ -77,8 +77,8 @@ struct ToolProtocolTests {
             }
         )
 
-        #expect(tool.name == "testTool")
-        #expect(tool.description == "A test tool")
+        #expect(tool.toolName == "testTool")
+        #expect(tool.toolDescription == "A test tool")
 
         let input = TestInput(message: "Hello")
         let output = try await tool.handle(input: input)

@@ -238,14 +238,14 @@ public struct ToolMacro: MemberMacro, ExtensionMacro {
     }
 
     public static func generateNameProperty(name: String, in structDecl: StructDeclSyntax) throws -> DeclSyntax? {
-        guard !propertyExists(named: "name", in: structDecl) else {
+        guard !propertyExists(named: "toolName", in: structDecl) else {
             return nil  // Property already exists, don't generate it
         }
 
         let accessModifier = getAccessModifier(from: structDecl)
 
         let nameProperty: DeclSyntax = """
-            \(raw: accessModifier)let name = "\(raw: name)"
+            \(raw: accessModifier)let toolName = "\(raw: name)"
             """
 
         return nameProperty
@@ -255,14 +255,14 @@ public struct ToolMacro: MemberMacro, ExtensionMacro {
         description: String,
         in structDecl: StructDeclSyntax
     ) throws -> DeclSyntax? {
-        guard !propertyExists(named: "description", in: structDecl) else {
+        guard !propertyExists(named: "toolDescription", in: structDecl) else {
             return nil  // Property already exists, don't generate it
         }
 
         let accessModifier = getAccessModifier(from: structDecl)
 
         let descriptionProperty: DeclSyntax = """
-            \(raw: accessModifier)let description = "\(raw: description)"
+            \(raw: accessModifier)let toolDescription = "\(raw: description)"
             """
 
         return descriptionProperty

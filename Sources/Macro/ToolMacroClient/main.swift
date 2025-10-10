@@ -62,8 +62,8 @@ struct ExistingPropertiesTool {
     typealias Input = String
     typealias Output = String
 
-    let name = "existing-tool"
-    let description = "This tool already has name and description"
+    let toolName = "existing-tool"
+    let toolDescription = "This tool already has name and description"
 
     /// Process text input with custom transformation
     /// - Parameter input: The text to process and transform
@@ -121,32 +121,32 @@ struct ToolMacroClient {
         // Example 1: Weather Tool (String input with DocC-generated schema)
         let weatherTool = WeatherTool()
         print("Weather Tool:")
-        print("  Name: \(weatherTool.name)")
-        print("  Description: \(weatherTool.description)")
+        print("  Name: \(weatherTool.toolName)")
+        print("  Description: \(weatherTool.toolDescription)")
         print("  Schema: \(weatherTool.inputSchema)")
         print()
 
         // Example 2: Calculator Tool (Complex input with DocC description)
         let calculatorTool = CalculatorTool()
         print("Calculator Tool:")
-        print("  Name: \(calculatorTool.name)")
-        print("  Description: \(calculatorTool.description)")
+        print("  Name: \(calculatorTool.toolName)")
+        print("  Description: \(calculatorTool.toolDescription)")
         print("  Schema: \(calculatorTool.inputSchema)")
         print()
 
         // Example 3: Tool with existing properties
         let existingTool = ExistingPropertiesTool()
         print("Existing Properties Tool:")
-        print("  Name: \(existingTool.name)")
-        print("  Description: \(existingTool.description)")
+        print("  Name: \(existingTool.toolName)")
+        print("  Description: \(existingTool.toolDescription)")
         print("  Schema: \(existingTool.inputSchema)")
         print()
 
         // Example 4: Tool with external input type
         let externalTool = ExternalCalculatorTool()
         print("External Calculator Tool:")
-        print("  Name: \(externalTool.name)")
-        print("  Description: \(externalTool.description)")
+        print("  Name: \(externalTool.toolName)")
+        print("  Description: \(externalTool.toolDescription)")
         print("  Schema: \(externalTool.inputSchema)")
         print()
 

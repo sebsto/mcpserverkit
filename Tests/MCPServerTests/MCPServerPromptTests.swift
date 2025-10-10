@@ -100,7 +100,7 @@ final class MCPServerPromptTests {
         ) { server in
             #expect(server.tools?.count == 1)
             #expect(server.prompts?.count == 1)
-            #expect(server.tools?.first?.name == "echo")
+            #expect(server.tools?.first?.toolName == "echo")
             #expect(server.prompts?.first?.name == "test-prompt")
         }
     }

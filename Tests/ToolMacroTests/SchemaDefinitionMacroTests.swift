@@ -48,12 +48,13 @@ struct SchemaDefinitionMacroTests {
             description: "Test \"quoted\" description"
         )
 
-        // Try to parse the JSON to verify it's valid
-        let jsonData = schemaJson.data(using: .utf8)!
 
         // This should not throw if JSON is valid
         #expect(throws: Never.self) {
-            try JSONSerialization.jsonObject(with: jsonData, options: [])
+            // Try to parse the JSON to verify it's valid
+            let jsonData = schemaJson.data(using: .utf8)
+
+            try JSONSerialization.jsonObject(with: jsonData!, options: [])
         }
 
         // Verify the description is properly escaped

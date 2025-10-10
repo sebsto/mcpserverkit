@@ -13,7 +13,7 @@ public typealias BedrockTool = Tool
 
 extension Agent {
     var toolNames: [String] {
-        self.tools.map { $0.name }
+        self.tools.map { $0.toolName }
     }
 
     func resolveToolUse(
@@ -104,7 +104,7 @@ extension Agent {
 extension ToolProtocol {
     public func bedrockTool() throws -> BedrockTool {
         let json = try JSON(from: self.inputSchema)
-        return try BedrockTool(name: self.name, inputSchema: json, description: self.description)
+        return try BedrockTool(name: self.toolName, inputSchema: json, description: self.toolDescription)
     }
 }
 
@@ -113,6 +113,6 @@ extension Array where Element == any ToolProtocol {
         try self.map { try $0.bedrockTool() }
     }
     public func tool(named toolName: String) -> (any ToolProtocol)? {
-        self.first(where: { $0.name == toolName })
+        self.first(where: { $0.toolName == toolName })
     }
 }

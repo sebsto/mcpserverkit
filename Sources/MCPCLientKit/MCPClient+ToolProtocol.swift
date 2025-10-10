@@ -17,14 +17,14 @@ extension MCPClient {
 
 }
 
-struct MCPToolWrapper: ToolProtocol {
+struct MCPToolWrapper: ToolProtocol, CustomStringConvertible {
     typealias Input = [String: MCPValue]
     typealias Output = String
 
-    var name: String { tool.name }
-    var description: String { tool.description }
+    var toolName: String { tool.name }
+    var toolDescription: String { tool.description }
     var inputSchema: String {
-        guard let schemaData = try? JSONSerialization.data(withJSONObject: tool.inputSchema as Any),
+        guard let schemaData = try? JSONEncoder().encode(tool.inputSchema),
             let schemaString = String(data: schemaData, encoding: .utf8)
         else {
             return "{}"
@@ -36,6 +36,10 @@ struct MCPToolWrapper: ToolProtocol {
     let tool: Tool
 
     func handle(input: Input) async throws -> Output {
-        try await client.invokeTool(name: self.name, arguments: input)
+        try await client.invokeTool(name: self.toolName, arguments: input)
+    }
+    
+    var description: String {
+        "MCPTool(name: \"\(toolName)\", description: \"\(toolDescription)\")"
     }
 }

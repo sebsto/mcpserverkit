@@ -12,8 +12,8 @@ extension MCPServer {
         await server.withMethodHandler(ListTools.self) { id, params in
             let _tools = try tools.map { tool in
                 Tool(
-                    name: tool.name,
-                    description: tool.description,
+                    name: tool.toolName,
+                    description: tool.toolDescription,
                     inputSchema: try JSONDecoder().decode(
                         Value.self,
                         from: tool.inputSchema.data(using: .utf8)!
@@ -27,7 +27,7 @@ extension MCPServer {
         // register the tools, part 2 : tools/call
         await server.withMethodHandler(CallTool.self) { id, params in
             // Check if the tool name is in our list of tools
-            guard let tool = tools.first(where: { $0.name == params.name }) else {
+            guard let tool = tools.first(where: { $0.toolName == params.name }) else {
                 throw MCPServerError.unknownTool(params.name)
             }
 

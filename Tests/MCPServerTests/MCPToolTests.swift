@@ -40,8 +40,8 @@ struct MCPToolTests {
             }
         )
 
-        #expect(tool.name == name)
-        #expect(tool.description == description)
+        #expect(tool.toolName == name)
+        #expect(tool.toolDescription == description)
         #expect(tool.inputSchema == inputSchema)
     }
 

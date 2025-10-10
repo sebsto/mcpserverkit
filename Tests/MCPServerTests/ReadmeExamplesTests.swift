@@ -43,8 +43,8 @@ struct ReadmeExamplesTests {
         )
 
         // Verify the tool was created correctly
-        #expect(myTool.name == "tool_name")
-        #expect(myTool.description == "Description of what your tool does")
+        #expect(myTool.toolName == "tool_name")
+        #expect(myTool.toolDescription == "Description of what your tool does")
     }
 
     @Test("Creating Resources Example")
@@ -276,7 +276,7 @@ struct ReadmeExamplesTests {
             #expect(server.name == "WeatherServer")
             #expect(server.version == "1.0.0")
             #expect(server.tools?.count == 1)
-            #expect(server.tools?[0].name == "weather")
+            #expect(server.tools?[0].toolName == "weather")
             #expect(server.resources.resources.count == 1)
             #expect(server.resources.resources[0].resource.name == "Weather API Documentation")
         }

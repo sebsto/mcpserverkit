@@ -78,7 +78,7 @@ struct MCPServerResourceTests {
             #expect(server.version == "1.0.0")
             #expect(server.tools != nil)
             #expect(server.tools?.count == 1)
-            #expect(server.tools?[0].name == "echo")
+            #expect(server.tools?[0].toolName == "echo")
             #expect(server.resources.resources.count == 1)
             #expect(server.resources.resources[0].resource.name == "Documentation")
         }
