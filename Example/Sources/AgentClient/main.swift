@@ -1,5 +1,11 @@
 import AgentKit
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
+import Foundation
+#endif 
+
 /// Option 1. Just call the agent, it sends its ouput to stdout
 // try await Agent("Tell me about Swift 6")  // , auth: .sso("pro")
 // or in two lines
@@ -23,11 +29,22 @@ import AgentKit
 //     }
 // }
 
-/// Option 4. Use tools
-let agent = try await Agent(tools: [WeatherTool(), FXRateTool()])
-try await agent(
-    "What is the weather in Lille today? Give a one paragraph summary with key metrics. Do not use bullet points."
-)
+/// Option 4. Use local tools
+// let agent = try await Agent(tools: [WeatherTool(), FXRateTool()])
+// try await agent(
+//     "What is the weather in Lille today? Give a one paragraph summary with key metrics. Do not use bullet points."
+// )
 
-try await agent("How much is 100 GBP in EUR?")
+// try await agent("How much is 100 GBP in EUR?")
 
+
+/// Option 5, use MCP servers defined in a config file
+let configFile = "./json/mcp-http.json"
+let url = URL(fileURLWithPath: configFile)
+
+let agent = try await Agent(mcpConfigFile: url)
+// try await agent(
+//     "What is the weather in Lille today? Give a one paragraph summary with key metrics. Do not use bullet points."
+// )
+print(await agent.tools)
+//try await agent("How much is 100 GBP in EUR?")
