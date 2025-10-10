@@ -76,7 +76,9 @@ extension Agent {
                     if let callback {
                         callback(.message(message))
                     } else {
-                        print("\n")
+                        if message.hasTextContent() {
+                            print("\n")
+                        }
                     }
                 case .metaData(let metadata):
                     logger.trace("Metadata", metadata: ["metadata": "\(metadata)"])
@@ -120,7 +122,7 @@ extension Agent {
                 logger.debug("No, checking if the last message is text")
                 if messages.last?.hasTextContent() == true {
                     lastMessageIsText = true
-                    logger.debug("yes, exiting the loop and ask next question to the user")
+                    logger.debug("yes, exiting the loop ")
                 } else {
                     logger.warning("Last message is not text nor tool use, break out the loop")
                     logger.debug(

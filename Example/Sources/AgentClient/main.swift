@@ -48,5 +48,9 @@ await agent.tools.forEach { tool in
 }	
 try await agent(
     "What is the weather in Lille today? Give a one paragraph summary with key metrics. Do not use bullet points."
-)
+) { event in 
+    print(event, terminator: "")
+}
+
+print("\n")
 try await agent("How much is 100 GBP in EUR?")
