@@ -46,12 +46,12 @@ extension Agent {
         // (because the ToolResultBlock's content is an enum that makes the distinction between string and json)
         if let string = isString(result) {
             return try ConverseRequestBuilder(from: requestBuilder)
-                .withToolResult(string)
                 .withHistory(messages)
+                .withToolResult(string)
         } else {
             return try ConverseRequestBuilder(from: requestBuilder)
-                .withToolResult(result)
                 .withHistory(messages)
+                .withToolResult(result)
         }
     }
 

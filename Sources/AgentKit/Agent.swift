@@ -20,8 +20,8 @@ public actor Agent: Sendable {
     public let systemPrompt: String
     /// the list of tools this agent can use to answer questions
     public let tools: [any ToolProtocol]
-    /// the history of messages 
-    public var messages : [Message]
+    /// the history of messages
+    public var messages: History
 
     private let bedrock: BedrockService
     internal let logger: Logger
@@ -41,8 +41,9 @@ public actor Agent: Sendable {
         _ initialPrompt: String = "",
         systemPrompt: String = "",
         model: BedrockModel = .claude_sonnet_v4,
-        messages: [Message] = [],
+        messages: History = [],
         tools: [any ToolProtocol] = [],
+        mcpTools: [MCPClient] = [],
         auth: AuthenticationMethod = .default,
         region: Region = .useast1,
         logger: Logger? = nil,
@@ -54,7 +55,18 @@ public actor Agent: Sendable {
         self.systemPrompt = systemPrompt
         self.messages = messages
         self.model = model
-        self.tools = tools
+        
+        // our local tools
+        let localTools = tools
+        
+        // our remote tools (MCP)
+        var remoteTools: [any ToolProtocol] = []
+        for mcpClient in mcpTools { 
+            await remoteTools.append(contentsOf: mcpClient.asTools())
+        }
+
+        // create our bag of tools by combining the local and remote tools
+        self.tools = localTools + remoteTools
 
         var logger = logger ?? Logger(label: "AgentKit")
         logger.logLevel =
@@ -89,19 +101,6 @@ public actor Agent: Sendable {
             logger: logger,
             authentication: bedrockAuth
         )
-
-        // let mcpFileLocationURL = URL(
-        //     fileURLWithPath:
-        //         "/Users/stormacq/Documents/amazon/code/swift/bedrock/mcp_music_tools"
-        // )
-
-        // let mcpTools: [MCPClient] = try await [MCPClient].create(
-        //     from: mcpFileLocationURL,
-        //     logger: logger
-        // )
-
-        // let tools = try await mcpTools.listTools().joined(separator: "\n")
-        // logger.trace("Tools discovered:\n\(tools)")
 
         if initialPrompt != "" {
             try await self.runLoop(
