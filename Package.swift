@@ -73,7 +73,8 @@ let package = Package(
         .target(
             name: "MCPClientKit",
             dependencies: [
-                .product(name: "MCP", package: "swift-sdk")
+                .product(name: "MCP", package: "swift-sdk"),
+                "MCPShared",
             ],
             path: "Sources/MCPClientKit"
         ),

@@ -8,6 +8,9 @@ import FoundationEssentials
 import Foundation
 #endif
 
+import struct BedrockService.Tool
+public typealias BedrockTool = Tool
+
 extension Agent {
     var toolNames: [String] {
         self.tools.map { $0.name }
@@ -61,17 +64,52 @@ extension Agent {
         }
         return string
     }
+
+    package static func collectTools(
+        mcpTools: [MCPClient] = [],
+        mcpConfig: MCPServerConfiguration? = nil,
+        mcpConfigFile: URL? = nil,
+        logger: Logger
+    ) async throws -> [any ToolProtocol] {
+
+        // our remote tools (MCP)
+        var result: [any ToolProtocol] = []
+
+        // start with the ones we received as MCP clients
+        for mcpClient in mcpTools {
+            await result.append(contentsOf: mcpClient.asTools())
+        }
+
+        // add the ones we received as a config object
+        if let mcpConfig {
+            for (key, value) in mcpConfig.mcpServers {
+                let mcpClient = try await MCPClient(with: value, name: key, logger: logger)
+                await result.append(contentsOf: mcpClient.asTools())
+            }
+        }
+
+        // add the ones we received as a config file
+        if let mcpConfigFile {
+            let mcpConfig = try MCPServerConfiguration(from: mcpConfigFile)
+            for (key, value) in mcpConfig.mcpServers {
+                let mcpClient = try await MCPClient(with: value, name: key, logger: logger)
+                await result.append(contentsOf: mcpClient.asTools())
+            }
+        }
+
+        return result
+    }
 }
 
 extension ToolProtocol {
-    public func bedrockTool() throws -> Tool {
+    public func bedrockTool() throws -> BedrockTool {
         let json = try JSON(from: self.inputSchema)
-        return try Tool(name: self.name, inputSchema: json, description: self.description)
+        return try BedrockTool(name: self.name, inputSchema: json, description: self.description)
     }
 }
 
 extension Array where Element == any ToolProtocol {
-    public func bedrockTools() throws -> [Tool] {
+    public func bedrockTools() throws -> [BedrockTool] {
         try self.map { try $0.bedrockTool() }
     }
     public func tool(named toolName: String) -> (any ToolProtocol)? {

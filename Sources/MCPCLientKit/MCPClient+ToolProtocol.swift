@@ -10,10 +10,10 @@ import Foundation
 
 extension MCPClient {
 
-	/// Convert all our MCP Tools to ToolProtocol know by this library (and the Agent)
-	public func asTools() -> [any ToolProtocol] {
-		self.tools.map { MCPToolWrapper(client: self, tool: $0) }
-	} 
+    /// Convert all our MCP Tools to ToolProtocol know by this library (and the Agent)
+    public func asTools() -> [any ToolProtocol] {
+        self.tools.map { MCPToolWrapper(client: self, tool: $0) }
+    }
 
 }
 
@@ -25,7 +25,8 @@ struct MCPToolWrapper: ToolProtocol {
     var description: String { tool.description }
     var inputSchema: String {
         guard let schemaData = try? JSONSerialization.data(withJSONObject: tool.inputSchema as Any),
-              let schemaString = String(data: schemaData, encoding: .utf8) else {
+            let schemaString = String(data: schemaData, encoding: .utf8)
+        else {
             return "{}"
         }
         return schemaString
@@ -35,6 +36,6 @@ struct MCPToolWrapper: ToolProtocol {
     let tool: Tool
 
     func handle(input: Input) async throws -> Output {
-        return try await client.invokeTool(name: self.name, arguments: input)
+        try await client.invokeTool(name: self.name, arguments: input)
     }
 }

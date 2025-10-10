@@ -28,13 +28,24 @@ public actor Agent: Sendable {
 
     /// Creates a new Agent instance with the specified configuration.
     ///
+    /// There are three ways to pass MCP server configurations, which are cumulative (all servers will be passed to the agent):
+    /// 1. Pass MCPClient instances directly via mcpTools parameter
+    /// 2. Pass URL to mcp.json config file via mcpConfigFile parameter
+    /// 3. Pass MCPServerConfiguration object via mcpConfig parameter
+    ///
     /// - Parameters:
+    ///   - initialPrompt: The initial prompt to send to the agent. Defaults to empty string.
     ///   - systemPrompt: The system prompt to guide the agent's behavior. Defaults to empty string.
     ///   - model: The Bedrock model to use. Defaults to Claude Sonnet v4.
-    ///   - tools: The tools this agent can use to answer questions
+    ///   - messages: The conversation history. Defaults to empty array.
+    ///   - tools: The local tools this agent can use to answer questions. Defaults to empty array.
+    ///   - mcpTools: The remote MCP tools this agent can use. Defaults to empty array.
+    ///   - mcpConfig: An MCPServerConfiguration object. Defaults to nil
+    ///   - mcpConfigFile: An URL of an mcp.json file with the list of MCP servers. Defaults to nil.
     ///   - auth: The authentication method. Defaults to default credential chain.
     ///   - region: The AWS region to use. Defaults to us-east-1.
     ///   - logger: Optional custom logger. If nil, creates a default logger.
+    ///   - callback: Optional callback function to handle events during processing.
     /// - Throws: An error if authentication fails or the Bedrock service cannot be initialized.
     @discardableResult
     public init(
@@ -42,31 +53,19 @@ public actor Agent: Sendable {
         systemPrompt: String = "",
         model: BedrockModel = .claude_sonnet_v4,
         messages: History = [],
-        tools: [any ToolProtocol] = [],
+        tools localTools: [any ToolProtocol] = [],
         mcpTools: [MCPClient] = [],
+        mcpConfig: MCPServerConfiguration? = nil,
+        mcpConfigFile: URL? = nil,
         auth: AuthenticationMethod = .default,
         region: Region = .useast1,
         logger: Logger? = nil,
         callback: AgentCallbackFunction? = nil
-    )
-        async throws
-    {
+    ) async throws {
 
         self.systemPrompt = systemPrompt
         self.messages = messages
         self.model = model
-        
-        // our local tools
-        let localTools = tools
-        
-        // our remote tools (MCP)
-        var remoteTools: [any ToolProtocol] = []
-        for mcpClient in mcpTools { 
-            await remoteTools.append(contentsOf: mcpClient.asTools())
-        }
-
-        // create our bag of tools by combining the local and remote tools
-        self.tools = localTools + remoteTools
 
         var logger = logger ?? Logger(label: "AgentKit")
         logger.logLevel =
@@ -74,6 +73,12 @@ public actor Agent: Sendable {
                 Logger.Level(rawValue: $0)
             } ?? .info
         self.logger = logger
+
+
+        // create our bag of tools by combining the local and remote tools
+        let remoteTools = try await Agent.collectTools(mcpTools: mcpTools, mcpConfig: mcpConfig, mcpConfigFile: mcpConfigFile, logger: logger)
+        self.tools = localTools + remoteTools
+
 
         let bedrockAuth: BedrockAuthentication
         switch auth {

@@ -1,5 +1,6 @@
 import Logging
 import MCP
+import MCPShared
 
 #if canImport(FoundationEssentials)
 import FoundationEssentials
@@ -28,4 +29,14 @@ extension Array where Element == MCPClient {
         return nil
     }
 
+    /// Create an array of MCP clients from a config URL
+    public init(fromt url: URL, logger: Logger) async throws {
+        let config = try MCPServerConfiguration(from: url)
+        var result: [MCPClient] = []
+        for (key, value) in config.mcpServers {
+            let mcpClient = try await MCPClient(with: value, name: key, logger: logger)
+            result.append(mcpClient)
+        }
+        self = result
+    }
 }

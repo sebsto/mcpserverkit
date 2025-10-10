@@ -5,8 +5,8 @@ import Foundation
 #endif
 
 /// Structure representing the MCP configuration file format
-public struct MCPServerConfiguration: Codable {
-    let mcpServers: [String: ServerConfiguration]
+public struct MCPServerConfiguration: Codable, Sendable {
+    package let mcpServers: [String: ServerConfiguration]
 
     public init(mcpServers: [String: ServerConfiguration]) {
         self.mcpServers = mcpServers
@@ -29,7 +29,7 @@ public struct MCPServerConfiguration: Codable {
         mcpServers[serverName]
     }
 
-    public enum ServerConfiguration: Codable {
+    public enum ServerConfiguration: Codable, Sendable {
         case stdio(ServerConfigurationStdio)
         case http(ServerConfigurationStreamable)
 
@@ -66,14 +66,14 @@ public struct MCPServerConfiguration: Codable {
         }
     }
 
-    public struct ServerConfigurationStdio: Codable {
+    public struct ServerConfigurationStdio: Codable, Sendable {
         let command: String
         let args: [String]?
         let env: [String: String]?
         let disabled: Bool?
         let timeout: Int?
     }
-    public struct ServerConfigurationStreamable: Codable {
+    public struct ServerConfigurationStreamable: Codable, Sendable {
         let url: String
         let disabled: Bool?
         let timeout: Int?

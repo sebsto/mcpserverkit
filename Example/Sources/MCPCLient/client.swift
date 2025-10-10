@@ -19,8 +19,6 @@ struct Test {
 
         let config = try MCPServerConfiguration(from: url)
 
-        // TODO create a [MCPCLient] form an URL
-
         // experiment with stdio server
         var serverName = "MCPExample-stdio"
         // guard let stdioServerConfig = config[serverName] else {
