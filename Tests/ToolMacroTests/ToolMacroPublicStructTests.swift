@@ -1,30 +1,29 @@
 #if MCPMacros
 
 import Testing
-import ToolMacro
 import MCPServerKit
 
 // Test structs at file scope to allow public/package modifiers
 @Tool(name: "public-test", description: "Public test tool")
 public struct PublicTestTool {
-    typealias Input = String
-    typealias Output = String
+    public typealias Input = String
+    public typealias Output = String
 
     /// Handle test input
     /// - Parameter input: Test input string
-    func handle(input: String) async throws -> String {
+    public func handle(input: String) async throws -> String {
         "Public: \(input)"
     }
 }
 
 @Tool(name: "package-test", description: "Package test tool")
 package struct PackageTestTool {
-    typealias Input = String
-    typealias Output = String
+    package typealias Input = String
+    package typealias Output = String
 
     /// Handle test input
     /// - Parameter input: Test input string
-    func handle(input: String) async throws -> String {
+    package func handle(input: String) async throws -> String {
         "Package: \(input)"
     }
 }
