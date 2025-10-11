@@ -13,12 +13,14 @@ struct SayHello {
     func handle(input: String) async throws -> String { "Hello \(input)" }
 }
 
+let sh = SayHello()
+
 // Create a server
 @Server(
     name: "Say Hello Server",
     version: "1.0.0",
     description: "A simple server that says hello",
-    tools: [SayHello()],
+    tools: [sh],
     type: .stdio
 )
 @main

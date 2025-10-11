@@ -175,10 +175,10 @@ public struct ToolMacro: MemberMacro, ExtensionMacro {
         }
 
         let structName = structDecl.name.text
-        let accessModifier = getAccessModifier(from: structDecl)
-
+        
+        // Always generate internal extension to avoid public protocol conformance issues
         let extensionDecl: DeclSyntax = """
-            \(raw: accessModifier.isEmpty ? "" : "\(accessModifier.trimmingCharacters(in: .whitespaces)) ")extension \(raw: structName): ToolProtocol {}
+            extension \(raw: structName): ToolProtocol {}
             """
 
         guard let extensionSyntax = extensionDecl.as(ExtensionDeclSyntax.self) else {
