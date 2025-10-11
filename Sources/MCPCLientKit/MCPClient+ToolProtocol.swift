@@ -35,6 +35,10 @@ struct MCPToolWrapper: ToolProtocol, CustomStringConvertible {
     let client: MCPClient
     let tool: Tool
 
+    init(client: MCPClient, tool: Tool) {
+        self.client = client
+        self.tool = tool
+    }
     func handle(input: Input) async throws -> Output {
         try await client.invokeTool(name: self.toolName, arguments: input)
     }
@@ -42,4 +46,5 @@ struct MCPToolWrapper: ToolProtocol, CustomStringConvertible {
     var description: String {
         "MCPToolWrapper(\(toolName))"
     }
+    public init() { fatalError("Can not create a MCPToolWrapper withoit passing a Tool and an MCPCLient") }
 }

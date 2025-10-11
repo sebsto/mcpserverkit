@@ -38,6 +38,20 @@ struct ToolProtocolTests {
             let input = try await convert(jsonInput)
             return try await handle(input: input)
         }
+        public init(
+            toolName: String,
+            toolDescription: String,
+            inputSchema: String,
+            mockHandler: @escaping @Sendable (I) async throws -> O,
+            mockConverter: @escaping @Sendable (CallTool.Parameters) async throws -> I
+        ) {
+            self.toolName = toolName
+            self.toolDescription = toolDescription
+            self.inputSchema = inputSchema
+            self.mockHandler = mockHandler
+            self.mockConverter = mockConverter
+        }
+        public init() { fatalError("Not implemented") }
     }
 
     struct TestInput: Codable, Equatable {

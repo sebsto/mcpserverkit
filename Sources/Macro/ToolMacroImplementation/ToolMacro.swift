@@ -117,6 +117,16 @@ public struct ToolMacro: MemberMacro, ExtensionMacro {
         return false
     }
 
+    // Helper function to check if an initializer already exists
+    private static func initializerExists(in structDecl: StructDeclSyntax) -> Bool {
+        for member in structDecl.memberBlock.members {
+            if member.decl.is(InitializerDeclSyntax.self) {
+                return true
+            }
+        }
+        return false
+    }
+
     public static func expansion(
         of node: AttributeSyntax,
         providingMembersOf declaration: some DeclGroupSyntax,
@@ -157,6 +167,13 @@ public struct ToolMacro: MemberMacro, ExtensionMacro {
             let schemaInfo = try parseDocComment(docComment, for: handlerFunc)
             try validateParameterConsistency(schemaInfo: schemaInfo, handlerFunc: handlerFunc)
             properties.append(generateInputSchemaProperty(from: schemaInfo, in: structDecl, context: context))
+        }
+
+        // Generate initializer if none exists
+        if !initializerExists(in: structDecl) {
+            let accessModifier = getAccessModifier(from: structDecl)
+            let initDecl: DeclSyntax = "\(raw: accessModifier)init() {}"
+            properties.append(initDecl)
         }
 
         return properties

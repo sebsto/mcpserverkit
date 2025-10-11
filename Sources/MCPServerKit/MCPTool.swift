@@ -7,6 +7,8 @@ import Foundation
 #endif
 
 /// A MCPTool implementation that deals with JSON input and output
+// @available(*, deprecated, message: "Use the @Tool macro instead" )
+/// THIS IS ONLY USED IN UNIT TEST TO AVOID USING THE MACRO THERE
 public struct MCPTool<Input: Decodable, Output: Encodable>: ToolProtocol {
     public let toolName: String
     public let toolDescription: String
@@ -28,4 +30,6 @@ public struct MCPTool<Input: Decodable, Output: Encodable>: ToolProtocol {
     public func handle(input: Input) async throws -> Output {
         try await self.body(input)
     }
+
+    public init() { fatalError("Always use the initializer with name, description, inputSchema, and body") }
 }
