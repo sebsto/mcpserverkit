@@ -22,7 +22,7 @@ struct MCPToolWrapper: ToolProtocol, CustomStringConvertible {
     typealias Output = String
 
     var toolName: String { tool.name }
-    var toolDescription: String { tool.description }
+    var toolDescription: String { tool.description ?? "" }
     var inputSchema: String {
         guard let schemaData = try? JSONEncoder().encode(tool.inputSchema),
             let schemaString = String(data: schemaData, encoding: .utf8)
