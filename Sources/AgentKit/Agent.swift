@@ -1,6 +1,7 @@
 import BedrockService
 import Logging
 import MCPServerKit
+import Synchronization
 
 #if canImport(FoundationEssentials)
 import FoundationEssentials
@@ -12,7 +13,7 @@ import Foundation
 ///
 /// The Agent struct simplifies interaction with Bedrock models by providing a callable interface
 /// and handling authentication, model configuration, and conversation flow.
-public actor Agent: Sendable {
+public final class Agent {
 
     /// The Bedrock model used for generating responses.
     public let model: BedrockModel
@@ -21,7 +22,7 @@ public actor Agent: Sendable {
     /// the list of tools this agent can use to answer questions
     public let tools: [any ToolProtocol]
     /// the history of messages
-    public var messages: History
+    public let messages: Mutex<History>
 
     private let bedrock: BedrockService
     internal let logger: Logger
@@ -64,7 +65,7 @@ public actor Agent: Sendable {
     ) async throws {
 
         self.systemPrompt = systemPrompt
-        self.messages = messages
+        self.messages = Mutex(messages)
         self.model = model
 
         var logger = logger ?? Logger(label: "AgentKit")
@@ -193,5 +194,15 @@ public actor Agent: Sendable {
             throw CredentialsError.credentialsExpired(credentials.expiration, currentDate)
         }
         return credentials
+    }
+
+    public func getHistory() -> History {
+        self.messages.withLock { $0 }
+    }
+    public func appendToHistory(_ message: Message) {
+        self.messages.withLock { $0.append(message) }
+    }
+    public func lastMessageFromHistory() -> Message? {
+        self.messages.withLock { $0.last }
     }
 }

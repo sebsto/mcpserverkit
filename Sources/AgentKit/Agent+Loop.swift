@@ -29,7 +29,7 @@ extension Agent {
         // is it our first request ?
         if requestBuilder == nil {
             requestBuilder = try ConverseRequestBuilder(with: model)
-                .withHistory(messages)
+                .withHistory(getHistory())
                 .withPrompt(prompt)
 
             if bedrockTools.count > 0 {
@@ -42,11 +42,13 @@ extension Agent {
         } else {
             // if not, we can just add the prompt to the existing request builder
             requestBuilder = try ConverseRequestBuilder(from: requestBuilder!)
-                .withHistory(messages)
+                .withHistory(getHistory())
         }
 
         // add the prompt to the history
-        messages.append(.init(prompt))
+        messages.withLock {
+            $0.append(Message(prompt))
+        }
 
         // loop on calling the model while the last message is NOT text
         // in other words, has long as we receive toolUse, call the tool, call the model again and iterate until the lats message is text.
@@ -72,7 +74,7 @@ extension Agent {
                         callback(.toolUse(toolUse))
                     }
                 case .messageComplete(let message):
-                    messages.append(message)
+                    self.appendToHistory(message)
                     if let callback {
                         callback(.message(message))
                     } else {
@@ -93,7 +95,7 @@ extension Agent {
             // If the last message is toolUse, invoke the tool and
             // continue the conversation with the tool result.
             logger.debug("Have receive a complete message, checking is this is tool use?")
-            if let msg = messages.last,
+            if let msg = self.lastMessageFromHistory(),
                 let toolUse = msg.getToolUse()
             {
 
@@ -106,28 +108,28 @@ extension Agent {
                     requestBuilder: requestBuilder!,
                     tools: tools,
                     toolUse: toolUse,
-                    messages: messages,
+                    messages: self.getHistory(),
                     logger: logger
                 )
 
                 // add the tool result to the history
                 if let toolResult = requestBuilder?.toolResult {
                     logger.debug("Tool Result", metadata: ["result": "\(toolResult)"])
-                    messages.append(.init(toolResult))
+                    self.appendToHistory(Message(toolResult))
                 } else {
                     logger.warning("No tool result found, this is unexpected")
                 }
 
             } else {
                 logger.debug("No, checking if the last message is text")
-                if messages.last?.hasTextContent() == true {
+                if self.lastMessageFromHistory()?.hasTextContent() == true {
                     lastMessageIsText = true
                     logger.debug("yes, exiting the loop ")
                 } else {
                     logger.warning("Last message is not text nor tool use, break out the loop")
                     logger.debug(
                         "Last message",
-                        metadata: ["message": "\(String(describing: messages.last))"]
+                        metadata: ["message": "\(String(describing: self.lastMessageFromHistory()))"]
                     )
                     lastMessageIsText = false
                 }

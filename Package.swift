@@ -141,6 +141,7 @@ let package = Package(
                 "ToolShared",
                 "ToolMacro",
                 "ToolMacroImplementation",
+                "MCPServerKit",
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
                 .product(name: "SwiftSyntax", package: "swift-syntax"),
                 .product(name: "SwiftDiagnostics", package: "swift-syntax"),

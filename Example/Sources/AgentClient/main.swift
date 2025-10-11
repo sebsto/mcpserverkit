@@ -42,8 +42,8 @@ let configFile = "./json/mcp-http.json"
 let url = URL(fileURLWithPath: configFile)
 
 let agent = try await Agent(mcpConfigFile: url)
-print("This agent has \(await agent.tools.count) tools")
-await agent.tools.forEach { tool in
+print("This agent has \(agent.tools.count) tools")
+agent.tools.forEach { tool in
     print("- \(tool.toolName)")
 }	
 try await agent(
